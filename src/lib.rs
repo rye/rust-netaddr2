@@ -118,21 +118,15 @@ mod tests {
 		let net: NetAddr = "ff02::1/8".parse().unwrap();
 		assert_eq!(
 			net.address,
-			IpAddr::V6(Ipv6Addr::new(
-				0xff02, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001
-			))
+			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
 		);
 		assert_eq!(
 			net.netmask,
-			IpAddr::V6(Ipv6Addr::new(
-				0xff00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-			))
+			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
 		);
 		assert_eq!(
 			net.network(),
-			IpAddr::V6(Ipv6Addr::new(
-				0xff00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-			))
+			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
 		);
 	}
 
@@ -141,9 +135,7 @@ mod tests {
 		let net: NetAddr = "ff02::1/128".parse().unwrap();
 		assert_eq!(
 			net.address,
-			IpAddr::V6(Ipv6Addr::new(
-				0xff02, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001
-			))
+			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
 		);
 		assert_eq!(
 			net.netmask,
@@ -153,9 +145,7 @@ mod tests {
 		);
 		assert_eq!(
 			net.network(),
-			IpAddr::V6(Ipv6Addr::new(
-				0xff02, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001
-			))
+			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
 		);
 	}
 }
