@@ -34,7 +34,7 @@ impl FromStr for NetAddr {
 	type Err = std::net::AddrParseError;
 
 	fn from_str(string: &str) -> Result<Self, std::net::AddrParseError> {
-		let split: Vec<&str> = string.split('/').collect();
+		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs = split[0];
 		let rhs = split[1];
