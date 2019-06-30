@@ -9,31 +9,21 @@ pub struct NetAddr {
 impl NetAddr {
 	pub fn network(&self) -> IpAddr {
 		match (self.address, self.netmask) {
-			(std::net::IpAddr::V4(address), std::net::IpAddr::V4(netmask)) => {
-				let network_masked: Vec<u8> = address
-					.octets()
-					.iter()
-					.zip(netmask.octets().iter())
-					.map(|(addr_oct, netm_oct): (&u8, &u8)| -> u8 { addr_oct & netm_oct })
-					.collect();
+			(IpAddr::V4(address), IpAddr::V4(netmask)) => {
+				let address: u32 = address.into();
+				let mask: u32 = netmask.into();
 
-				let mut network_octets: [u8; 4] = [0_u8; 4];
-				network_octets.copy_from_slice(&network_masked);
+				let masked = address & mask;
 
-				network_octets.into()
+				IpAddr::V4(masked.into())
 			}
-			(std::net::IpAddr::V6(address), std::net::IpAddr::V6(netmask)) => {
-				let network_masked: Vec<u8> = address
-					.octets()
-					.iter()
-					.zip(netmask.octets().iter())
-					.map(|(addr_oct, netm_oct): (&u8, &u8)| -> u8 { addr_oct & netm_oct })
-					.collect();
+			(IpAddr::V6(address), IpAddr::V6(netmask)) => {
+				let address: u128 = address.into();
+				let mask: u128 = netmask.into();
 
-				let mut network_octets: [u8; 16] = [0_u8; 16];
-				network_octets.copy_from_slice(&network_masked);
+				let masked = address & mask;
 
-				network_octets.into()
+				IpAddr::V6(masked.into())
 			}
 			(_, _) => panic!("mismatched address/netmask types"),
 		}
