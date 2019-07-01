@@ -39,10 +39,10 @@ impl FromStr for NetAddr {
 		let lhs = split[0];
 		let rhs = split[1];
 
-		let lhs: IpAddr = lhs.parse()?;
+		let address: IpAddr = lhs.parse()?;
 		let rhs: u32 = rhs.parse().expect("expected cidr rhs of /");
 
-		match lhs {
+		match address {
 			IpAddr::V4(_addr) => {
 				let mask: u32 = 0xff_ff_ff_ff_u32
 					^ match 0xff_ff_ff_ff_u32.checked_shr(rhs) {
@@ -51,10 +51,7 @@ impl FromStr for NetAddr {
 					};
 				let netmask = IpAddr::V4(mask.into());
 
-				Ok(Self {
-					address: lhs,
-					netmask,
-				})
+				Ok(Self { address, netmask })
 			}
 			IpAddr::V6(_) => {
 				let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
@@ -65,10 +62,7 @@ impl FromStr for NetAddr {
 
 				let netmask = IpAddr::V6(mask.into());
 
-				Ok(Self {
-					address: lhs,
-					netmask,
-				})
+				Ok(Self { address, netmask })
 			}
 		}
 	}
