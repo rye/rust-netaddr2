@@ -34,36 +34,43 @@ impl FromStr for NetAddr {
 	type Err = std::net::AddrParseError;
 
 	fn from_str(string: &str) -> Result<Self, std::net::AddrParseError> {
-		let split: Vec<&str> = string.split('/').collect();
+		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs = split[0];
 		let rhs = split[1];
 
 		let address: IpAddr = lhs.parse()?;
-		let rhs: u32 = rhs.parse().expect("expected cidr rhs of /");
 
-		match address {
-			IpAddr::V4(_addr) => {
-				let mask: u32 = 0xff_ff_ff_ff_u32
-					^ match 0xff_ff_ff_ff_u32.checked_shr(rhs) {
-						Some(k) => k,
-						None => 0_u32,
-					};
-				let netmask = IpAddr::V4(mask.into());
+		let as_u32 = rhs.parse::<u32>();
+		let as_ipaddr = rhs.parse::<IpAddr>();
 
-				Ok(Self { address, netmask })
-			}
-			IpAddr::V6(_) => {
-				let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
-					^ match 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128.checked_shr(rhs) {
-						Some(k) => k,
-						None => 0_u128,
-					};
+		match (as_u32, as_ipaddr) {
+			(Ok(cidr_prefix_length), _) => match address {
+				IpAddr::V4(_addr) => {
+					let mask: u32 = 0xff_ff_ff_ff_u32
+						^ match 0xff_ff_ff_ff_u32.checked_shr(cidr_prefix_length) {
+							Some(k) => k,
+							None => 0_u32,
+						};
 
-				let netmask = IpAddr::V6(mask.into());
+					let netmask = IpAddr::V4(mask.into());
 
-				Ok(Self { address, netmask })
-			}
+					Ok(Self { address, netmask })
+				}
+				IpAddr::V6(_) => {
+					let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
+						^ match 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128.checked_shr(cidr_prefix_length) {
+							Some(k) => k,
+							None => 0_u128,
+						};
+
+					let netmask = IpAddr::V6(mask.into());
+
+					Ok(Self { address, netmask })
+				}
+			},
+			(Err(_), Ok(netmask)) => Ok(Self { address, netmask }),
+			(Err(_), Err(e)) => Err(e),
 		}
 	}
 }
@@ -88,6 +95,22 @@ mod tests {
 		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(192, 168, 16, 1)));
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 252, 0)));
 		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
+	}
+
+	#[test]
+	fn parse_space_separated_v4_localhost() {
+		let net: NetAddr = "127.0.0.1 255.0.0.0".parse().unwrap();
+		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
+		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+	}
+
+	#[test]
+	fn parse_slash_separated_v4_localhost() {
+		let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
+		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
+		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 	}
 
 	#[test]
