@@ -2,8 +2,8 @@ use core::str::FromStr;
 use std::net::IpAddr;
 
 pub struct NetAddr {
-	pub address: IpAddr,
 	pub netmask: IpAddr,
+	pub network: IpAddr,
 }
 
 /// Mask the given referenced `addr` with the given `mask`, returning a new
@@ -38,30 +38,8 @@ pub fn mask(addr: &IpAddr, mask: &IpAddr) -> IpAddr {
 }
 
 impl NetAddr {
-	pub fn network(&self) -> IpAddr {
-		match (self.address, self.netmask) {
-			(IpAddr::V4(address), IpAddr::V4(netmask)) => {
-				let address: u32 = address.into();
-				let mask: u32 = netmask.into();
-
-				let masked = address & mask;
-
-				IpAddr::V4(masked.into())
-			}
-			(IpAddr::V6(address), IpAddr::V6(netmask)) => {
-				let address: u128 = address.into();
-				let mask: u128 = netmask.into();
-
-				let masked = address & mask;
-
-				IpAddr::V6(masked.into())
-			}
-			(_, _) => panic!("mismatched address/netmask types"),
-		}
-	}
-
 	pub fn contains(&self, other: &IpAddr) -> bool {
-		match (self.netmask, self.network(), other) {
+		match (self.netmask, self.network, other) {
 			(IpAddr::V4(netmask), IpAddr::V4(network), IpAddr::V4(other)) => {
 				let other: u32 = (*other).into();
 				let mask: u32 = netmask.into();
@@ -106,7 +84,9 @@ impl FromStr for NetAddr {
 
 					let netmask = IpAddr::V4(mask.into());
 
-					Ok(Self { address, netmask })
+					let network = crate::mask(&address, &netmask);
+
+					Ok(Self { network, netmask })
 				}
 				IpAddr::V6(_) => {
 					let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
@@ -117,10 +97,16 @@ impl FromStr for NetAddr {
 
 					let netmask = IpAddr::V6(mask.into());
 
-					Ok(Self { address, netmask })
+					let network = crate::mask(&address, &netmask);
+
+					Ok(Self { network, netmask })
 				}
 			},
-			(Err(_), Ok(netmask)) => Ok(Self { address, netmask }),
+			(Err(_), Ok(netmask)) => {
+				let network = crate::mask(&address, &netmask);
+
+				Ok(Self { network, netmask })
+			},
 			(Err(_), Err(e)) => Err(e),
 		}
 	}
@@ -133,6 +119,13 @@ mod tests {
 	use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 	#[test]
+	fn parse_v4_correct_network() {
+		let net: NetAddr = "192.0.2.0/32".parse().unwrap();
+		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));
+		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 0, 2, 0)));
+	}
+
+	#[test]
 	fn contains_v4_correct() {
 		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
 		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))));
@@ -143,48 +136,40 @@ mod tests {
 	#[test]
 	fn parse_v4_localhost() {
 		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
-		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 	}
 
 	#[test]
 	fn parse_v4_cidr_22() {
 		let net: NetAddr = "192.168.16.1/22".parse().unwrap();
-		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(192, 168, 16, 1)));
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 252, 0)));
-		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
+		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
 	}
 
 	#[test]
-	fn parse_space_separated_v4_localhost() {
+	fn parse_v4_extended_localhost() {
 		let net: NetAddr = "127.0.0.1 255.0.0.0".parse().unwrap();
-		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 	}
 
 	#[test]
-	fn parse_slash_separated_v4_localhost() {
+	fn parse_v4_slashed_localhost() {
 		let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
-		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 	}
 
 	#[test]
 	fn parse_v6_cidr_8() {
 		let net: NetAddr = "ff02::1/8".parse().unwrap();
 		assert_eq!(
-			net.address,
-			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
-		);
-		assert_eq!(
 			net.netmask,
 			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
 		);
 		assert_eq!(
-			net.network(),
+			net.network,
 			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
 		);
 	}
@@ -193,17 +178,13 @@ mod tests {
 	fn parse_v6_cidr_128() {
 		let net: NetAddr = "ff02::1/128".parse().unwrap();
 		assert_eq!(
-			net.address,
-			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
-		);
-		assert_eq!(
 			net.netmask,
 			IpAddr::V6(Ipv6Addr::new(
 				0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
 			))
 		);
 		assert_eq!(
-			net.network(),
+			net.network,
 			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
 		);
 	}
