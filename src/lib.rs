@@ -28,6 +28,26 @@ impl NetAddr {
 			(_, _) => panic!("mismatched address/netmask types"),
 		}
 	}
+
+	pub fn contains(&self, other: &IpAddr) -> bool {
+		match (self.netmask, self.network(), other) {
+			(IpAddr::V4(netmask), IpAddr::V4(network), IpAddr::V4(other)) => {
+				let other: u32 = (*other).into();
+				let mask: u32 = netmask.into();
+				let network: u32 = network.into();
+
+				(other & mask) == network
+			}
+			(IpAddr::V6(netmask), IpAddr::V6(network), IpAddr::V6(other)) => {
+				let other: u128 = (*other).into();
+				let mask: u128 = netmask.into();
+				let network: u128 = network.into();
+
+				(other & mask) == network
+			}
+			(_, _, _) => panic!("mismatched address types")
+		}
+	}
 }
 
 impl FromStr for NetAddr {
