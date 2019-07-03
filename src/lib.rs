@@ -102,6 +102,14 @@ mod tests {
 	use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 	#[test]
+	fn contains_v4_correct() {
+		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
+		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))));
+		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 127, 255, 1))));
+		assert!(!net.contains(&IpAddr::V4(Ipv4Addr::new(64, 0, 0, 0))));
+	}
+
+	#[test]
 	fn parse_v4_localhost() {
 		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
 		assert_eq!(net.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
