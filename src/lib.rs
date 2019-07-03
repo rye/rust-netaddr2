@@ -6,6 +6,37 @@ pub struct NetAddr {
 	pub netmask: IpAddr,
 }
 
+/// Mask the given referenced `addr` with the given `mask`, returning a new
+/// IpAddr.
+///
+/// Both `addr` and `mask` must be of the same `enum` variant for the
+/// operation to succeed.
+///
+/// # Panics
+///
+/// This function will panic if the provided `addr` and `mask` are not of the
+/// same enum variant.
+///
+/// ```should_panic
+/// # use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+/// let addr: IpAddr = IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1));
+/// let mask: IpAddr = IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 255, 0, 0, 0));
+/// netaddr2::mask(&addr, &mask);
+/// ```
+pub fn mask(addr: &IpAddr, mask: &IpAddr) -> IpAddr {
+	match (addr, mask) {
+		(IpAddr::V4(addr), IpAddr::V4(mask)) => {
+			let (addr, mask): (u32, u32) = ((*addr).into(), (*mask).into());
+			IpAddr::V4((addr & mask).into())
+		}
+		(IpAddr::V6(addr), IpAddr::V6(mask)) => {
+			let (addr, mask): (u128, u128) = ((*addr).into(), (*mask).into());
+			IpAddr::V6((addr & mask).into())
+		}
+		(_, _) => panic!("mismatched types")
+	}
+}
+
 impl NetAddr {
 	pub fn network(&self) -> IpAddr {
 		match (self.address, self.netmask) {
