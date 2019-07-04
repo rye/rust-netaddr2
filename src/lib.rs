@@ -7,7 +7,7 @@ pub struct NetAddr {
 }
 
 /// Mask the given referenced `addr` with the given `mask`, returning a new
-/// IpAddr.
+/// `IpAddr`.
 ///
 /// Both `addr` and `mask` must be of the same `enum` variant for the
 /// operation to succeed.
