@@ -33,7 +33,7 @@ pub fn mask(addr: &IpAddr, mask: &IpAddr) -> IpAddr {
 			let (addr, mask): (u128, u128) = ((*addr).into(), (*mask).into());
 			IpAddr::V6((addr & mask).into())
 		}
-		(_, _) => panic!("mismatched types")
+		(_, _) => panic!("mismatched types"),
 	}
 }
 
@@ -54,7 +54,7 @@ impl NetAddr {
 
 				(other & mask) == network
 			}
-			(_, _, _) => panic!("mismatched address types")
+			(_, _, _) => panic!("mismatched address types"),
 		}
 	}
 }
@@ -106,7 +106,7 @@ impl FromStr for NetAddr {
 				let network = crate::mask(&address, &netmask);
 
 				Ok(Self { network, netmask })
-			},
+			}
 			(Err(_), Err(e)) => Err(e),
 		}
 	}
