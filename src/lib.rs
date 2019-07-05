@@ -184,6 +184,18 @@ mod tests {
 	use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 	#[test]
+	fn netaddr_is_send() {
+		fn assert_send<T: Send>() {}
+		assert_send::<NetAddr>();
+	}
+
+	#[test]
+	fn netaddr_is_sync() {
+		fn assert_sync<T: Sync>() {}
+		assert_sync::<NetAddr>();
+	}
+
+	#[test]
 	fn parse_v4_correct_network() {
 		let net: NetAddr = "192.0.2.0/32".parse().unwrap();
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));
