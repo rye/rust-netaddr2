@@ -2,7 +2,7 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::IpAddr;
 
-#[derive(Copy, Clone, Hash, Debug)]
+#[derive(Copy, Clone, Debug, Eq, Hash, Ord)]
 pub struct NetAddr {
 	pub netmask: IpAddr,
 	pub network: IpAddr,
@@ -215,11 +215,27 @@ mod tests {
 	}
 
 	#[test]
-	fn cmp_v4() {
+	fn cmp_v4_different_networks() {
 		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
 		let b: NetAddr = "2.0.0.0/8".parse().unwrap();
 
 		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
+	}
+
+	#[test]
+	fn cmp_v4_different_netmasks() {
+		let a: NetAddr = "1.0.0.0/7".parse().unwrap();
+		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
+
+		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
+	}
+
+	#[test]
+	fn cmp_v4_equals() {
+		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
+
+		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Equal))
 	}
 
 	#[test]
