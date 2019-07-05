@@ -141,6 +141,29 @@ impl PartialOrd for NetAddr {
 	}
 }
 
+impl PartialEq for NetAddr {
+	/// Check two `NetAddr`s for equality.
+	///
+	/// Two `NetAddr`s are the same if they have the same network address and
+	/// netmask.
+	///
+	/// # Examples
+	///
+	/// In this example, two networks of the same netmask but unequal network
+	/// addresses are compared.
+	///
+	/// ```
+	/// let a: netaddr2::NetAddr = "1.1.1.1/32".parse().unwrap();
+	/// let b: netaddr2::NetAddr = "2.2.2.2/32".parse().unwrap();
+	/// assert!(!a.eq(&b));
+	/// // or, more concisely:
+	/// assert!(a != b);
+	/// ```
+	fn eq(&self, other: &Self) -> bool {
+		self.network.eq(&other.network) && self.netmask.eq(&other.netmask)
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use crate::NetAddr;
