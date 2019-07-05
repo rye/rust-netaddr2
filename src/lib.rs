@@ -1,6 +1,7 @@
 use core::str::FromStr;
 use std::net::IpAddr;
 
+#[derive(Copy, Clone, Hash, Debug)]
 pub struct NetAddr {
 	pub netmask: IpAddr,
 	pub network: IpAddr,
