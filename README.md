@@ -23,6 +23,17 @@ Check out the issue tracker if you want to contribute, and don't hesistate to as
 That said, the business logic is tested and should work.
 We will release version 1.0 when the GitHub milestone has been fully resolved.
 
+## Testing
+
+This project is tested both on concrete RFC5737/RFC3849 IPv4 and IPv6 documentation prefixes of:
+
+- `192.0.2.0/24 (TEST-NET-1)`
+- `198.51.100.0/24 (TEST-NET-2)`
+- `203.0.113.0/24 (TEST-NET-3)`
+- `2001:DB8::/32`
+
+as well as randomly-generated IP addresses in the test suite to demonstrate full correctness.
+
 ## License
 
 Until such a time as this project is first published on the crates.io repository, the following copyright notice applies, and this work is not licensed.
