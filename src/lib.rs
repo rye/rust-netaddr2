@@ -2,6 +2,10 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::IpAddr;
 
+/// A structure representing an IP network.
+///
+/// Internally using the built-in `std::net::IpAddr` structures, this is a
+/// simple data structure that can be used in a variety of situations.
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord)]
 pub struct NetAddr {
 	pub netmask: IpAddr,
