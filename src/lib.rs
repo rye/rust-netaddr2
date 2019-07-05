@@ -61,6 +61,18 @@ impl NetAddr {
 	}
 }
 
+impl From<IpAddr> for NetAddr {
+	fn from(addr: IpAddr) -> Self {
+		Self {
+			network: addr,
+			netmask: match addr {
+				IpAddr::V4(_) => IpAddr::V4(std::net::Ipv4Addr::new(255, 255, 255, 255)),
+				IpAddr::V6(_) => IpAddr::V6(std::net::Ipv6Addr::new(0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff)),
+			}
+		}
+	}
+}
+
 impl FromStr for NetAddr {
 	type Err = std::net::AddrParseError;
 
@@ -244,6 +256,18 @@ mod tests {
 		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
 
 		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Equal))
+	}
+
+	#[test]
+	fn from_ipaddr_v4_returns_full_netmask() {
+		let addr: IpAddr = "192.0.2.42".parse().unwrap();
+		assert_eq!(NetAddr::from(addr), NetAddr { network: addr, netmask: IpAddr::V4(Ipv4Addr::from(0xff_ff_ff_ff)) });
+	}
+
+	#[test]
+	fn from_ipaddr_v6_returns_full_netmask() {
+		let addr: IpAddr = "2001:db8:dead:beef::42".parse().unwrap();
+		assert_eq!(NetAddr::from(addr), NetAddr { network: addr, netmask: IpAddr::V6(Ipv6Addr::from(0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff)) });
 	}
 
 	#[test]
