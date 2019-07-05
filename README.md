@@ -42,3 +42,7 @@ Until such a time as this project is first published on the crates.io repository
 All rights reserved.
 
 It is likely that, upon release, this software will be licensed under the `GPLv3` license with private licensing options available upon request.
+
+## Acknowledgements
+
+We would like to thank Dustin Spinhirne, the developer of the `netaddr` Ruby gem for inspiring the development of this project.
