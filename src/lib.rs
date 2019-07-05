@@ -231,7 +231,15 @@ mod tests {
 	}
 
 	#[test]
-	fn cmp_v4_equals() {
+	fn cmp_v4_different() {
+		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+		let b: NetAddr = "0.0.0.0/24".parse().unwrap();
+
+		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Greater))
+	}
+
+	#[test]
+	fn cmp_v4_equal() {
 		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
 		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
 
