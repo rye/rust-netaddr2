@@ -1,3 +1,4 @@
+use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::IpAddr;
 
@@ -112,6 +113,34 @@ impl FromStr for NetAddr {
 	}
 }
 
+impl PartialOrd for NetAddr {
+	/// Ordinalize two `NetAddr`s.
+	///
+	/// Two `NetAddr`s are first compared by network address, or if their network
+	/// address is the same, instead by netmask.  Two `NetAddr`s are said to be
+	/// equal if both their network address and netmask are the same.
+	///
+	/// # Examples
+	///
+	/// In this example, two networks of the same netmask but unequal network
+	/// addresses are compared.
+	///
+	/// ```
+	/// let a: netaddr2::NetAddr = "1.1.1.1/32".parse().unwrap();
+	/// let b: netaddr2::NetAddr = "2.2.2.2/32".parse().unwrap();
+	/// assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less));
+	/// // or, more concisely:
+	/// assert!(a < b);
+	/// ```
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+		match self.network.partial_cmp(&other.network) {
+			Some(Ordering::Equal) => self.netmask.partial_cmp(&other.netmask),
+			Some(ordering) => Some(ordering),
+			None => None,
+		}
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use crate::NetAddr;
@@ -159,6 +188,14 @@ mod tests {
 		let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
 		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
 		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+	}
+
+	#[test]
+	fn cmp_v4() {
+		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+		let b: NetAddr = "2.0.0.0/8".parse().unwrap();
+
+		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
 	}
 
 	#[test]
