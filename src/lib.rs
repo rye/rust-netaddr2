@@ -1,6 +1,6 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 /// A structure representing an IP network.
 ///
@@ -93,8 +93,8 @@ impl From<IpAddr> for NetAddr {
 		Self {
 			network: addr,
 			netmask: match addr {
-				IpAddr::V4(_) => IpAddr::V4(std::net::Ipv4Addr::new(255, 255, 255, 255)),
-				IpAddr::V6(_) => IpAddr::V6(std::net::Ipv6Addr::new(
+				IpAddr::V4(_) => IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)),
+				IpAddr::V6(_) => IpAddr::V6(Ipv6Addr::new(
 					0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
 				)),
 			},
