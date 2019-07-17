@@ -107,7 +107,7 @@ impl NetAddr {
 
 				if network & netmask == other_network & netmask {
 					Some(NetAddr {
-						network: IpAddr::V4(Ipv4Addr::from(network)),
+						network: IpAddr::V4(Ipv4Addr::from(network & netmask)),
 						netmask: IpAddr::V4(Ipv4Addr::from(netmask)),
 					})
 				} else {
@@ -115,28 +115,11 @@ impl NetAddr {
 				}
 			}
 			(
-				IpAddr::V6(network),
-				IpAddr::V6(netmask),
-				IpAddr::V6(other_network),
-				IpAddr::V6(other_netmask),
-			) => {
-				let network: u128 = network.into();
-				let netmask: u128 = netmask.into();
-				let other_network: u128 = other_network.into();
-				let other_netmask: u128 = other_netmask.into();
-
-				let netmask: u128 = match netmask.cmp(&other_netmask) {
-					Ordering::Equal => netmask << 1,
-					_ => unimplemented!(),
-				};
-
-				assert_eq!(network & netmask, other_network & netmask);
-
-				Some(NetAddr {
-					network: IpAddr::V6(Ipv6Addr::from(network)),
-					netmask: IpAddr::V6(Ipv6Addr::from(netmask)),
-				})
-			}
+				IpAddr::V6(_network),
+				IpAddr::V6(_netmask),
+				IpAddr::V6(_other_network),
+				IpAddr::V6(_other_netmask),
+			) => unimplemented!(),
 			(_, _, _, _) => unimplemented!(),
 		}
 	}
