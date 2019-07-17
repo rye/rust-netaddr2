@@ -12,6 +12,17 @@ pub struct NetAddr {
 	pub network: IpAddr,
 }
 
+#[derive(Debug)]
+pub enum NetAddrError {
+	ParseError(String),
+}
+
+impl std::convert::From<std::net::AddrParseError> for NetAddrError {
+	fn from(other: std::net::AddrParseError) -> Self {
+		Self::ParseError(other.to_string())
+	}
+}
+
 /// Mask the given referenced `addr` with the given `mask`, returning a new
 /// `IpAddr`.
 ///
@@ -80,22 +91,23 @@ impl From<IpAddr> for NetAddr {
 }
 
 impl FromStr for NetAddr {
-	type Err = std::net::AddrParseError;
+	type Err = NetAddrError;
 
-	fn from_str(string: &str) -> Result<Self, std::net::AddrParseError> {
+	fn from_str(string: &str) -> Result<Self, NetAddrError> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
-		let lhs = split[0];
-		let rhs = split[1];
+		let lhs: &str = split[0];
+		let rhs: &str = split
+			.get(1)
+			.ok_or_else(|| NetAddrError::ParseError("could not split provided input".to_string()))?;
 
-		let address: IpAddr = lhs.parse()?;
-
+		let address = lhs.parse::<IpAddr>();
 		let as_u32 = rhs.parse::<u32>();
 		let as_ipaddr = rhs.parse::<IpAddr>();
 
 		match (as_u32, as_ipaddr) {
 			(Ok(cidr_prefix_length), _) => match address {
-				IpAddr::V4(_addr) => {
+				Ok(IpAddr::V4(address)) => {
 					let mask: u32 = 0xff_ff_ff_ff_u32
 						^ match 0xff_ff_ff_ff_u32.checked_shr(cidr_prefix_length) {
 							Some(k) => k,
@@ -104,11 +116,11 @@ impl FromStr for NetAddr {
 
 					let netmask = IpAddr::V4(mask.into());
 
-					let network = crate::mask(&address, &netmask);
+					let network = crate::mask(&address.into(), &netmask);
 
 					Ok(Self { network, netmask })
 				}
-				IpAddr::V6(_) => {
+				Ok(IpAddr::V6(address)) => {
 					let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
 						^ match 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128.checked_shr(cidr_prefix_length) {
 							Some(k) => k,
@@ -117,17 +129,21 @@ impl FromStr for NetAddr {
 
 					let netmask = IpAddr::V6(mask.into());
 
+					let network = crate::mask(&address.into(), &netmask);
+
+					Ok(Self { network, netmask })
+				}
+				Err(e) => Err(e.into()),
+			},
+			(Err(_), Ok(netmask)) => match address {
+				Ok(address) => {
 					let network = crate::mask(&address, &netmask);
 
 					Ok(Self { network, netmask })
 				}
+				Err(e) => Err(e.into()),
 			},
-			(Err(_), Ok(netmask)) => {
-				let network = crate::mask(&address, &netmask);
-
-				Ok(Self { network, netmask })
-			}
-			(Err(_), Err(e)) => Err(e),
+			(Err(_), Err(e)) => Err(e.into()),
 		}
 	}
 }
@@ -199,6 +215,11 @@ mod tests {
 	fn netaddr_is_sync() {
 		fn assert_sync<T: Sync>() {}
 		assert_sync::<NetAddr>();
+	}
+
+	#[test]
+	fn parse_invalid_is_safe() {
+		let _: Result<NetAddr, _> = "zoop".parse::<NetAddr>();
 	}
 
 	#[test]
