@@ -74,6 +74,18 @@ impl NetAddr {
 			(_, _, _) => panic!("mismatched address types"),
 		}
 	}
+
+	pub fn broadcast(&self) -> Option<IpAddr> {
+		match (self.network, self.netmask) {
+			(IpAddr::V4(network), IpAddr::V4(netmask)) => {
+				let netmask: u32 = netmask.into();
+				let network: u32 = network.into();
+				let broadcast: u32 = network | !netmask;
+				Some(IpAddr::V4(broadcast.into()))
+			}
+			(_, _) => None,
+		}
+	}
 }
 
 impl From<IpAddr> for NetAddr {
@@ -230,11 +242,29 @@ mod tests {
 	}
 
 	#[test]
-	fn contains_v4_correct() {
+	fn contains_v4_seems_correct() {
 		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
 		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))));
 		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 127, 255, 1))));
 		assert!(!net.contains(&IpAddr::V4(Ipv4Addr::new(64, 0, 0, 0))));
+	}
+
+	#[test]
+	fn broadcast_v4_seems_correct() {
+		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
+		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(127, 255, 255, 255)));
+
+		let net: NetAddr = "192.168.69.25/29".parse().unwrap();
+		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(192, 168, 69, 31)));
+
+		let net: NetAddr = "192.168.128.127/32".parse().unwrap();
+		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(192, 168, 128, 127)));
+	}
+
+	#[test]
+	fn broadcast_v6_returns_none() {
+		let net: NetAddr = "fe80::1/64".parse().unwrap();
+		assert_eq!(net.broadcast(), None);
 	}
 
 	#[test]
