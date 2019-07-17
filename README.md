@@ -1,4 +1,4 @@
-# rust-netaddr (`netaddr2`)
+# rust-netaddr (`netaddr2`) &mdot; [![Build Status](https://travis-ci.org/rye/rust-netaddr2.svg?branch=master)](https://travis-ci.org/rye/rust-netaddr2)
 
 This crate is meant as a replacement for an existing reimplementation of various "netaddr" libraries that other languages have.
 However, this crate aims to be as _simple_ and _straightforward_ as possible.
