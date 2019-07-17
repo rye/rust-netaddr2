@@ -1,3 +1,4 @@
 use super::*;
 
-#[cfg(test)] mod ipaddr;
+#[cfg(test)]
+mod ipaddr;
