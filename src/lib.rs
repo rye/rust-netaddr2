@@ -89,7 +89,12 @@ impl NetAddr {
 
 	pub fn merge(&self, other: &NetAddr) -> Option<NetAddr> {
 		match (self.network, self.netmask, other.network, other.netmask) {
-			(IpAddr::V4(network), IpAddr::V4(netmask), IpAddr::V4(other_network), IpAddr::V4(other_netmask)) => {
+			(
+				IpAddr::V4(network),
+				IpAddr::V4(netmask),
+				IpAddr::V4(other_network),
+				IpAddr::V4(other_netmask),
+			) => {
 				let network: u32 = network.into();
 				let netmask: u32 = netmask.into();
 				let other_network: u32 = other_network.into();
@@ -97,14 +102,24 @@ impl NetAddr {
 
 				let netmask: u32 = match netmask.cmp(&other_netmask) {
 					Ordering::Equal => netmask << 1,
-					_ => unimplemented!()
+					_ => unimplemented!(),
 				};
 
-				assert_eq!(network & netmask, other_network & netmask);
-
-				Some(NetAddr { network: IpAddr::V4(Ipv4Addr::from(network)), netmask: IpAddr::V4(Ipv4Addr::from(netmask)) })
-			},
-			(IpAddr::V6(network), IpAddr::V6(netmask), IpAddr::V6(other_network), IpAddr::V6(other_netmask)) => {
+				if network & netmask == other_network & netmask {
+					Some(NetAddr {
+						network: IpAddr::V4(Ipv4Addr::from(network)),
+						netmask: IpAddr::V4(Ipv4Addr::from(netmask)),
+					})
+				} else {
+					None
+				}
+			}
+			(
+				IpAddr::V6(network),
+				IpAddr::V6(netmask),
+				IpAddr::V6(other_network),
+				IpAddr::V6(other_netmask),
+			) => {
 				let network: u128 = network.into();
 				let netmask: u128 = netmask.into();
 				let other_network: u128 = other_network.into();
@@ -112,14 +127,17 @@ impl NetAddr {
 
 				let netmask: u128 = match netmask.cmp(&other_netmask) {
 					Ordering::Equal => netmask << 1,
-					_ => unimplemented!()
+					_ => unimplemented!(),
 				};
 
 				assert_eq!(network & netmask, other_network & netmask);
 
-				Some(NetAddr { network: IpAddr::V6(Ipv6Addr::from(network)), netmask: IpAddr::V6(Ipv6Addr::from(netmask)) })
-			},
-			(_, _, _, _) => unimplemented!()
+				Some(NetAddr {
+					network: IpAddr::V6(Ipv6Addr::from(network)),
+					netmask: IpAddr::V6(Ipv6Addr::from(netmask)),
+				})
+			}
+			(_, _, _, _) => unimplemented!(),
 		}
 	}
 }
@@ -226,169 +244,196 @@ impl PartialOrd for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use crate::NetAddr;
+	mod netaddr {
+		use crate::NetAddr;
 
-	use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+		use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-	#[test]
-	fn netaddr_is_send() {
-		fn assert_send<T: Send>() {}
-		assert_send::<NetAddr>();
-	}
+		#[test]
+		fn is_send() {
+			fn assert_send<T: Send>() {}
+			assert_send::<NetAddr>();
+		}
 
-	#[test]
-	fn netaddr_is_sync() {
-		fn assert_sync<T: Sync>() {}
-		assert_sync::<NetAddr>();
-	}
+		#[test]
+		fn is_sync() {
+			fn assert_sync<T: Sync>() {}
+			assert_sync::<NetAddr>();
+		}
 
-	#[test]
-	fn parse_invalid_is_safe() {
-		let _: Result<NetAddr, _> = "zoop".parse::<NetAddr>();
-	}
+		mod contains {
+			use super::*;
 
-	#[test]
-	fn parse_v4_correct_network() {
-		let net: NetAddr = "192.0.2.0/32".parse().unwrap();
-		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));
-		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 0, 2, 0)));
-	}
-
-	#[test]
-	fn contains_v4_seems_correct() {
-		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
-		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))));
-		assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 127, 255, 1))));
-		assert!(!net.contains(&IpAddr::V4(Ipv4Addr::new(64, 0, 0, 0))));
-	}
-
-	#[test]
-	fn broadcast_v4_seems_correct() {
-		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
-		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(127, 255, 255, 255)));
-
-		let net: NetAddr = "192.168.69.25/29".parse().unwrap();
-		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(192, 168, 69, 31)));
-
-		let net: NetAddr = "192.168.128.127/32".parse().unwrap();
-		assert_eq!(net.broadcast().unwrap(), IpAddr::V4(Ipv4Addr::new(192, 168, 128, 127)));
-	}
-
-	#[test]
-	fn broadcast_v6_returns_none() {
-		let net: NetAddr = "fe80::1/64".parse().unwrap();
-		assert_eq!(net.broadcast(), None);
-	}
-
-	#[test]
-	fn parse_v4_localhost() {
-		let net: NetAddr = "127.0.0.1/8".parse().unwrap();
-		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
-	}
-
-	#[test]
-	fn parse_v4_cidr_22() {
-		let net: NetAddr = "192.168.16.1/22".parse().unwrap();
-		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 252, 0)));
-		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
-	}
-
-	#[test]
-	fn parse_v4_extended_localhost() {
-		let net: NetAddr = "127.0.0.1 255.0.0.0".parse().unwrap();
-		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
-	}
-
-	#[test]
-	fn parse_v4_slashed_localhost() {
-		let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
-		assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
-		assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
-	}
-
-	#[test]
-	fn cmp_v4_different_networks() {
-		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
-		let b: NetAddr = "2.0.0.0/8".parse().unwrap();
-
-		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
-	}
-
-	#[test]
-	fn cmp_v4_different_netmasks() {
-		let a: NetAddr = "1.0.0.0/7".parse().unwrap();
-		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
-
-		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
-	}
-
-	#[test]
-	fn cmp_v4_different() {
-		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
-		let b: NetAddr = "0.0.0.0/24".parse().unwrap();
-
-		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Greater))
-	}
-
-	#[test]
-	fn cmp_v4_equal() {
-		let a: NetAddr = "1.0.0.0/8".parse().unwrap();
-		let b: NetAddr = "1.0.0.0/8".parse().unwrap();
-
-		assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Equal))
-	}
-
-	#[test]
-	fn from_ipaddr_v4_returns_full_netmask() {
-		let addr: IpAddr = "192.0.2.42".parse().unwrap();
-		assert_eq!(
-			NetAddr::from(addr),
-			NetAddr {
-				network: addr,
-				netmask: IpAddr::V4(Ipv4Addr::from(0xff_ff_ff_ff))
+			#[test]
+			fn v4_seems_correct() {
+				let net: NetAddr = "127.0.0.1/8".parse().unwrap();
+				assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))));
+				assert!(net.contains(&IpAddr::V4(Ipv4Addr::new(127, 127, 255, 1))));
+				assert!(!net.contains(&IpAddr::V4(Ipv4Addr::new(64, 0, 0, 0))));
 			}
-		);
-	}
+		}
 
-	#[test]
-	fn from_ipaddr_v6_returns_full_netmask() {
-		let addr: IpAddr = "2001:db8:dead:beef::42".parse().unwrap();
-		assert_eq!(
-			NetAddr::from(addr),
-			NetAddr {
-				network: addr,
-				netmask: IpAddr::V6(Ipv6Addr::from(0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff))
+		#[test]
+		fn broadcast_v4_seems_correct() {
+			let net: NetAddr = "127.0.0.1/8".parse().unwrap();
+			assert_eq!(
+				net.broadcast().unwrap(),
+				IpAddr::V4(Ipv4Addr::new(127, 255, 255, 255))
+			);
+
+			let net: NetAddr = "192.168.69.25/29".parse().unwrap();
+			assert_eq!(
+				net.broadcast().unwrap(),
+				IpAddr::V4(Ipv4Addr::new(192, 168, 69, 31))
+			);
+
+			let net: NetAddr = "192.168.128.127/32".parse().unwrap();
+			assert_eq!(
+				net.broadcast().unwrap(),
+				IpAddr::V4(Ipv4Addr::new(192, 168, 128, 127))
+			);
+		}
+
+		#[test]
+		fn broadcast_v6_returns_none() {
+			let net: NetAddr = "fe80::1/64".parse().unwrap();
+			assert_eq!(net.broadcast(), None);
+		}
+
+		#[test]
+		fn cmp_v4_different_networks() {
+			let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+			let b: NetAddr = "2.0.0.0/8".parse().unwrap();
+
+			assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
+		}
+
+		#[test]
+		fn cmp_v4_different_netmasks() {
+			let a: NetAddr = "1.0.0.0/7".parse().unwrap();
+			let b: NetAddr = "1.0.0.0/8".parse().unwrap();
+
+			assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less))
+		}
+
+		#[test]
+		fn cmp_v4_different() {
+			let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+			let b: NetAddr = "0.0.0.0/24".parse().unwrap();
+
+			assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Greater))
+		}
+
+		#[test]
+		fn cmp_v4_equal() {
+			let a: NetAddr = "1.0.0.0/8".parse().unwrap();
+			let b: NetAddr = "1.0.0.0/8".parse().unwrap();
+
+			assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Equal))
+		}
+
+		mod from {
+			use super::*;
+
+			mod ipaddr {
+				use super::*;
+
+				#[test]
+				fn v4_returns_full_netmask() {
+					let addr: IpAddr = "192.0.2.42".parse().unwrap();
+					assert_eq!(
+						NetAddr::from(addr),
+						NetAddr {
+							network: addr,
+							netmask: IpAddr::V4(Ipv4Addr::from(0xff_ff_ff_ff))
+						}
+					);
+				}
+
+				#[test]
+				fn v6_returns_full_netmask() {
+					let addr: IpAddr = "2001:db8:dead:beef::42".parse().unwrap();
+					assert_eq!(
+						NetAddr::from(addr),
+						NetAddr {
+							network: addr,
+							netmask: IpAddr::V6(Ipv6Addr::from(0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff))
+						}
+					);
+				}
 			}
-		);
-	}
+		}
 
-	#[test]
-	fn parse_v6_cidr_8() {
-		let net: NetAddr = "ff02::1/8".parse().unwrap();
-		assert_eq!(
-			net.netmask,
-			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
-		);
-		assert_eq!(
-			net.network,
-			IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
-		);
-	}
+		mod parse {
+			use super::*;
 
-	#[test]
-	fn parse_v6_cidr_128() {
-		let net: NetAddr = "ff02::1/128".parse().unwrap();
-		assert_eq!(
-			net.netmask,
-			IpAddr::V6(Ipv6Addr::new(
-				0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
-			))
-		);
-		assert_eq!(
-			net.network,
-			IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
-		);
+			#[test]
+			fn invalid_is_safe() {
+				let _: Result<NetAddr, _> = "zoop".parse::<NetAddr>();
+			}
+
+			#[test]
+			fn v4_correct_network() {
+				let net: NetAddr = "192.0.2.0/32".parse().unwrap();
+				assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));
+				assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 0, 2, 0)));
+			}
+
+			#[test]
+			fn v4_localhost() {
+				let net: NetAddr = "127.0.0.1/8".parse().unwrap();
+				assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
+				assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+			}
+
+			#[test]
+			fn v4_cidr_22() {
+				let net: NetAddr = "192.168.16.1/22".parse().unwrap();
+				assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 255, 252, 0)));
+				assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
+			}
+
+			#[test]
+			fn v4_extended_localhost() {
+				let net: NetAddr = "127.0.0.1 255.0.0.0".parse().unwrap();
+				assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
+				assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+			}
+
+			#[test]
+			fn v4_slashed_localhost() {
+				let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
+				assert_eq!(net.netmask, IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
+				assert_eq!(net.network, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
+			}
+
+			#[test]
+			fn v6_cidr_8() {
+				let net: NetAddr = "ff02::1/8".parse().unwrap();
+				assert_eq!(
+					net.netmask,
+					IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
+				);
+				assert_eq!(
+					net.network,
+					IpAddr::V6(Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0x0000))
+				);
+			}
+
+			#[test]
+			fn v6_cidr_128() {
+				let net: NetAddr = "ff02::1/128".parse().unwrap();
+				assert_eq!(
+					net.netmask,
+					IpAddr::V6(Ipv6Addr::new(
+						0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+					))
+				);
+				assert_eq!(
+					net.network,
+					IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
+				);
+			}
+		}
 	}
 }
