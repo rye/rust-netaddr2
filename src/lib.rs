@@ -86,6 +86,42 @@ impl NetAddr {
 			(_, _) => None,
 		}
 	}
+
+	pub fn merge(&self, other: &NetAddr) -> Option<NetAddr> {
+		match (self.network, self.netmask, other.network, other.netmask) {
+			(IpAddr::V4(network), IpAddr::V4(netmask), IpAddr::V4(other_network), IpAddr::V4(other_netmask)) => {
+				let network: u32 = network.into();
+				let netmask: u32 = netmask.into();
+				let other_network: u32 = other_network.into();
+				let other_netmask: u32 = other_netmask.into();
+
+				let netmask: u32 = match netmask.cmp(&other_netmask) {
+					Ordering::Equal => netmask << 1,
+					_ => unimplemented!()
+				};
+
+				assert_eq!(network & netmask, other_network & netmask);
+
+				Some(NetAddr { network: IpAddr::V4(Ipv4Addr::from(network)), netmask: IpAddr::V4(Ipv4Addr::from(netmask)) })
+			},
+			(IpAddr::V6(network), IpAddr::V6(netmask), IpAddr::V6(other_network), IpAddr::V6(other_netmask)) => {
+				let network: u128 = network.into();
+				let netmask: u128 = netmask.into();
+				let other_network: u128 = other_network.into();
+				let other_netmask: u128 = other_netmask.into();
+
+				let netmask: u128 = match netmask.cmp(&other_netmask) {
+					Ordering::Equal => netmask << 1,
+					_ => unimplemented!()
+				};
+
+				assert_eq!(network & netmask, other_network & netmask);
+
+				Some(NetAddr { network: IpAddr::V6(Ipv6Addr::from(network)), netmask: IpAddr::V6(Ipv6Addr::from(netmask)) })
+			},
+			(_, _, _, _) => unimplemented!()
+		}
+	}
 }
 
 impl From<IpAddr> for NetAddr {
