@@ -14,8 +14,8 @@ fn is_sync() {
 	assert_sync::<NetAddr>();
 }
 
-#[cfg(test)] mod cmp;
 #[cfg(test)] mod broadcast;
+#[cfg(test)] mod cmp;
 #[cfg(test)] mod contains;
-#[cfg(test)] mod parse;
 #[cfg(test)] mod from;
+#[cfg(test)] mod parse;
