@@ -18,4 +18,5 @@ fn is_sync() {
 #[cfg(test)] mod cmp;
 #[cfg(test)] mod contains;
 #[cfg(test)] mod from;
+#[cfg(test)] mod merge;
 #[cfg(test)] mod parse;
