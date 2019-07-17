@@ -89,27 +89,22 @@ impl NetAddr {
 
 	pub fn merge(&self, other: &NetAddr) -> Option<NetAddr> {
 		match (self.network, self.netmask, other.network, other.netmask) {
-			(
-				IpAddr::V4(network),
-				IpAddr::V4(netmask),
-				IpAddr::V4(other_network),
-				IpAddr::V4(other_netmask),
-			) => {
-				let network: u32 = network.into();
-				let netmask: u32 = netmask.into();
-				let other_network: u32 = other_network.into();
-				let other_netmask: u32 = other_netmask.into();
+			(IpAddr::V4(net), IpAddr::V4(mask), IpAddr::V4(other_net), IpAddr::V4(other_mask)) => {
+				let net: u32 = net.into();
+				let mask: u32 = mask.into();
+				let other_net: u32 = other_net.into();
+				let other_mask: u32 = other_mask.into();
 
-				let netmask: u32 = match netmask.cmp(&other_netmask) {
-					Ordering::Equal => netmask << 1,
-					Ordering::Less => netmask,
-					Ordering::Greater => other_netmask,
+				let mask: u32 = match mask.cmp(&other_mask) {
+					Ordering::Equal => mask << 1,
+					Ordering::Less => mask,
+					Ordering::Greater => other_mask,
 				};
 
-				if network & netmask == other_network & netmask {
+				if net & mask == other_net & mask {
 					Some(NetAddr {
-						network: IpAddr::V4(Ipv4Addr::from(network & netmask)),
-						netmask: IpAddr::V4(Ipv4Addr::from(netmask)),
+						network: IpAddr::V4(Ipv4Addr::from(net & mask)),
+						netmask: IpAddr::V4(Ipv4Addr::from(mask)),
 					})
 				} else {
 					None
