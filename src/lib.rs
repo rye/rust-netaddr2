@@ -19,7 +19,7 @@ pub enum NetAddrError {
 
 impl std::convert::From<std::net::AddrParseError> for NetAddrError {
 	fn from(other: std::net::AddrParseError) -> Self {
-		Self::ParseError(other.to_string())
+		NetAddrError::ParseError(other.to_string())
 	}
 }
 
