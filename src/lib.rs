@@ -74,6 +74,13 @@ where
 }
 
 impl NetAddr {
+	const F32: u32 = u32::max_value();
+	const F128: u128 = u128::max_value();
+	const F32V4: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
+	const F32V6: Ipv6Addr = Ipv6Addr::new(
+		0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
+	);
+
 	pub fn contains<T>(&self, other: &T) -> bool
 	where
 		T: Copy,
@@ -163,13 +170,11 @@ impl From<IpAddr> for NetAddr {
 		match addr {
 			IpAddr::V4(addr) => NetAddr::V4 {
 				network: addr,
-				netmask: Ipv4Addr::new(255, 255, 255, 255),
+				netmask: NetAddr::F32V4,
 			},
 			IpAddr::V6(addr) => NetAddr::V6 {
 				network: addr,
-				netmask: Ipv6Addr::new(
-					0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
-				),
+				netmask: NetAddr::F32V6,
 			},
 		}
 	}
@@ -179,7 +184,7 @@ impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
 		NetAddr::V4 {
 			network: addr,
-			netmask: Ipv4Addr::new(0xff, 0xff, 0xff, 0xff),
+			netmask: NetAddr::F32V4,
 		}
 	}
 }
@@ -188,9 +193,7 @@ impl From<Ipv6Addr> for NetAddr {
 	fn from(addr: Ipv6Addr) -> Self {
 		NetAddr::V6 {
 			network: addr,
-			netmask: Ipv6Addr::new(
-				0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
-			),
+			netmask: NetAddr::F32V6,
 		}
 	}
 }
@@ -212,8 +215,8 @@ impl FromStr for NetAddr {
 
 		match (address, as_u32, as_ipaddr) {
 			(Ok(IpAddr::V4(address)), Ok(cidr_prefix_length), _) => {
-				let mask: u32 = 0xff_ff_ff_ff_u32
-					^ match 0xff_ff_ff_ff_u32.checked_shr(cidr_prefix_length) {
+				let mask: u32 = NetAddr::F32
+					^ match NetAddr::F32.checked_shr(cidr_prefix_length) {
 						Some(k) => k,
 						None => 0_u32,
 					};
@@ -228,8 +231,8 @@ impl FromStr for NetAddr {
 				})
 			}
 			(Ok(IpAddr::V6(address)), Ok(cidr_prefix_length), _) => {
-				let mask: u128 = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128
-					^ match 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff_u128.checked_shr(cidr_prefix_length) {
+				let mask: u128 = NetAddr::F128
+					^ match NetAddr::F128.checked_shr(cidr_prefix_length) {
 						Some(k) => k,
 						None => 0_u128,
 					};
