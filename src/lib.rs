@@ -102,7 +102,8 @@ impl NetAddr {
 
 				let netmask: u32 = match netmask.cmp(&other_netmask) {
 					Ordering::Equal => netmask << 1,
-					_ => unimplemented!(),
+					Ordering::Less => netmask,
+					Ordering::Greater => other_netmask,
 				};
 
 				if network & netmask == other_network & netmask {
