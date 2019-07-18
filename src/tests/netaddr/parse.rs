@@ -95,3 +95,47 @@ fn v6_slashed() {
 		IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
 	);
 }
+
+#[test]
+fn addr_only() {
+	let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
+	assert_eq!(net, "127.0.0.1/32".parse().unwrap());
+}
+
+#[test]
+fn addr_no_mask_returns_full_bitstring() {
+	let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
+	assert_eq!(net, "127.0.0.1/32".parse().unwrap());
+	let net: NetAddr = "ff02::1/zoop".parse().unwrap();
+	assert_eq!(net, "ff02::1/128".parse().unwrap());
+}
+
+#[test]
+fn non_addr_passes_out_error() {
+	let result = "zoop".parse::<NetAddr>();
+	assert_eq!(
+		result,
+		Err(NetAddrError::ParseError(
+			"could not split provided input".to_string()
+		))
+	);
+}
+
+#[test]
+fn mismatched_v4_v6_returns_error() {
+	let result = "127.0.0.1 ffff::0".parse::<NetAddr>();
+	assert_eq!(
+		result,
+		Err(NetAddrError::ParseError(
+			"mismatched types of network/netmask".to_string()
+		))
+	);
+
+	let result = "ff02::1 255.255.255.0".parse::<NetAddr>();
+	assert_eq!(
+		result,
+		Err(NetAddrError::ParseError(
+			"mismatched types of network/netmask".to_string()
+		))
+	);
+}
