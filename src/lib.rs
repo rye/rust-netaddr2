@@ -157,9 +157,7 @@ impl NetAddr {
 					None
 				}
 			}
-			(IpAddr::V6(_net), IpAddr::V6(_mask), IpAddr::V6(_other_net), IpAddr::V6(_other_mask)) => {
-				unimplemented!()
-			}
+			(IpAddr::V6(_net), IpAddr::V6(_mask), IpAddr::V6(_other_net), IpAddr::V6(_other_mask)) => unimplemented!(),
 			(_, _, _, _) => unimplemented!(),
 		}
 	}
