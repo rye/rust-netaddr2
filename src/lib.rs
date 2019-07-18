@@ -34,7 +34,7 @@ impl NetAddr {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq, Hash)]
 pub enum NetAddrError {
 	ParseError(String),
 }
