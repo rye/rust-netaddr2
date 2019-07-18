@@ -13,7 +13,7 @@ fn v4_correct_network() {
 }
 
 #[test]
-fn v4_localhost() {
+fn v4_localhost_8() {
 	let net: NetAddr = "127.0.0.1/8".parse().unwrap();
 	assert_eq!(net.netmask(), IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
 	assert_eq!(net.network(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
@@ -55,6 +55,34 @@ fn v6_cidr_8() {
 
 #[test]
 fn v6_cidr_128() {
+	let net: NetAddr = "ff02::1/128".parse().unwrap();
+	assert_eq!(
+		net.netmask(),
+		IpAddr::V6(Ipv6Addr::new(
+			0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+		))
+	);
+	assert_eq!(
+		net.network(),
+		IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0x0001))
+	);
+}
+
+#[test]
+fn v6_extended() {
+	let net: NetAddr = "ff02::1 ffff::0".parse().unwrap();
+	assert_eq!(
+		net.netmask(),
+		IpAddr::V6(Ipv6Addr::new(0xffff, 0, 0, 0, 0, 0, 0, 0))
+	);
+	assert_eq!(
+		net.network(),
+		IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 0))
+	);
+}
+
+#[test]
+fn v6_slashed() {
 	let net: NetAddr = "ff02::1/128".parse().unwrap();
 	assert_eq!(
 		net.netmask(),
