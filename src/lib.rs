@@ -51,16 +51,19 @@ impl std::convert::From<std::net::AddrParseError> for NetAddrError {
 /// Both `addr` and `mask` must be of the same `enum` variant for the
 /// operation to succeed.
 ///
-/// # Panics
+/// Because this method is a generic, you will need to be sure to use type
+/// annotations to specify which types it runs on.  For `Ipv4Addr` masking, you
+/// should use `::<Ipv4Addr, u32>` and for `Ipv6Addr` masking, the best choice
+/// is `::<Ipv6Addr, u128>`.  The Rust compiler will complain if you try to do
+/// this with incompatible types.
 ///
-/// This function will panic if the provided `addr` and `mask` are not of the
-/// same enum variant.
+/// # Examples
 ///
 /// ```
 /// # use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 /// let addr = Ipv4Addr::new(127, 0, 0, 1);
 /// let mask = Ipv4Addr::new(255, 0, 0, 0);
-/// netaddr2::mask::<Ipv4Addr, u32>(&addr, &mask);
+/// assert_eq!(netaddr2::mask::<Ipv4Addr, u32>(&addr, &mask), Ipv4Addr::new(127, 0, 0, 0));
 /// ```
 pub fn mask<T, U>(addr: &T, mask: &T) -> T
 where
