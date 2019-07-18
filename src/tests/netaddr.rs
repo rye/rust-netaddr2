@@ -1,4 +1,4 @@
-use crate::NetAddr;
+use crate::*;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
