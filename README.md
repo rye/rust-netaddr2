@@ -1,9 +1,13 @@
 # rust-netaddr (`netaddr2`) &bull; [![Build Status](https://travis-ci.org/rye/rust-netaddr2.svg?branch=master)](https://travis-ci.org/rye/rust-netaddr2) [![codecov](https://codecov.io/gh/rye/rust-netaddr2/branch/master/graph/badge.svg)](https://codecov.io/gh/rye/rust-netaddr2)
 
 This crate is meant as a replacement for an existing reimplementation of various "netaddr" libraries that other languages have.
-However, this crate aims to be as _simple_ and _straightforward_ as possible.
+There does exist another `netaddr` crate, however the author of this crate did not respond when asked about maintainership status.
+
+This crate aims to be as _simple_ and _straightforward_ as possible.
 We accomplish the desired results by only introducing one new data structure on top of the existing `std::net::IpAddr` frameworks, which were added to the Rust language in version 1.7.0.
-We have no dependencies by default and will only accept additional dependencies on an opt-in basis.
+We have no dependencies (except `std`) by default and will only accept additional dependencies on an opt-in basis.
+Support for `no_std` will come at a later date if `std::net::IpAddr` can be ported.
+(PRs are definitely welcome.)
 
 ## Usage
 
