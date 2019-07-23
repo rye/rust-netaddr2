@@ -2,7 +2,6 @@
 name = "netaddr2"
 version = "0.1.0-alpha.0"
 license = "MIT OR APACHE-2.0"
-license-file = "LICENSE.md"
 authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
 edition = "2018"
 
