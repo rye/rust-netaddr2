@@ -40,13 +40,17 @@ as well as randomly-generated IP addresses in the test suite to demonstrate full
 
 ## License
 
-Until such a time as this project is first published on the crates.io repository, the following copyright notice applies, and this work is not licensed.
+> Copyright &copy; 2019 Kristofer J. Rye
 
->Copyright (c) 2019 Kristofer J. Rye
-All rights reserved.
+This software is released under either of:
 
-It is likely that, upon release, this software will be licensed under the `GPLv3` license with private licensing options available upon request.
+- The Apache License, Version 2.0, (http://www.apache.org/licenses/LICENSE-2.0) or
+- The MIT License, (http://opensource.org/licenses/MIT)
+
+at your discretion.
+Please see the license file ([LICENSE.md](LICENSE.md)) for more information.
+
 
 ## Acknowledgements
 
-We would like to thank Dustin Spinhirne, the developer of the `netaddr` Ruby gem for inspiring the development of this project.
+We would like to thank the developers of the `netaddr` Ruby gem for inspiring the development and ergonomics of this project.

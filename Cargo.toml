@@ -1,7 +1,15 @@
 [package]
 name = "netaddr2"
 version = "0.1.0-alpha.0"
+license = "MIT OR APACHE-2.0"
+license-file = "LICENSE.md"
 authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
 edition = "2018"
 
+description = "A Rust network address parsing and arithmetic library"
+repository = "https://github.com/rye/rust-netaddr2"
+documentation = "https://docs.rs/netaddr2"
+homepage = "https://rye.github.io/rust-netaddr2"
+
 categories = ["data-structures", "network-programming"]
+keywords = ["netaddr", "network", "address", "cidr"]
