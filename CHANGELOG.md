@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
-## [Unreleased]
+## Unreleased
+
+## [0.1.2] - 2019-07-23
+### Fixed
+- SPDX identifier for `Apache-2.0` in the manifest, allowing releases to be published.
+
+## [0.1.1] - 2019-07-23
 ### Added
 - A `CHANGELOG.md` file.
 
@@ -35,5 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An impl for `PartialOrd` on `NetAddr` for comparing two networks first by network address and then by netmask.
 - Tests for all of these Added features.
 
-[Unreleased]: https://github.com/rye/rust-netaddr2/compare/v0.1.0...HEAD
+[0.1.2]: https://github.com/rye/rust-netaddr2/releases/tag/v0.1.2
+[0.1.1]: https://github.com/rye/rust-netaddr2/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.1.0
