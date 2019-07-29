@@ -25,7 +25,7 @@ before_cache: |
   fi
 
 script:
-- cargo check
+- cargo check --all-targets
 - cargo build
 - cargo test
 
