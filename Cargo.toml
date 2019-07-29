@@ -6,6 +6,7 @@ authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
 edition = "2018"
 
 description = "A Rust network address parsing and arithmetic library"
+readme = "README.md"
 repository = "https://github.com/rye/rust-netaddr2"
 documentation = "https://docs.rs/netaddr2"
 homepage = "https://rye.github.io/rust-netaddr2"
