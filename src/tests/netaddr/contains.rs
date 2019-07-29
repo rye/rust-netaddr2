@@ -48,7 +48,7 @@ fn v4_v6_ip() {
 #[should_panic]
 fn v4_v6_net() {
 	let a: NetAddr = "127.0.0.1/8".parse().unwrap();
-	let b: IpAddr = "2001:db8:d0::/48".parse().unwrap();
+	let b: NetAddr = "2001:db8:d0::/48".parse().unwrap();
 	assert!(!a.contains(&b));
 }
 
@@ -64,6 +64,6 @@ fn v6_v4_ip() {
 #[should_panic]
 fn v6_v4_net() {
 	let a: NetAddr = "2001:db8:d0::/48".parse().unwrap();
-	let b: IpAddr = "127.0.0.1/8".parse().unwrap();
+	let b: NetAddr = "127.0.0.1/8".parse().unwrap();
 	assert!(!a.contains(&b));
 }
