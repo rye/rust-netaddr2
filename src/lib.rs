@@ -73,7 +73,7 @@ where
 	T: Copy,
 {
 	let (addr, mask): (U, U) = ((*addr).into(), (*mask).into());
-	T::from((addr & mask).into())
+	T::from(addr & mask)
 }
 
 impl NetAddr {
