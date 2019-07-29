@@ -229,8 +229,8 @@ impl FromStr for NetAddr {
 				let network: Ipv4Addr = crate::mask::<Ipv4Addr, u32>(&address, &netmask);
 
 				Ok(NetAddr::V4 {
-					network: network,
-					netmask: netmask,
+					network,
+					netmask,
 				})
 			}
 			(Ok(IpAddr::V6(address)), Ok(cidr_prefix_length), _) => {
