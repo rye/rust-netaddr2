@@ -30,6 +30,13 @@ pub enum NetAddrError {
 }
 
 impl NetAddr {
+	const F32: u32 = u32::max_value();
+	const F128: u128 = u128::max_value();
+	const F32V4: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
+	const F32V6: Ipv6Addr = Ipv6Addr::new(
+		0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
+	);
+
 	fn netmask(&self) -> IpAddr {
 		match self {
 			Self::V4(netaddr) => IpAddr::V4(netaddr.mask),
@@ -221,16 +228,6 @@ impl Contains for NetAddr {
 			(_, _) => false
 		}
 	}
-}
-
-
-impl NetAddr {
-	const F32: u32 = u32::max_value();
-	const F128: u128 = u128::max_value();
-	const F32V4: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
-	const F32V6: Ipv6Addr = Ipv6Addr::new(
-		0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
-	);
 }
 
 impl From<IpAddr> for NetAddr {
