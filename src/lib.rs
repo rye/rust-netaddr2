@@ -73,21 +73,10 @@ impl Mask for Ipv6Addr {
 	}
 }
 
-trait Broadcast {
+pub trait Broadcast {
 	type Output;
 
 	fn broadcast(&self) -> Self::Output;
-}
-
-impl Broadcast for NetAddr {
-	type Output = Option<IpAddr>;
-
-	fn broadcast(&self) -> Self::Output {
-		match self {
-			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
-			_ => None,
-		}
-	}
 }
 
 impl Broadcast for Netv4Addr {
@@ -98,6 +87,17 @@ impl Broadcast for Netv4Addr {
 		let network: u32 = self.addr.into();
 		let broadcast: u32 = network | !netmask;
 		broadcast.into()
+	}
+}
+
+impl Broadcast for NetAddr {
+	type Output = Option<IpAddr>;
+
+	fn broadcast(&self) -> Self::Output {
+		match self {
+			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
+			_ => None,
+		}
 	}
 }
 
@@ -133,15 +133,29 @@ impl Merge for Netv4Addr {
 	}
 }
 
-impl From<Netv4Addr> for NetAddr {
-	fn from(netaddr: Netv4Addr) -> Self {
-		NetAddr::V4(netaddr)
-	}
-}
+impl Merge for Netv6Addr {
+	type Output = Option<Self>;
 
-impl From<Netv6Addr> for NetAddr {
-	fn from(netaddr: Netv6Addr) -> Self {
-		NetAddr::V6(netaddr)
+	fn merge(&self, other: &Self) -> Self::Output {
+		let addr: u128 = self.addr.into();
+		let mask: u128 = self.mask.into();
+		let other_addr: u128 = other.addr.into();
+		let other_mask: u128 = other.mask.into();
+
+		let mask: u128 = match mask.cmp(&other_mask) {
+			Ordering::Equal => mask << 1,
+			Ordering::Less => mask,
+			Ordering::Greater => other_mask,
+		};
+
+		if addr & mask == other_addr & mask {
+			Some(Self {
+				addr: Ipv6Addr::from(addr & mask),
+				mask: Ipv6Addr::from(mask),
+			})
+		} else {
+			None
+		}
 	}
 }
 
@@ -151,8 +165,21 @@ impl Merge for NetAddr {
 	fn merge(&self, other: &Self) -> Self::Output {
 		match (self, other) {
 			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
+			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
 			(_, _) => unimplemented!(),
 		}
+	}
+}
+
+impl From<Netv4Addr> for NetAddr {
+	fn from(netaddr: Netv4Addr) -> Self {
+		NetAddr::V4(netaddr)
+	}
+}
+
+impl From<Netv6Addr> for NetAddr {
+	fn from(netaddr: Netv6Addr) -> Self {
+		NetAddr::V6(netaddr)
 	}
 }
 
