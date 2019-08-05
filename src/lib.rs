@@ -231,8 +231,8 @@ impl FromStr for Netv4Addr {
 
 		match (address, cidr, raddr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u32 = NetAddr::F32
-					^ match NetAddr::F32.checked_shr(cidr) {
+				let mask: u32 = std::u32::MAX
+					^ match std::u32::MAX.checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u32,
 					};
@@ -265,8 +265,8 @@ impl FromStr for Netv6Addr {
 
 		match (address, cidr, raddr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u128 = NetAddr::F128
-					^ match NetAddr::F128.checked_shr(cidr) {
+				let mask: u128 = std::u128::MAX
+					^ match std::u128::MAX.checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u128,
 					};
