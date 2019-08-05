@@ -1,6 +1,5 @@
 use super::*;
 
-
 #[test]
 fn v4_adjacent_networks_correct() {
 	let a: NetAddr = "10.0.0.0/24".parse().unwrap();
@@ -48,7 +47,10 @@ fn v6_adjacent_networks_correct() {
 	let a: NetAddr = "2001:db8:dead:beef::/64".parse().unwrap();
 	let b: NetAddr = "2001:db8:dead:beee::/64".parse().unwrap();
 
-	assert_eq!(a.merge(&b), Some("2001:db8:dead:beee::/63".parse().unwrap()));
+	assert_eq!(
+		a.merge(&b),
+		Some("2001:db8:dead:beee::/63".parse().unwrap())
+	);
 }
 
 #[test]
