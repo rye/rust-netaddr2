@@ -13,8 +13,10 @@ impl Mask for IpAddr {
 
 	fn mask(&self, other: &Self) -> Self::Output {
 		match (self, other) {
-			(Self::V4(a), Self::V4(b)) => Ok(Self::V4(a.mask(&b))),
-			(Self::V6(a), Self::V6(b)) => Ok(Self::V6(a.mask(&b))),
+			// TODO convert to Self::V4, Self::V6 once stabilized in 1.37 (2019-08-15)
+			(IpAddr::V4(a), IpAddr::V4(b)) => Ok(IpAddr::V4(a.mask(&b))),
+			// TODO convert to Self::V4, Self::V6 once stabilized in 1.37 (2019-08-15)
+			(IpAddr::V6(a), IpAddr::V6(b)) => Ok(IpAddr::V6(a.mask(&b))),
 			(_, _) => Err("mismatched address types"),
 		}
 	}
