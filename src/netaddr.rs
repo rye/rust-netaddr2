@@ -39,12 +39,6 @@ impl Netv4Addr {
 	}
 }
 
-impl From<(Ipv4Addr, Ipv4Addr)> for Netv4Addr {
-	fn from((addr, mask): (Ipv4Addr, Ipv4Addr)) -> Self {
-		Self::new(addr, mask)
-	}
-}
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
 pub struct Netv6Addr {
 	mask: Ipv6Addr,
@@ -63,12 +57,6 @@ impl Netv6Addr {
 	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
-	}
-}
-
-impl From<(Ipv6Addr, Ipv6Addr)> for Netv6Addr {
-	fn from((addr, mask): (Ipv6Addr, Ipv6Addr)) -> Self {
-		Self::new(addr, mask)
 	}
 }
 
