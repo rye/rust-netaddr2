@@ -13,9 +13,6 @@ impl From<std::net::AddrParseError> for NetAddrError {
 	}
 }
 
-mod mask;
-pub use mask::*;
-
 pub trait Broadcast {
 	type Output;
 
@@ -359,6 +356,9 @@ impl PartialOrd for Netv6Addr {
 		}
 	}
 }
+
+mod mask;
+pub use mask::*;
 
 mod netaddr;
 pub use netaddr::*;
