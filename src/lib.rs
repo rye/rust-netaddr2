@@ -215,6 +215,38 @@ impl From<Ipv6Addr> for Netv6Addr {
 impl FromStr for Netv4Addr {
 	type Err = NetAddrError;
 
+	/// Parse a `Netv4Addr` from a string
+	///
+	/// Often used implicitly, this implementation allows for a few formats to be given:
+	/// - (Standard) CIDR format: `192.0.2.16/29`
+	/// - Extended format (` `-delimited): `192.0.2.16 255.255.255.248`
+	/// - Extended format (`/`-delimited): `192.0.2.16/255.255.255.248`
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16/29".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16 255.255.255.248".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16/255.255.255.248".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
 	fn from_str(string: &str) -> Result<Self, NetAddrError> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
@@ -226,8 +258,6 @@ impl FromStr for Netv4Addr {
 		let address = lhs.parse::<Ipv4Addr>();
 		let cidr = rhs.parse::<u32>();
 		let raddr = rhs.parse::<Ipv4Addr>();
-
-		eprintln!("{:?}, {:?}, {:?}", address, cidr, raddr);
 
 		match (address, cidr, raddr) {
 			(Ok(addr), Ok(cidr), _) => {
@@ -251,6 +281,38 @@ impl FromStr for Netv4Addr {
 impl FromStr for Netv6Addr {
 	type Err = NetAddrError;
 
+	/// Parse a `Netv6Addr` from a string
+	///
+	/// Often used implicitly, this implementation allows for a few formats to be given:
+	/// - (Standard) CIDR format: `2001:db8:dead:beef::1/64`
+	/// - Extended format: `2001:db8:dead:beef::1 ffff:ffff:ffff:ffff::`
+	/// - Extended format (with a `/` delimiter): `2001:db8:dead:beef::1/ffff:ffff:ffff:ffff::`
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1/32".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1 ffff:ffff::".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1/ffff:ffff::".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
 	fn from_str(string: &str) -> Result<Self, NetAddrError> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
