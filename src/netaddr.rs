@@ -63,15 +63,14 @@ impl Netv6Addr {
 	}
 
 	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
-		Self::from((addr, mask))
+		let addr = addr.mask(&mask);
+		Self { addr, mask }
 	}
 }
 
 impl From<(Ipv6Addr, Ipv6Addr)> for Netv6Addr {
-	fn from(addr_mask: (Ipv6Addr, Ipv6Addr)) -> Self {
-		let (addr, mask): (Ipv6Addr, Ipv6Addr) = addr_mask;
-		let addr = addr.mask(&mask);
-		Self { addr, mask }
+	fn from((addr, mask): (Ipv6Addr, Ipv6Addr)) -> Self {
+		Self::new(addr, mask)
 	}
 }
 
