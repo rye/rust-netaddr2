@@ -235,12 +235,12 @@ impl FromStr for Netv4Addr {
 
 		let address = lhs.parse::<Ipv4Addr>();
 		let cidr = rhs.parse::<u32>();
-		let raddr = rhs.parse::<Ipv4Addr>();
+		let right_addr = rhs.parse::<Ipv4Addr>();
 
-		match (address, cidr, raddr) {
+		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u32 = std::u32::MAX
-					^ match std::u32::MAX.checked_shr(cidr) {
+				let mask: u32 = u32::max_value()
+					^ match u32::max_value().checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u32,
 					};
@@ -301,12 +301,12 @@ impl FromStr for Netv6Addr {
 
 		let address = lhs.parse::<Ipv6Addr>();
 		let cidr = rhs.parse::<u32>();
-		let raddr = rhs.parse::<Ipv6Addr>();
+		let right_addr = rhs.parse::<Ipv6Addr>();
 
-		match (address, cidr, raddr) {
+		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u128 = std::u128::MAX
-					^ match std::u128::MAX.checked_shr(cidr) {
+				let mask: u128 = u128::max_value()
+					^ match u128::max_value().checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u128,
 					};
