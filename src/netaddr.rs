@@ -83,6 +83,7 @@ impl NetAddr {
 			NetAddr::V6(v6) => IpAddr::V6(*v6.mask()),
 		}
 	}
+
 	pub fn addr(&self) -> IpAddr {
 		match self {
 			NetAddr::V4(v4) => IpAddr::V4(*v4.addr()),
