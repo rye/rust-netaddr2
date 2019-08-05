@@ -36,15 +36,14 @@ impl Netv4Addr {
 	}
 
 	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
-		Self::from((addr, mask))
+		let addr = addr.mask(&mask);
+		Self { addr, mask }
 	}
 }
 
 impl From<(Ipv4Addr, Ipv4Addr)> for Netv4Addr {
-	fn from(addr_mask: (Ipv4Addr, Ipv4Addr)) -> Self {
-		let (addr, mask): (Ipv4Addr, Ipv4Addr) = addr_mask;
-		let addr = addr.mask(&mask);
-		Self { addr, mask }
+	fn from((addr, mask): (Ipv4Addr, Ipv4Addr)) -> Self {
+		Self::new(addr, mask)
 	}
 }
 
