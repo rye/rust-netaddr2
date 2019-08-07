@@ -160,33 +160,33 @@ impl Contains for NetAddr {
 impl From<IpAddr> for NetAddr {
 	fn from(addr: IpAddr) -> Self {
 		match addr {
-			IpAddr::V4(addr) => NetAddr::V4(Netv4Addr::new(addr, Self::F32V4)),
-			IpAddr::V6(addr) => NetAddr::V6(Netv6Addr::new(addr, Self::F32V6)),
+			IpAddr::V4(addr) => Self::from(addr),
+			IpAddr::V6(addr) => Self::from(addr),
 		}
 	}
 }
 
 impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
-		NetAddr::V4(Netv4Addr::new(addr, Self::F32V4))
+		NetAddr::V4(Netv4Addr::from(addr))
 	}
 }
 
 impl From<Ipv4Addr> for Netv4Addr {
 	fn from(addr: Ipv4Addr) -> Self {
-		Self::new(addr, NetAddr::F32V4)
+		Self::new(addr, Ipv4Addr::from(u32::max_value()))
 	}
 }
 
 impl From<Ipv6Addr> for NetAddr {
 	fn from(addr: Ipv6Addr) -> Self {
-		NetAddr::V6(Netv6Addr::new(addr, Self::F32V6))
+		NetAddr::V6(Netv6Addr::from(addr))
 	}
 }
 
 impl From<Ipv6Addr> for Netv6Addr {
 	fn from(addr: Ipv6Addr) -> Self {
-		Self::new(addr, NetAddr::F32V6)
+		Self::new(addr, Ipv6Addr::from(u128::max_value()))
 	}
 }
 

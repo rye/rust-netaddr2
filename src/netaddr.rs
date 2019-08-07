@@ -11,13 +11,6 @@ pub enum NetAddr {
 	V6(Netv6Addr),
 }
 
-impl NetAddr {
-	pub const F32V4: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
-	pub const F32V6: Ipv6Addr = Ipv6Addr::new(
-		0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
-	);
-}
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
 pub struct Netv4Addr {
 	mask: Ipv4Addr,
