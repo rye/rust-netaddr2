@@ -3,7 +3,7 @@
 extern crate test;
 
 extern crate netaddr2;
-use netaddr2::NetAddr;
+use netaddr2::{Contains, NetAddr};
 
 use std::net::IpAddr;
 

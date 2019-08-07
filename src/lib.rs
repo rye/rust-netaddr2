@@ -2,166 +2,157 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-/// A structure representing an IP network.
-///
-/// Internally using the built-in `std::net::IpAddr` structures, this is a
-/// simple data structure that can be used in a variety of situations.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
-pub enum NetAddr {
-	V4 {
-		netmask: Ipv4Addr,
-		network: Ipv4Addr,
-	},
-	V6 {
-		netmask: Ipv6Addr,
-		network: Ipv6Addr,
-	},
-}
-
-impl NetAddr {
-	pub fn netmask(&self) -> IpAddr {
-		match self {
-			NetAddr::V4 { netmask, .. } => IpAddr::V4(*netmask),
-			NetAddr::V6 { netmask, .. } => IpAddr::V6(*netmask),
-		}
-	}
-
-	pub fn network(&self) -> IpAddr {
-		match self {
-			NetAddr::V4 { network, .. } => IpAddr::V4(*network),
-			NetAddr::V6 { network, .. } => IpAddr::V6(*network),
-		}
-	}
-}
-
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetAddrError {
 	ParseError(String),
 }
 
-impl std::convert::From<std::net::AddrParseError> for NetAddrError {
+impl From<std::net::AddrParseError> for NetAddrError {
 	fn from(other: std::net::AddrParseError) -> Self {
 		NetAddrError::ParseError(other.to_string())
 	}
 }
 
-/// Mask the given referenced `addr` with the given `mask`, returning a new
-/// `IpAddr`.
-///
-/// Both `addr` and `mask` must be of the same `enum` variant for the
-/// operation to succeed.
-///
-/// Because this method is a generic, you will need to be sure to use type
-/// annotations to specify which types it runs on.  For `Ipv4Addr` masking, you
-/// should use `::<Ipv4Addr, u32>` and for `Ipv6Addr` masking, the best choice
-/// is `::<Ipv6Addr, u128>`.  The Rust compiler will complain if you try to do
-/// this with incompatible types.
-///
-/// # Examples
-///
-/// ```
-/// # use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
-/// let addr = Ipv4Addr::new(127, 0, 0, 1);
-/// let mask = Ipv4Addr::new(255, 0, 0, 0);
-/// assert_eq!(netaddr2::mask::<Ipv4Addr, u32>(&addr, &mask), Ipv4Addr::new(127, 0, 0, 0));
-/// ```
-pub fn mask<T, U>(addr: &T, mask: &T) -> T
-where
-	U: std::convert::From<T>,
-	U: std::ops::BitAnd<U, Output = U>,
-	T: std::convert::From<U>,
-	T: Copy,
-{
-	let (addr, mask): (U, U) = ((*addr).into(), (*mask).into());
-	T::from(addr & mask)
+pub trait Broadcast {
+	type Output;
+
+	fn broadcast(&self) -> Self::Output;
 }
 
-impl NetAddr {
-	const F32: u32 = u32::max_value();
-	const F128: u128 = u128::max_value();
-	const F32V4: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
-	const F32V6: Ipv6Addr = Ipv6Addr::new(
-		0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
-	);
+impl Broadcast for Netv4Addr {
+	type Output = Ipv4Addr;
 
-	pub fn contains<T>(&self, other: &T) -> bool
+	fn broadcast(&self) -> Ipv4Addr {
+		let netmask: u32 = self.mask().clone().into();
+		let network: u32 = self.addr().clone().into();
+		let broadcast: u32 = network | !netmask;
+		broadcast.into()
+	}
+}
+
+impl Broadcast for NetAddr {
+	type Output = Option<IpAddr>;
+
+	fn broadcast(&self) -> Self::Output {
+		match self {
+			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
+			_ => None,
+		}
+	}
+}
+
+trait Merge {
+	type Output;
+
+	fn merge(&self, other: &Self) -> Self::Output;
+}
+
+impl Merge for Netv4Addr {
+	type Output = Option<Self>;
+
+	fn merge(&self, other: &Self) -> Self::Output {
+		let addr: u32 = self.addr().clone().into();
+		let mask: u32 = self.mask().clone().into();
+		let other_addr: u32 = other.addr().clone().into();
+		let other_mask: u32 = other.mask().clone().into();
+
+		let mask: u32 = match mask.cmp(&other_mask) {
+			Ordering::Equal => mask << 1,
+			Ordering::Less => mask,
+			Ordering::Greater => other_mask,
+		};
+
+		if addr & mask == other_addr & mask {
+			Some(Self::new(Ipv4Addr::from(addr & mask), Ipv4Addr::from(mask)))
+		} else {
+			None
+		}
+	}
+}
+
+impl Merge for Netv6Addr {
+	type Output = Option<Self>;
+
+	fn merge(&self, other: &Self) -> Self::Output {
+		let addr: u128 = self.addr().clone().into();
+		let mask: u128 = self.mask().clone().into();
+		let other_addr: u128 = other.addr().clone().into();
+		let other_mask: u128 = other.mask().clone().into();
+
+		let mask: u128 = match mask.cmp(&other_mask) {
+			Ordering::Equal => mask << 1,
+			Ordering::Less => mask,
+			Ordering::Greater => other_mask,
+		};
+
+		if addr & mask == other_addr & mask {
+			Some(Self::new(Ipv6Addr::from(addr & mask), Ipv6Addr::from(mask)))
+		} else {
+			None
+		}
+	}
+}
+
+impl Merge for NetAddr {
+	type Output = Option<Self>;
+
+	fn merge(&self, other: &Self) -> Self::Output {
+		match (self, other) {
+			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
+			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
+			(_, _) => unimplemented!(),
+		}
+	}
+}
+
+impl From<Netv4Addr> for NetAddr {
+	fn from(netaddr: Netv4Addr) -> Self {
+		NetAddr::V4(netaddr)
+	}
+}
+
+impl From<Netv6Addr> for NetAddr {
+	fn from(netaddr: Netv6Addr) -> Self {
+		NetAddr::V6(netaddr)
+	}
+}
+
+pub trait Contains {
+	fn contains<T: Copy>(&self, other: &T) -> bool
 	where
-		T: Copy,
-		NetAddr: std::convert::From<T>,
+		Self: From<T>;
+}
+
+impl Contains for Netv4Addr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
 	{
-		match (*self, NetAddr::from(*other)) {
-			(
-				NetAddr::V4 {
-					network: net,
-					netmask: mask,
-				},
-				NetAddr::V4 { network: onet, .. },
-			) => {
-				let onet: u32 = onet.into();
-				let net: u32 = net.into();
-				let mask: u32 = mask.into();
-
-				(onet & mask) == net
-			}
-			(
-				NetAddr::V6 {
-					network: net,
-					netmask: mask,
-				},
-				NetAddr::V6 { network: onet, .. },
-			) => {
-				let onet: u128 = onet.into();
-				let net: u128 = net.into();
-				let mask: u128 = mask.into();
-
-				(onet & mask) == net
-			}
-			(_, _) => panic!("mismatched types"),
-		}
+		let other: Self = Self::from(*other);
+		other.addr().mask(&self.mask()) == *self.addr()
 	}
+}
 
-	pub fn broadcast(&self) -> Option<IpAddr> {
-		match (self.network(), self.netmask()) {
-			(IpAddr::V4(network), IpAddr::V4(netmask)) => {
-				let netmask: u32 = netmask.into();
-				let network: u32 = network.into();
-				let broadcast: u32 = network | !netmask;
-				Some(IpAddr::V4(broadcast.into()))
-			}
-			(_, _) => None,
-		}
+impl Contains for Netv6Addr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		other.addr().mask(&self.mask()) == *self.addr()
 	}
+}
 
-	pub fn merge(&self, other: &NetAddr) -> Option<NetAddr> {
-		match (
-			self.network(),
-			self.netmask(),
-			other.network(),
-			other.netmask(),
-		) {
-			(IpAddr::V4(net), IpAddr::V4(mask), IpAddr::V4(other_net), IpAddr::V4(other_mask)) => {
-				let net: u32 = net.into();
-				let mask: u32 = mask.into();
-				let other_net: u32 = other_net.into();
-				let other_mask: u32 = other_mask.into();
-
-				let mask: u32 = match mask.cmp(&other_mask) {
-					Ordering::Equal => mask << 1,
-					Ordering::Less => mask,
-					Ordering::Greater => other_mask,
-				};
-
-				if net & mask == other_net & mask {
-					Some(NetAddr::V4 {
-						network: Ipv4Addr::from(net & mask),
-						netmask: Ipv4Addr::from(mask),
-					})
-				} else {
-					None
-				}
-			}
-			(IpAddr::V6(_), IpAddr::V6(_), IpAddr::V6(_), IpAddr::V6(_)) => unimplemented!(),
-			(_, _, _, _) => unimplemented!(),
+impl Contains for NetAddr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
+			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
 		}
 	}
 }
@@ -169,39 +160,71 @@ impl NetAddr {
 impl From<IpAddr> for NetAddr {
 	fn from(addr: IpAddr) -> Self {
 		match addr {
-			IpAddr::V4(addr) => NetAddr::V4 {
-				network: addr,
-				netmask: NetAddr::F32V4,
-			},
-			IpAddr::V6(addr) => NetAddr::V6 {
-				network: addr,
-				netmask: NetAddr::F32V6,
-			},
+			IpAddr::V4(addr) => Self::from(addr),
+			IpAddr::V6(addr) => Self::from(addr),
 		}
 	}
 }
 
 impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
-		NetAddr::V4 {
-			network: addr,
-			netmask: NetAddr::F32V4,
-		}
+		NetAddr::V4(Netv4Addr::from(addr))
+	}
+}
+
+impl From<Ipv4Addr> for Netv4Addr {
+	fn from(addr: Ipv4Addr) -> Self {
+		Self::new(addr, Ipv4Addr::from(u32::max_value()))
 	}
 }
 
 impl From<Ipv6Addr> for NetAddr {
 	fn from(addr: Ipv6Addr) -> Self {
-		NetAddr::V6 {
-			network: addr,
-			netmask: NetAddr::F32V6,
-		}
+		NetAddr::V6(Netv6Addr::from(addr))
 	}
 }
 
-impl FromStr for NetAddr {
+impl From<Ipv6Addr> for Netv6Addr {
+	fn from(addr: Ipv6Addr) -> Self {
+		Self::new(addr, Ipv6Addr::from(u128::max_value()))
+	}
+}
+
+impl FromStr for Netv4Addr {
 	type Err = NetAddrError;
 
+	/// Parse a `Netv4Addr` from a string
+	///
+	/// Often used implicitly, this implementation allows for a few formats to be given:
+	/// - (Standard) CIDR format: `192.0.2.16/29`
+	/// - Extended format (` `-delimited): `192.0.2.16 255.255.255.248`
+	/// - Extended format (`/`-delimited): `192.0.2.16/255.255.255.248`
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16/29".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16 255.255.255.248".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let parsed: Netv4Addr = "192.0.2.16/255.255.255.248".parse().unwrap();
+	/// let addr: std::net::Ipv4Addr = "192.0.2.16".parse().unwrap();
+	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
+	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
+	/// ```
 	fn from_str(string: &str) -> Result<Self, NetAddrError> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
@@ -210,109 +233,135 @@ impl FromStr for NetAddr {
 			.get(1)
 			.ok_or_else(|| NetAddrError::ParseError("could not split provided input".to_string()))?;
 
-		let address = lhs.parse::<IpAddr>();
-		let as_u32 = rhs.parse::<u32>();
-		let as_ipaddr = rhs.parse::<IpAddr>();
+		let address = lhs.parse::<Ipv4Addr>();
+		let cidr = rhs.parse::<u32>();
+		let right_addr = rhs.parse::<Ipv4Addr>();
 
-		match (address, as_u32, as_ipaddr) {
-			(Ok(IpAddr::V4(address)), Ok(cidr_prefix_length), _) => {
-				let mask: u32 = NetAddr::F32
-					^ match NetAddr::F32.checked_shr(cidr_prefix_length) {
+		match (address, cidr, right_addr) {
+			(Ok(addr), Ok(cidr), _) => {
+				let mask: u32 = u32::max_value()
+					^ match u32::max_value().checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u32,
 					};
 
-				let netmask: Ipv4Addr = mask.into();
+				let mask: Ipv4Addr = mask.into();
 
-				let network: Ipv4Addr = crate::mask::<Ipv4Addr, u32>(&address, &netmask);
-
-				Ok(NetAddr::V4 { network, netmask })
+				Ok(Self::new(addr.mask(&mask), mask))
 			}
-			(Ok(IpAddr::V6(address)), Ok(cidr_prefix_length), _) => {
-				let mask: u128 = NetAddr::F128
-					^ match NetAddr::F128.checked_shr(cidr_prefix_length) {
+			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr.mask(&mask), mask)),
+			(Ok(addr), Err(_), Err(_)) => Ok(Self::from(addr)),
+			(Err(e), _, _) => Err(e.into()),
+		}
+	}
+}
+
+impl FromStr for Netv6Addr {
+	type Err = NetAddrError;
+
+	/// Parse a `Netv6Addr` from a string
+	///
+	/// Often used implicitly, this implementation allows for a few formats to be given:
+	/// - (Standard) CIDR format: `2001:db8:dead:beef::1/64`
+	/// - Extended format: `2001:db8:dead:beef::1 ffff:ffff:ffff:ffff::`
+	/// - Extended format (with a `/` delimiter): `2001:db8:dead:beef::1/ffff:ffff:ffff:ffff::`
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1/32".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1 ffff:ffff::".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let parsed: Netv6Addr = "2001:db8:dead:beef::1/ffff:ffff::".parse().unwrap();
+	/// let addr: std::net::Ipv6Addr = "2001:db8::0".parse().unwrap();
+	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
+	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
+	/// ```
+	fn from_str(string: &str) -> Result<Self, NetAddrError> {
+		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
+
+		let lhs: &str = split[0];
+		let rhs: &str = split
+			.get(1)
+			.ok_or_else(|| NetAddrError::ParseError("could not split provided input".to_string()))?;
+
+		let address = lhs.parse::<Ipv6Addr>();
+		let cidr = rhs.parse::<u32>();
+		let right_addr = rhs.parse::<Ipv6Addr>();
+
+		match (address, cidr, right_addr) {
+			(Ok(addr), Ok(cidr), _) => {
+				let mask: u128 = u128::max_value()
+					^ match u128::max_value().checked_shr(cidr) {
 						Some(k) => k,
 						None => 0_u128,
 					};
 
-				let netmask: Ipv6Addr = mask.into();
+				let mask: Ipv6Addr = mask.into();
 
-				let network = crate::mask::<Ipv6Addr, u128>(&address, &netmask);
-
-				Ok(NetAddr::V6 { network, netmask })
+				Ok(Self::new(addr, mask))
 			}
-			(Ok(IpAddr::V4(address)), Err(_), Ok(IpAddr::V4(netmask))) => {
-				let network = crate::mask::<Ipv4Addr, u32>(&address, &netmask);
-
-				Ok(NetAddr::V4 { network, netmask })
-			}
-			(Ok(IpAddr::V6(address)), Err(_), Ok(IpAddr::V6(netmask))) => {
-				let network = crate::mask::<Ipv6Addr, u128>(&address, &netmask);
-
-				Ok(NetAddr::V6 { network, netmask })
-			}
-			(Ok(addr), Err(_), Err(_)) => Ok(NetAddr::from(addr)),
+			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr, mask)),
+			(Ok(addr), Err(_), Err(_)) => Ok(Self::from(addr)),
 			(Err(e), _, _) => Err(e.into()),
-			(Ok(_), Err(_), Ok(_)) => Err(NetAddrError::ParseError(
-				"mismatched types of network/netmask".to_string(),
-			)),
 		}
 	}
 }
 
-impl PartialOrd for NetAddr {
-	/// Ordinalize two `NetAddr`s.
-	///
-	/// Two `NetAddr`s are first compared by network address, or if their network
-	/// address is the same, instead by netmask.  Two `NetAddr`s are said to be
-	/// equal if both their network address and netmask are the same.
-	///
-	/// # Examples
-	///
-	/// In this example, two networks of the same netmask but unequal network
-	/// addresses are compared.
-	///
-	/// ```
-	/// let a: netaddr2::NetAddr = "1.1.1.1/32".parse().unwrap();
-	/// let b: netaddr2::NetAddr = "2.2.2.2/32".parse().unwrap();
-	/// assert_eq!(a.partial_cmp(&b), Some(std::cmp::Ordering::Less));
-	/// // or, more concisely:
-	/// assert!(a < b);
-	/// ```
-	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-		match (self, other) {
-			(
-				NetAddr::V4 {
-					network: net,
-					netmask: mask,
-				},
-				NetAddr::V4 {
-					network: other_net,
-					netmask: other_mask,
-				},
-			) => match net.partial_cmp(other_net) {
-				Some(Ordering::Equal) => mask.partial_cmp(other_mask),
-				Some(ordering) => Some(ordering),
-				None => None,
-			},
-			(
-				NetAddr::V6 {
-					network: net,
-					netmask: mask,
-				},
-				NetAddr::V6 {
-					network: other_net,
-					netmask: other_mask,
-				},
-			) => match net.partial_cmp(other_net) {
-				Some(Ordering::Equal) => mask.partial_cmp(other_mask),
-				Some(ordering) => Some(ordering),
-				None => None,
-			},
-			(_, _) => unimplemented!(),
+impl FromStr for NetAddr {
+	type Err = NetAddrError;
+
+	fn from_str(string: &str) -> Result<Self, NetAddrError> {
+		let as_v4: Result<Netv4Addr, NetAddrError> = string.parse::<Netv4Addr>();
+		let as_v6: Result<Netv6Addr, NetAddrError> = string.parse::<Netv6Addr>();
+
+		match (as_v4, as_v6) {
+			(Ok(v4), _) => Ok(NetAddr::V4(v4)),
+			(_, Ok(v6)) => Ok(NetAddr::V6(v6)),
+			(Err(_e4), Err(e6)) => Err(e6),
 		}
 	}
 }
+
+impl PartialOrd for Netv4Addr {
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+		match self.addr().partial_cmp(other.addr()) {
+			Some(Ordering::Equal) => self.mask().partial_cmp(other.mask()),
+			Some(ordering) => Some(ordering),
+			None => None,
+		}
+	}
+}
+
+impl PartialOrd for Netv6Addr {
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+		match self.addr().partial_cmp(other.addr()) {
+			Some(Ordering::Equal) => self.mask().partial_cmp(other.mask()),
+			Some(ordering) => Some(ordering),
+			None => None,
+		}
+	}
+}
+
+mod mask;
+pub use mask::*;
+
+mod netaddr;
+pub use netaddr::*;
 
 #[cfg(test)]
 mod tests;

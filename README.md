@@ -4,7 +4,9 @@ This crate is meant as a replacement for an existing reimplementation of various
 There does exist another `netaddr` crate, however the author of this crate did not respond when asked about maintainership status.
 
 This crate aims to be as _simple_ and _straightforward_ as possible.
-We accomplish the desired results by only introducing one new data structure on top of the existing `std::net::IpAddr` frameworks, which were added to the Rust language in version 1.7.0.
+We accomplish this by mirroring the internal `std::net::Ip.*Addr` structure.
+So, the `netaddr2::NetAddr` enum has a `V4` and `V6` variant which each respectively contain `netaddr2::Netv4Addr` and `netaddr2::Netv6Addr` unit-tuples.
+Most of the operations are implemented through the use of _traits_ which are implemented both on the main structures and on the enum that bridges them.
 We have no dependencies (except `std`) by default and will only accept additional dependencies on an opt-in basis.
 Support for `no_std` will come at a later date if `std::net::IpAddr` can be ported.
 (PRs are definitely welcome.)
