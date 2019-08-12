@@ -283,21 +283,6 @@ impl FromStr for Netv6Addr {
 	}
 }
 
-impl FromStr for NetAddr {
-	type Err = NetAddrError;
-
-	fn from_str(string: &str) -> Result<Self, NetAddrError> {
-		let as_v4: Result<Netv4Addr, NetAddrError> = string.parse::<Netv4Addr>();
-		let as_v6: Result<Netv6Addr, NetAddrError> = string.parse::<Netv6Addr>();
-
-		match (as_v4, as_v6) {
-			(Ok(v4), _) => Ok(NetAddr::V4(v4)),
-			(_, Ok(v6)) => Ok(NetAddr::V6(v6)),
-			(Err(_e4), Err(e6)) => Err(e6),
-		}
-	}
-}
-
 impl PartialOrd for Netv4Addr {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
 		match self.addr().partial_cmp(other.addr()) {
