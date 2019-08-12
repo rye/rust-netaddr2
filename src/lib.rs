@@ -6,12 +6,6 @@ impl From<Ipv4Addr> for Netv4Addr {
 	}
 }
 
-impl From<Ipv6Addr> for NetAddr {
-	fn from(addr: Ipv6Addr) -> Self {
-		NetAddr::V6(Netv6Addr::from(addr))
-	}
-}
-
 impl From<Ipv6Addr> for Netv6Addr {
 	fn from(addr: Ipv6Addr) -> Self {
 		Self::new(addr, Ipv6Addr::from(u128::max_value()))
