@@ -3,13 +3,10 @@
 This crate is meant as a replacement for an existing reimplementation of various "netaddr" libraries that other languages have.
 There does exist another `netaddr` crate, however the author of this crate did not respond when asked about maintainership status.
 
-This crate aims to be as _simple_ and _straightforward_ as possible.
-We accomplish this by mirroring the internal `std::net::Ip.*Addr` structure.
-So, the `netaddr2::NetAddr` enum has a `V4` and `V6` variant which each respectively contain `netaddr2::Netv4Addr` and `netaddr2::Netv6Addr` unit-tuples.
-Most of the operations are implemented through the use of _traits_ which are implemented both on the main structures and on the enum that bridges them.
-We have no dependencies (except `std`) by default and will only accept additional dependencies on an opt-in basis.
-Support for `no_std` will come at a later date if `std::net::IpAddr` can be ported.
-(PRs are definitely welcome.)
+## What it does
+
+`NetAddr` arose out of a need to mask and subnet IP space in a manner identical to that which routers and network interfaces do.
+Its utility may be most fully realized in the development of tooling for such purposes.
 
 ## Usage
 
@@ -17,10 +14,21 @@ There are a few ways to use this library.
 Perhaps most ergonomical of these is to use the `FromStr` trait:
 
 ```rust
-let net: NetAddr = "ff02::1/128".parse().expect("couldn't parse an IPv6 address");
+let net: NetAddr = "ff02::1/128".parse().unwrap();
+let net: Netv4Addr = "203.0.113.19/29".parse().unwrap();
 ```
 
 (More options will be added eventually.)
+
+## Vision
+
+This crate aims to be as _simple_ and _straightforward_ as possible.
+We accomplish this by mirroring the structure of the `std::net::Ip.*Addr` data structures.
+Most of the operations on `NetAddr` structs are implemented through the use of _traits_ which are implemented both on the main structures and on the enum that bridges them.
+These are also implemented, where appropriate, for standard library structures.
+
+This crate has no dependencies, and will not accept any unless required for `no_std` support.
+The only part of this crate that uses `std` is the part that bridges with `std::net::IpAddr`, so a potential contribution would be to generalize `std::net::IpAddr` in a `no_std` environment.
 
 ## Maintenance Status
 
@@ -28,17 +36,6 @@ This codebase is still not feature-complete.
 Check out the issue tracker if you want to contribute, and don't hesistate to ask for something in an Issue.
 That said, the business logic is tested and should work.
 We will release version 1.0 when the GitHub milestone has been fully resolved.
-
-## Testing
-
-This project is tested both on concrete RFC5737/RFC3849 IPv4 and IPv6 documentation prefixes of:
-
-- `192.0.2.0/24 (TEST-NET-1)`
-- `198.51.100.0/24 (TEST-NET-2)`
-- `203.0.113.0/24 (TEST-NET-3)`
-- `2001:DB8::/32`
-
-as well as randomly-generated IP addresses in the test suite to demonstrate full correctness.
 
 ## License
 
