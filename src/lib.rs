@@ -325,7 +325,9 @@ mod mask;
 pub use mask::*;
 
 mod netaddr;
+mod netv4addr;
 pub use netaddr::*;
+pub use netv4addr::*;
 
 mod netaddr_error;
 pub use netaddr_error::*;

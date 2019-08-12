@@ -1,5 +1,6 @@
+use crate::netaddr::NetAddr;
+use crate::netv4addr::Netv4Addr;
 use std::net::{IpAddr, Ipv4Addr};
-use crate::netaddr::{NetAddr, Netv4Addr};
 
 pub trait Broadcast {
 	type Output;

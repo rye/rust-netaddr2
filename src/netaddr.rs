@@ -1,5 +1,6 @@
+use crate::netv4addr::Netv4Addr;
 use crate::Mask;
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::net::{IpAddr, Ipv6Addr};
 
 /// A structure representing an IP network.
 ///
@@ -9,27 +10,6 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 pub enum NetAddr {
 	V4(Netv4Addr),
 	V6(Netv6Addr),
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
-pub struct Netv4Addr {
-	mask: Ipv4Addr,
-	addr: Ipv4Addr,
-}
-
-impl Netv4Addr {
-	pub(crate) fn mask(&self) -> &Ipv4Addr {
-		&self.mask
-	}
-
-	pub(crate) fn addr(&self) -> &Ipv4Addr {
-		&self.addr
-	}
-
-	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
-		let addr = addr.mask(&mask);
-		Self { addr, mask }
-	}
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
