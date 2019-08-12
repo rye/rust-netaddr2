@@ -1,3 +1,4 @@
+use crate::broadcast::Broadcast;
 use crate::merge::Merge;
 use crate::netaddr_error::NetAddrError;
 use crate::netv4addr::Netv4Addr;
@@ -27,6 +28,17 @@ impl NetAddr {
 		match self {
 			NetAddr::V4(v4) => IpAddr::V4(*v4.addr()),
 			NetAddr::V6(v6) => IpAddr::V6(*v6.addr()),
+		}
+	}
+}
+
+impl Broadcast for NetAddr {
+	type Output = Option<IpAddr>;
+
+	fn broadcast(&self) -> Self::Output {
+		match self {
+			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
+			_ => None,
 		}
 	}
 }

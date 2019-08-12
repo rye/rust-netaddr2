@@ -1,3 +1,4 @@
+use crate::broadcast::Broadcast;
 use crate::merge::Merge;
 use crate::mask::Mask;
 use core::cmp::Ordering;
@@ -21,6 +22,17 @@ impl Netv4Addr {
 	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
+	}
+}
+
+impl Broadcast for Netv4Addr {
+	type Output = Ipv4Addr;
+
+	fn broadcast(&self) -> Ipv4Addr {
+		let netmask: u32 = self.mask().clone().into();
+		let network: u32 = self.addr().clone().into();
+		let broadcast: u32 = network | !netmask;
+		broadcast.into()
 	}
 }
 
