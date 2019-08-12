@@ -1,26 +1,6 @@
 use core::cmp::Ordering;
-use core::fmt::{Display, Error, Formatter};
 use core::str::FromStr;
-use std::net::{AddrParseError, IpAddr, Ipv4Addr, Ipv6Addr};
-
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum NetAddrError {
-	ParseError(String),
-}
-
-impl Display for NetAddrError {
-	fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-		match self {
-			NetAddrError::ParseError(text) => write!(f, "unable to parse address: {}", text),
-		}
-	}
-}
-
-impl From<AddrParseError> for NetAddrError {
-	fn from(other: AddrParseError) -> Self {
-		NetAddrError::ParseError(other.to_string())
-	}
-}
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 pub trait Broadcast {
 	type Output;
@@ -371,6 +351,9 @@ pub use mask::*;
 
 mod netaddr;
 pub use netaddr::*;
+
+mod netaddr_error;
+pub use netaddr_error::*;
 
 #[cfg(test)]
 mod tests;
