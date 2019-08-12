@@ -21,20 +21,6 @@ impl Contains for Netv6Addr {
 	}
 }
 
-impl Contains for NetAddr {
-	fn contains<T: Copy>(&self, other: &T) -> bool
-	where
-		Self: From<T>,
-	{
-		let other: Self = Self::from(*other);
-		match (self, other) {
-			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
-			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
-			(_, _) => false,
-		}
-	}
-}
-
 impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
 		NetAddr::V4(Netv4Addr::from(addr))

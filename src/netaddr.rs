@@ -1,4 +1,5 @@
 use crate::broadcast::Broadcast;
+use crate::contains::Contains;
 use crate::merge::Merge;
 use crate::netaddr_error::NetAddrError;
 use crate::netv4addr::Netv4Addr;
@@ -39,6 +40,20 @@ impl Broadcast for NetAddr {
 		match self {
 			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
 			_ => None,
+		}
+	}
+}
+
+impl Contains for NetAddr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
+			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
 		}
 	}
 }
