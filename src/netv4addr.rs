@@ -1,8 +1,8 @@
-use crate::broadcast::Broadcast;
-use crate::contains::Contains;
-use crate::merge::Merge;
-use crate::mask::Mask;
 use crate::netaddr_error::NetAddrError;
+use crate::traits::Broadcast;
+use crate::traits::Contains;
+use crate::traits::Merge;
+use crate::traits::Mask;
 use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::Ipv4Addr;

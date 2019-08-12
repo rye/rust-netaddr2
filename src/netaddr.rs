@@ -1,9 +1,9 @@
-use crate::broadcast::Broadcast;
-use crate::contains::Contains;
-use crate::merge::Merge;
 use crate::netaddr_error::NetAddrError;
 use crate::netv4addr::Netv4Addr;
 use crate::netv6addr::Netv6Addr;
+use crate::traits::Broadcast;
+use crate::traits::Contains;
+use crate::traits::Merge;
 use core::str::FromStr;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
