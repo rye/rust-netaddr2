@@ -1,4 +1,10 @@
-use crate::Mask;
+use crate::netaddr_error::NetAddrError;
+use crate::netv4addr::Netv4Addr;
+use crate::netv6addr::Netv6Addr;
+use crate::traits::Broadcast;
+use crate::traits::Contains;
+use crate::traits::Merge;
+use core::str::FromStr;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 /// A structure representing an IP network.
@@ -9,48 +15,6 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 pub enum NetAddr {
 	V4(Netv4Addr),
 	V6(Netv6Addr),
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
-pub struct Netv4Addr {
-	mask: Ipv4Addr,
-	addr: Ipv4Addr,
-}
-
-impl Netv4Addr {
-	pub(crate) fn mask(&self) -> &Ipv4Addr {
-		&self.mask
-	}
-
-	pub(crate) fn addr(&self) -> &Ipv4Addr {
-		&self.addr
-	}
-
-	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
-		let addr = addr.mask(&mask);
-		Self { addr, mask }
-	}
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
-pub struct Netv6Addr {
-	mask: Ipv6Addr,
-	addr: Ipv6Addr,
-}
-
-impl Netv6Addr {
-	pub(crate) fn mask(&self) -> &Ipv6Addr {
-		&self.mask
-	}
-
-	pub(crate) fn addr(&self) -> &Ipv6Addr {
-		&self.addr
-	}
-
-	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
-		let addr = addr.mask(&mask);
-		Self { addr, mask }
-	}
 }
 
 impl NetAddr {
@@ -65,6 +29,91 @@ impl NetAddr {
 		match self {
 			NetAddr::V4(v4) => IpAddr::V4(*v4.addr()),
 			NetAddr::V6(v6) => IpAddr::V6(*v6.addr()),
+		}
+	}
+}
+
+impl Broadcast for NetAddr {
+	type Output = Option<IpAddr>;
+
+	fn broadcast(&self) -> Self::Output {
+		match self {
+			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
+			_ => None,
+		}
+	}
+}
+
+impl Contains for NetAddr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
+			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
+
+impl FromStr for NetAddr {
+	type Err = NetAddrError;
+
+	fn from_str(string: &str) -> Result<Self, NetAddrError> {
+		let as_v4: Result<Netv4Addr, NetAddrError> = string.parse::<Netv4Addr>();
+		let as_v6: Result<Netv6Addr, NetAddrError> = string.parse::<Netv6Addr>();
+
+		match (as_v4, as_v6) {
+			(Ok(v4), _) => Ok(NetAddr::V4(v4)),
+			(_, Ok(v6)) => Ok(NetAddr::V6(v6)),
+			(Err(_e4), Err(e6)) => Err(e6),
+		}
+	}
+}
+
+impl From<IpAddr> for NetAddr {
+	fn from(addr: IpAddr) -> Self {
+		match addr {
+			IpAddr::V4(addr) => Self::from(addr),
+			IpAddr::V6(addr) => Self::from(addr),
+		}
+	}
+}
+
+impl From<Ipv4Addr> for NetAddr {
+	fn from(addr: Ipv4Addr) -> Self {
+		NetAddr::V4(Netv4Addr::from(addr))
+	}
+}
+
+impl From<Ipv6Addr> for NetAddr {
+	fn from(addr: Ipv6Addr) -> Self {
+		NetAddr::V6(Netv6Addr::from(addr))
+	}
+}
+
+impl From<Netv4Addr> for NetAddr {
+	fn from(netaddr: Netv4Addr) -> Self {
+		NetAddr::V4(netaddr)
+	}
+}
+
+impl From<Netv6Addr> for NetAddr {
+	fn from(netaddr: Netv6Addr) -> Self {
+		NetAddr::V6(netaddr)
+	}
+}
+
+impl Merge for NetAddr {
+	type Output = Option<Self>;
+
+	fn merge(&self, other: &Self) -> Self::Output {
+		match (self, other) {
+			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
+			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
+			(_, _) => unimplemented!(),
 		}
 	}
 }

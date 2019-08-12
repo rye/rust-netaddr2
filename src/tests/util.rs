@@ -1,4 +1,5 @@
 use crate::*;
+use std::net::{Ipv4Addr, Ipv6Addr};
 
 use rand::Rng;
 
