@@ -1,16 +1,6 @@
 use core::str::FromStr;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-impl Contains for Netv4Addr {
-	fn contains<T: Copy>(&self, other: &T) -> bool
-	where
-		Self: From<T>,
-	{
-		let other: Self = Self::from(*other);
-		other.addr().mask(&self.mask()) == *self.addr()
-	}
-}
-
 impl Contains for Netv6Addr {
 	fn contains<T: Copy>(&self, other: &T) -> bool
 	where

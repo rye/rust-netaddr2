@@ -1,4 +1,5 @@
 use crate::broadcast::Broadcast;
+use crate::contains::Contains;
 use crate::merge::Merge;
 use crate::mask::Mask;
 use core::cmp::Ordering;
@@ -33,6 +34,16 @@ impl Broadcast for Netv4Addr {
 		let network: u32 = self.addr().clone().into();
 		let broadcast: u32 = network | !netmask;
 		broadcast.into()
+	}
+}
+
+impl Contains for Netv4Addr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		other.addr().mask(&self.mask()) == *self.addr()
 	}
 }
 
