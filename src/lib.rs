@@ -2,82 +2,6 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-trait Merge {
-	type Output;
-
-	fn merge(&self, other: &Self) -> Self::Output;
-}
-
-impl Merge for Netv4Addr {
-	type Output = Option<Self>;
-
-	fn merge(&self, other: &Self) -> Self::Output {
-		let addr: u32 = self.addr().clone().into();
-		let mask: u32 = self.mask().clone().into();
-		let other_addr: u32 = other.addr().clone().into();
-		let other_mask: u32 = other.mask().clone().into();
-
-		let mask: u32 = match mask.cmp(&other_mask) {
-			Ordering::Equal => mask << 1,
-			Ordering::Less => mask,
-			Ordering::Greater => other_mask,
-		};
-
-		if addr & mask == other_addr & mask {
-			Some(Self::new(Ipv4Addr::from(addr & mask), Ipv4Addr::from(mask)))
-		} else {
-			None
-		}
-	}
-}
-
-impl Merge for Netv6Addr {
-	type Output = Option<Self>;
-
-	fn merge(&self, other: &Self) -> Self::Output {
-		let addr: u128 = self.addr().clone().into();
-		let mask: u128 = self.mask().clone().into();
-		let other_addr: u128 = other.addr().clone().into();
-		let other_mask: u128 = other.mask().clone().into();
-
-		let mask: u128 = match mask.cmp(&other_mask) {
-			Ordering::Equal => mask << 1,
-			Ordering::Less => mask,
-			Ordering::Greater => other_mask,
-		};
-
-		if addr & mask == other_addr & mask {
-			Some(Self::new(Ipv6Addr::from(addr & mask), Ipv6Addr::from(mask)))
-		} else {
-			None
-		}
-	}
-}
-
-impl Merge for NetAddr {
-	type Output = Option<Self>;
-
-	fn merge(&self, other: &Self) -> Self::Output {
-		match (self, other) {
-			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
-			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
-			(_, _) => unimplemented!(),
-		}
-	}
-}
-
-impl From<Netv4Addr> for NetAddr {
-	fn from(netaddr: Netv4Addr) -> Self {
-		NetAddr::V4(netaddr)
-	}
-}
-
-impl From<Netv6Addr> for NetAddr {
-	fn from(netaddr: Netv6Addr) -> Self {
-		NetAddr::V6(netaddr)
-	}
-}
-
 pub trait Contains {
 	fn contains<T: Copy>(&self, other: &T) -> bool
 	where
@@ -295,10 +219,11 @@ impl PartialOrd for Netv6Addr {
 }
 
 mod broadcast;
-pub use broadcast::*;
-
 mod mask;
+mod merge;
+pub use broadcast::*;
 pub use mask::*;
+pub use merge::*;
 
 mod netaddr;
 mod netv4addr;

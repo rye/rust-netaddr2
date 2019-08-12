@@ -1,3 +1,4 @@
+use crate::merge::Merge;
 use crate::netaddr_error::NetAddrError;
 use crate::netv4addr::Netv4Addr;
 use crate::netv6addr::Netv6Addr;
@@ -50,6 +51,30 @@ impl From<IpAddr> for NetAddr {
 		match addr {
 			IpAddr::V4(addr) => Self::from(addr),
 			IpAddr::V6(addr) => Self::from(addr),
+		}
+	}
+}
+
+impl From<Netv4Addr> for NetAddr {
+	fn from(netaddr: Netv4Addr) -> Self {
+		NetAddr::V4(netaddr)
+	}
+}
+
+impl From<Netv6Addr> for NetAddr {
+	fn from(netaddr: Netv6Addr) -> Self {
+		NetAddr::V6(netaddr)
+	}
+}
+
+impl Merge for NetAddr {
+	type Output = Option<Self>;
+
+	fn merge(&self, other: &Self) -> Self::Output {
+		match (self, other) {
+			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
+			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
+			(_, _) => unimplemented!(),
 		}
 	}
 }
