@@ -1,7 +1,7 @@
 use crate::netaddr_error::NetAddrError;
 use crate::traits::Contains;
-use crate::traits::Merge;
 use crate::traits::Mask;
+use crate::traits::Merge;
 use core::cmp::Ordering;
 use core::str::FromStr;
 use std::net::Ipv6Addr;
