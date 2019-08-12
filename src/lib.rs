@@ -1,14 +1,14 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::net::{AddrParseError, IpAddr, Ipv4Addr, Ipv6Addr};
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetAddrError {
 	ParseError(String),
 }
 
-impl From<std::net::AddrParseError> for NetAddrError {
-	fn from(other: std::net::AddrParseError) -> Self {
+impl From<AddrParseError> for NetAddrError {
+	fn from(other: AddrParseError) -> Self {
 		NetAddrError::ParseError(other.to_string())
 	}
 }
