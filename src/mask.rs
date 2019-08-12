@@ -1,6 +1,4 @@
-use std::net::IpAddr;
-use std::net::Ipv4Addr;
-use std::net::Ipv6Addr;
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 pub trait Mask {
 	type Output;
