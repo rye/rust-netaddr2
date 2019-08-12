@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Added
+- A Travis CI configuration for testing.
+
+### Changed
+- Existing API to use traits.
 
 ## [0.1.2] - 2019-07-23
 ### Fixed
