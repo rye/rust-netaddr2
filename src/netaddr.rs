@@ -5,7 +5,7 @@ use crate::netaddr_error::NetAddrError;
 use crate::netv4addr::Netv4Addr;
 use crate::netv6addr::Netv6Addr;
 use core::str::FromStr;
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr};
 
 /// A structure representing an IP network.
 ///
@@ -79,6 +79,12 @@ impl From<IpAddr> for NetAddr {
 			IpAddr::V4(addr) => Self::from(addr),
 			IpAddr::V6(addr) => Self::from(addr),
 		}
+	}
+}
+
+impl From<Ipv4Addr> for NetAddr {
+	fn from(addr: Ipv4Addr) -> Self {
+		NetAddr::V4(Netv4Addr::from(addr))
 	}
 }
 
