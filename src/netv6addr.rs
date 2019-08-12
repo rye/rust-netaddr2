@@ -1,3 +1,4 @@
+use crate::contains::Contains;
 use crate::merge::Merge;
 use crate::mask::Mask;
 use core::cmp::Ordering;
@@ -21,6 +22,16 @@ impl Netv6Addr {
 	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
+	}
+}
+
+impl Contains for Netv6Addr {
+	fn contains<T: Copy>(&self, other: &T) -> bool
+	where
+		Self: From<T>,
+	{
+		let other: Self = Self::from(*other);
+		other.addr().mask(&self.mask()) == *self.addr()
 	}
 }
 
