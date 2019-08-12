@@ -37,6 +37,12 @@ impl Contains for Netv6Addr {
 	}
 }
 
+impl From<Ipv6Addr> for Netv6Addr {
+	fn from(addr: Ipv6Addr) -> Self {
+		Self::new(addr, Ipv6Addr::from(u128::max_value()))
+	}
+}
+
 impl FromStr for Netv6Addr {
 	type Err = NetAddrError;
 

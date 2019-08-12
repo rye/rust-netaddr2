@@ -1,11 +1,5 @@
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-impl From<Ipv6Addr> for Netv6Addr {
-	fn from(addr: Ipv6Addr) -> Self {
-		Self::new(addr, Ipv6Addr::from(u128::max_value()))
-	}
-}
-
 impl Mask for IpAddr {
 	type Output = Result<Self, &'static str>;
 
