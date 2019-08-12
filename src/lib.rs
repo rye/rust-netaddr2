@@ -1,12 +1,6 @@
 use core::str::FromStr;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-pub trait Contains {
-	fn contains<T: Copy>(&self, other: &T) -> bool
-	where
-		Self: From<T>;
-}
-
 impl Contains for Netv4Addr {
 	fn contains<T: Copy>(&self, other: &T) -> bool
 	where
@@ -198,9 +192,11 @@ impl FromStr for Netv6Addr {
 }
 
 mod broadcast;
+mod contains;
 mod mask;
 mod merge;
 pub use broadcast::*;
+pub use contains::*;
 pub use mask::*;
 pub use merge::*;
 
