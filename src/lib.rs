@@ -1,6 +1,6 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::net::{Ipv4Addr, Ipv6Addr};
 
 trait Merge {
 	type Output;
@@ -114,15 +114,6 @@ impl Contains for NetAddr {
 			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
 			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
 			(_, _) => false,
-		}
-	}
-}
-
-impl From<IpAddr> for NetAddr {
-	fn from(addr: IpAddr) -> Self {
-		match addr {
-			IpAddr::V4(addr) => Self::from(addr),
-			IpAddr::V6(addr) => Self::from(addr),
 		}
 	}
 }

@@ -44,3 +44,12 @@ impl FromStr for NetAddr {
 		}
 	}
 }
+
+impl From<IpAddr> for NetAddr {
+	fn from(addr: IpAddr) -> Self {
+		match addr {
+			IpAddr::V4(addr) => Self::from(addr),
+			IpAddr::V6(addr) => Self::from(addr),
+		}
+	}
+}
