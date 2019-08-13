@@ -16,6 +16,23 @@ fn is_sync() {
 	assert_sync::<NetAddr>();
 }
 
+#[test]
+fn hash_same() {
+	use std::collections::hash_map::DefaultHasher;
+	use std::hash::Hash;
+	let mut hasher = DefaultHasher::new();
+	assert_eq!(
+		"192.0.2.26/29"
+			.parse::<NetAddr>()
+			.unwrap()
+			.hash(&mut hasher),
+		"192.0.2.26/29"
+			.parse::<NetAddr>()
+			.unwrap()
+			.hash(&mut hasher)
+	);
+}
+
 mod netv4addr {
 	use super::Netv4Addr;
 
@@ -30,6 +47,24 @@ mod netv4addr {
 		fn assert_sync<T: Sync>() {}
 		assert_sync::<Netv4Addr>();
 	}
+
+	#[test]
+	fn hash_same() {
+		use std::collections::hash_map::DefaultHasher;
+		use std::hash::Hash;
+		let mut hasher = DefaultHasher::new();
+		assert_eq!(
+			"192.0.2.26/29"
+				.parse::<Netv4Addr>()
+				.unwrap()
+				.hash(&mut hasher),
+			"192.0.2.26/29"
+				.parse::<Netv4Addr>()
+				.unwrap()
+				.hash(&mut hasher)
+		);
+	}
+
 }
 
 mod netv6addr {
@@ -37,7 +72,7 @@ mod netv6addr {
 
 	#[test]
 	fn is_send() {
-		fn assert_send<T: Send>() {}
+;		fn assert_send<T: Send>() {}
 		assert_send::<Netv6Addr>();
 	}
 
@@ -46,6 +81,24 @@ mod netv6addr {
 		fn assert_sync<T: Sync>() {}
 		assert_sync::<Netv6Addr>();
 	}
+
+	#[test]
+	fn hash_same() {
+		use std::collections::hash_map::DefaultHasher;
+		use std::hash::Hash;
+		let mut hasher = DefaultHasher::new();
+		assert_eq!(
+			"2001:db8:dead:beef::1325/64"
+				.parse::<Netv6Addr>()
+				.unwrap()
+				.hash(&mut hasher),
+			"2001:db8:dead:beef::1325/64"
+				.parse::<Netv6Addr>()
+				.unwrap()
+				.hash(&mut hasher)
+		);
+	}
+
 }
 
 mod broadcast;
