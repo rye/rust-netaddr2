@@ -14,8 +14,10 @@ jobs:
       matrix:
         rust: [stable, beta, nightly]
     steps:
-    - name: Install/update the ${{ matrix.rust }} toolchain
-      run: rustup toolchain install ${{ matrix.rust }}
+    - name: Install the appropriate Rust toolchain
+      run: |
+        rustup toolchain install ${{ matrix.rust }}
+        rustup default ${{ matrix.rust }}
     - uses: actions/checkout@v1
     - name: Run rustfmt
       run: cargo fmt -- --check
