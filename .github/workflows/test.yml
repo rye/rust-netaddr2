@@ -6,12 +6,13 @@ on:
   - cron: 15 */6 * * *
 
 jobs:
-  print_event:
-    name: Print the event...
+  try_annotations:
+    name: 
     runs-on: ubuntu-latest
     steps:
-    - name: Print the thing that is running
-      run: cat $GITHUB_EVENT_PATH
+    - uses: actions/checkout@v1
+    - name: Print the check run id
+      run: script/clippy
 
   check:
     name: Check the code
