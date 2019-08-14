@@ -9,10 +9,17 @@ jobs:
   dump_context:
     runs-on: ubuntu-latest
     steps:
-    - name: Dump Job context
+    - name: Dump contexts
       env:
-        CONTEXT: ${{ toJson(job) }}
-      run: echo "$CONTEXT"
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+        JOB_CONTEXT: ${{ toJson(job) }}
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+        RUNNER_CONTEXT: ${{ toJson(runner) }}
+      run: |
+        echo "GITHUB $GITHUB_CONTEXT"
+        echo "JOB $JOB_CONTEXT"
+        echo "STEPS $STEPS_CONTEXT"
+        echo "RUNNER $RUNNER_CONTEXT"
 
   check:
     name: Check the code
