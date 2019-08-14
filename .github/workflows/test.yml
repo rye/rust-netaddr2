@@ -6,13 +6,6 @@ on:
   - cron: 15 */6 * * *
 
 jobs:
-  print_environment:
-    name: 
-    runs-on: ubuntu-latest
-    steps:
-    - name: Print the environment
-      run: env
-
   check:
     name: Check the code
     runs-on: ubuntu-latest
@@ -51,3 +44,11 @@ jobs:
     - name: Run tests
       run: |
         cargo test
+    - name: Generate and upload coverage
+      if: ${{ matrix.rust }} == "stable"
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        cargo install --force cargo-tarpaulin
+        cargo tarpaulin --out Xml
+        bash <(curl -s https://codecov.io/bash)
