@@ -1,0 +1,69 @@
+name: Check, test, and build the code
+
+on:
+  push:
+  schedule:
+  - cron: 15 */6 * * *
+
+jobs:
+  dump_context:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Dump contexts
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+        JOB_CONTEXT: ${{ toJson(job) }}
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+        RUNNER_CONTEXT: ${{ toJson(runner) }}
+      run: |
+        echo "GITHUB $GITHUB_CONTEXT"
+        echo "JOB $JOB_CONTEXT"
+        echo "STEPS $STEPS_CONTEXT"
+        echo "RUNNER $RUNNER_CONTEXT"
+
+  check:
+    name: Check the code
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable, beta, nightly]
+    steps:
+    - name: Install the appropriate Rust toolchain
+      run: |
+        rustup toolchain install ${{ matrix.rust }}
+        rustup default ${{ matrix.rust }}
+    - uses: actions/checkout@v1
+    - name: Run rustfmt
+      run: |
+        rustup component add rustfmt
+        cargo fmt -- --check
+    - name: Run clippy
+      run: |
+        rustup component add clippy
+        cargo clippy -- -D clippy::all -W clippy::cargo -W clippy::pedantic
+
+  test:
+    name: Run tests and measure coverage
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable]
+    steps:
+    - name: Install the appropriate Rust toolchain
+      run: |
+        rustup toolchain install ${{ matrix.rust }}
+        rustup default ${{ matrix.rust }}
+    - uses: actions/checkout@v1
+    - name: Run tests
+      run: |
+        cargo test
+    - name: Generate and upload coverage
+      if: matrix.rust == 'stable'
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        cargo install --force cargo-tarpaulin
+        cargo tarpaulin --out Xml
+        bash <(curl -s https://codecov.io/bash)

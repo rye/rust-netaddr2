@@ -64,7 +64,6 @@ mod netv4addr {
 				.hash(&mut hasher)
 		);
 	}
-
 }
 
 mod netv6addr {
@@ -98,7 +97,6 @@ mod netv6addr {
 				.hash(&mut hasher)
 		);
 	}
-
 }
 
 mod broadcast;
