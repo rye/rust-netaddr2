@@ -1,0 +1,23 @@
+name: Run tests
+
+on:
+  push:
+  schedule:
+  - cron: 15 */6 * * *
+
+jobs:
+  check_style:
+    name: Check code style
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable, beta, nightly]
+    steps:
+    - name: Install/update the "${{ matrix.rust }}" toolchain
+      run: rustup toolchain install ${{ matrix.rust }}
+    - uses: actions/checkout@v1
+    - name: Run rustfmt
+      run: cargo fmt -- --check
+    - name: Run clippy
+      run: cargo clippy -- -D clippy::all -W clippy::cargo -W clippy::pedantic
