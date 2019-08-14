@@ -14,7 +14,7 @@ jobs:
       matrix:
         rust: [stable, beta, nightly]
     steps:
-    - name: Install/update the "${{ matrix.rust }}" toolchain
+    - name: Install/update the ${{ matrix.rust }} toolchain
       run: rustup toolchain install ${{ matrix.rust }}
     - uses: actions/checkout@v1
     - name: Run rustfmt
