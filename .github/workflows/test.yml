@@ -6,8 +6,15 @@ on:
   - cron: 15 */6 * * *
 
 jobs:
-  check_style:
-    name: Check code style
+  print_event:
+    name: Print the event...
+    runs-on: ubuntu-latest
+    steps:
+    - name: Print the thing that is running
+      run: cat $GITHUB_EVENT_PATH
+
+  check:
+    name: Check the code
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,3 +34,20 @@ jobs:
       run: |
         rustup component add clippy
         cargo clippy -- -D clippy::all -W clippy::cargo -W clippy::pedantic
+
+  test:
+    name: Run tests and measure coverage
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable]
+    steps:
+    - name: Install the appropriate Rust toolchain
+      run: |
+        rustup toolchain install ${{ matrix.rust }}
+        rustup default ${{ matrix.rust }}
+    - uses: actions/checkout@v1
+    - name: Run tests
+      run: |
+        cargo test
