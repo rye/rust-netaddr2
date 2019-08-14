@@ -6,13 +6,12 @@ on:
   - cron: 15 */6 * * *
 
 jobs:
-  try_annotations:
+  print_environment:
     name: 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Print the check run id
-      run: script/clippy
+    - name: Print the environment
+      run: env
 
   check:
     name: Check the code
