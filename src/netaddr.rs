@@ -147,7 +147,10 @@ mod tests {
 		fn uses_max_netmask() {
 			let addr: Ipv4Addr = "192.0.2.42".parse().unwrap();
 			let netaddr: NetAddr = NetAddr::from(addr);
-			assert_eq!(netaddr, NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::max_value()))));
+			assert_eq!(
+				netaddr,
+				NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::max_value())))
+			);
 		}
 	}
 
@@ -158,7 +161,10 @@ mod tests {
 		fn uses_max_netmask() {
 			let addr: Ipv6Addr = "2001:db8:dead:beef::42".parse().unwrap();
 			let netaddr: NetAddr = NetAddr::from(addr);
-			assert_eq!(netaddr, NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value()))));
+			assert_eq!(
+				netaddr,
+				NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value())))
+			);
 		}
 	}
 }
