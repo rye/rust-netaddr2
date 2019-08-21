@@ -6,32 +6,6 @@ fn invalid_is_safe() {
 }
 
 #[test]
-fn v4_netv4addr_cidr_correct_network() {
-	let input: (String, Ipv4Addr, Ipv4Addr) = rnd_v4_cidr();
-	let net: Result<Netv4Addr, _> = input.0.parse();
-
-	assert!(net.is_ok());
-
-	let net: Netv4Addr = net.unwrap();
-
-	assert_eq!(net.addr(), &input.1);
-	assert_eq!(net.mask(), &input.2);
-}
-
-#[test]
-fn v6_netv6addr_cidr_correct_network() {
-	let input: (String, Ipv6Addr, Ipv6Addr) = rnd_v6_cidr();
-	let net: Result<Netv6Addr, _> = input.0.parse();
-
-	assert!(net.is_ok());
-
-	let net: Netv6Addr = net.unwrap();
-
-	assert_eq!(net.addr(), &input.1);
-	assert_eq!(net.mask(), &input.2);
-}
-
-#[test]
 fn v4_correct_network() {
 	let net: NetAddr = "192.0.2.0/32".parse().unwrap();
 	assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));

@@ -13,6 +13,3 @@ homepage = "https://rye.github.io/rust-netaddr2"
 
 categories = ["data-structures", "network-programming"]
 keywords = ["netaddr", "network", "address", "cidr"]
-
-[dev-dependencies]
-rand = "0.7.0"
