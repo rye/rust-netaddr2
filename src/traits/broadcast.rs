@@ -7,11 +7,11 @@ pub trait Broadcast {
 #[cfg(test)]
 mod tests {
 	use super::Broadcast;
-	use std::net::IpAddr;
 
 	mod netaddr {
 		use super::*;
 		use crate::NetAddr;
+		use std::net::IpAddr;
 
 		mod v4 {
 			use super::*;
