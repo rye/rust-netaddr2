@@ -20,15 +20,15 @@ pub enum NetAddr {
 impl NetAddr {
 	pub fn mask(&self) -> IpAddr {
 		match self {
-			NetAddr::V4(v4) => IpAddr::V4(*v4.mask()),
-			NetAddr::V6(v6) => IpAddr::V6(*v6.mask()),
+			Self::V4(v4) => IpAddr::V4(*v4.mask()),
+			Self::V6(v6) => IpAddr::V6(*v6.mask()),
 		}
 	}
 
 	pub fn addr(&self) -> IpAddr {
 		match self {
-			NetAddr::V4(v4) => IpAddr::V4(*v4.addr()),
-			NetAddr::V6(v6) => IpAddr::V6(*v6.addr()),
+			Self::V4(v4) => IpAddr::V4(*v4.addr()),
+			Self::V6(v6) => IpAddr::V6(*v6.addr()),
 		}
 	}
 }
@@ -38,7 +38,7 @@ impl Broadcast for NetAddr {
 
 	fn broadcast(&self) -> Self::Output {
 		match self {
-			NetAddr::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
+			Self::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
 			_ => None,
 		}
 	}
@@ -51,8 +51,8 @@ impl Contains for NetAddr {
 	{
 		let other: Self = Self::from(*other);
 		match (self, other) {
-			(NetAddr::V4(netaddr), NetAddr::V4(other)) => netaddr.contains(&other),
-			(NetAddr::V6(netaddr), NetAddr::V6(other)) => netaddr.contains(&other),
+			(Self::V4(netaddr), Self::V4(other)) => netaddr.contains(&other),
+			(Self::V6(netaddr), Self::V6(other)) => netaddr.contains(&other),
 			(_, _) => false,
 		}
 	}
@@ -66,8 +66,8 @@ impl FromStr for NetAddr {
 		let as_v6: Result<Netv6Addr, NetAddrError> = string.parse::<Netv6Addr>();
 
 		match (as_v4, as_v6) {
-			(Ok(v4), _) => Ok(NetAddr::V4(v4)),
-			(_, Ok(v6)) => Ok(NetAddr::V6(v6)),
+			(Ok(v4), _) => Ok(Self::V4(v4)),
+			(_, Ok(v6)) => Ok(Self::V6(v6)),
 			(Err(_e4), Err(e6)) => Err(e6),
 		}
 	}
@@ -84,25 +84,25 @@ impl From<IpAddr> for NetAddr {
 
 impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
-		NetAddr::V4(Netv4Addr::from(addr))
+		Self::V4(Netv4Addr::from(addr))
 	}
 }
 
 impl From<Ipv6Addr> for NetAddr {
 	fn from(addr: Ipv6Addr) -> Self {
-		NetAddr::V6(Netv6Addr::from(addr))
+		Self::V6(Netv6Addr::from(addr))
 	}
 }
 
 impl From<Netv4Addr> for NetAddr {
 	fn from(netaddr: Netv4Addr) -> Self {
-		NetAddr::V4(netaddr)
+		Self::V4(netaddr)
 	}
 }
 
 impl From<Netv6Addr> for NetAddr {
 	fn from(netaddr: Netv6Addr) -> Self {
-		NetAddr::V6(netaddr)
+		Self::V6(netaddr)
 	}
 }
 
@@ -111,8 +111,8 @@ impl Merge for NetAddr {
 
 	fn merge(&self, other: &Self) -> Self::Output {
 		match (self, other) {
-			(NetAddr::V4(a), NetAddr::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
-			(NetAddr::V6(a), NetAddr::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
+			(Self::V4(a), Self::V4(b)) => a.merge(b).map(|netvxaddr: Netv4Addr| netvxaddr.into()),
+			(Self::V6(a), Self::V6(b)) => a.merge(b).map(|netvxaddr: Netv6Addr| netvxaddr.into()),
 			(_, _) => unimplemented!(),
 		}
 	}
