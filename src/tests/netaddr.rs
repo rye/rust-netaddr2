@@ -66,5 +66,4 @@ mod netv6addr {
 mod broadcast;
 mod cmp;
 mod contains;
-mod merge;
 mod parse;
