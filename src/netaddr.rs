@@ -117,3 +117,48 @@ impl Merge for NetAddr {
 		}
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn is_from_ipaddr() {
+		fn is_from_ipaddr<T: From<IpAddr>>() {};
+		is_from_ipaddr::<NetAddr>();
+	}
+
+	#[test]
+	fn is_from_ipv4addr() {
+		fn is_from_ipv4addr<T: From<Ipv4Addr>>() {};
+		is_from_ipv4addr::<NetAddr>();
+	}
+
+	#[test]
+	fn is_from_ipv6addr() {
+		fn is_from_ipv6addr<T: From<Ipv6Addr>>() {};
+		is_from_ipv6addr::<NetAddr>();
+	}
+
+	mod from_ipv4addr {
+		use super::*;
+
+		#[test]
+		fn uses_max_netmask() {
+			let addr: Ipv4Addr = "192.0.2.42".parse().unwrap();
+			let netaddr: NetAddr = NetAddr::from(addr);
+			assert_eq!(netaddr, NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::max_value()))));
+		}
+	}
+
+	mod from_ipv6addr {
+		use super::*;
+
+		#[test]
+		fn uses_max_netmask() {
+			let addr: Ipv6Addr = "2001:db8:dead:beef::42".parse().unwrap();
+			let netaddr: NetAddr = NetAddr::from(addr);
+			assert_eq!(netaddr, NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value()))));
+		}
+	}
+}
