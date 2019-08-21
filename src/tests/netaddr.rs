@@ -71,7 +71,7 @@ mod netv6addr {
 
 	#[test]
 	fn is_send() {
-;		fn assert_send<T: Send>() {}
+		fn assert_send<T: Send>() {}
 		assert_send::<Netv6Addr>();
 	}
 
@@ -102,6 +102,5 @@ mod netv6addr {
 mod broadcast;
 mod cmp;
 mod contains;
-mod from;
 mod merge;
 mod parse;
