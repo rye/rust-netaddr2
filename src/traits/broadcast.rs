@@ -7,14 +7,15 @@ pub trait Broadcast {
 #[cfg(test)]
 mod tests {
 	use super::Broadcast;
-	use crate::NetAddr;
-	use std::net::{IpAddr, Ipv4Addr};
+	use std::net::IpAddr;
 
 	mod netaddr {
 		use super::*;
+		use crate::NetAddr;
 
 		mod v4 {
 			use super::*;
+			use std::net::Ipv4Addr;
 
 			#[test]
 			fn returns_correct_address() {
@@ -46,6 +47,24 @@ mod tests {
 				let net: NetAddr = "fe80::1/64".parse().unwrap();
 				assert_eq!(net.broadcast(), None);
 			}
+		}
+	}
+
+	mod netv4addr {
+		use super::*;
+		use crate::Netv4Addr;
+		use std::net::Ipv4Addr;
+
+		#[test]
+		fn returns_correct_address() {
+			let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+			assert_eq!(net.broadcast(), Ipv4Addr::new(127, 255, 255, 255));
+
+			let net: Netv4Addr = "192.168.69.25/29".parse().unwrap();
+			assert_eq!(net.broadcast(), Ipv4Addr::new(192, 168, 69, 31));
+
+			let net: Netv4Addr = "192.168.128.127/32".parse().unwrap();
+			assert_eq!(net.broadcast(), Ipv4Addr::new(192, 168, 128, 127));
 		}
 	}
 }
