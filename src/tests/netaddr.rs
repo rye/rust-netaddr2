@@ -1,7 +1,5 @@
 use crate::*;
 
-use super::*;
-
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 #[test]
