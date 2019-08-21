@@ -123,6 +123,24 @@ mod tests {
 	use super::*;
 
 	#[test]
+	fn is_broadcast() {
+		fn is_broadcast<T: Broadcast>() {};
+		is_broadcast::<NetAddr>();
+	}
+
+	#[test]
+	fn is_contains() {
+		fn is_contains<T: Contains>() {};
+		is_contains::<NetAddr>();
+	}
+
+	#[test]
+	fn is_fromstr() {
+		fn is_fromstr<T: FromStr>() {};
+		is_fromstr::<NetAddr>();
+	}
+
+	#[test]
 	fn is_from_ipaddr() {
 		fn is_from_ipaddr<T: From<IpAddr>>() {};
 		is_from_ipaddr::<NetAddr>();
@@ -166,5 +184,17 @@ mod tests {
 				NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value())))
 			);
 		}
+	}
+
+	#[test]
+	fn is_from_netv4addr() {
+		fn is_from_netv4addr<T: From<Netv4Addr>>() {};
+		is_from_netv4addr::<NetAddr>();
+	}
+
+	#[test]
+	fn is_from_netv6addr() {
+		fn is_from_netv6addr<T: From<Netv6Addr>>() {};
+		is_from_netv6addr::<NetAddr>();
 	}
 }
