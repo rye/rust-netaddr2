@@ -6,21 +6,6 @@ on:
   - cron: 15 */6 * * *
 
 jobs:
-  dump_context:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Dump contexts
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-        JOB_CONTEXT: ${{ toJson(job) }}
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-        RUNNER_CONTEXT: ${{ toJson(runner) }}
-      run: |
-        echo "GITHUB $GITHUB_CONTEXT"
-        echo "JOB $JOB_CONTEXT"
-        echo "STEPS $STEPS_CONTEXT"
-        echo "RUNNER $RUNNER_CONTEXT"
-
   check:
     name: Check the code
     runs-on: ubuntu-latest
