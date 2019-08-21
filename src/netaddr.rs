@@ -120,10 +120,54 @@ impl Merge for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{NetAddr, Netv4Addr, Netv6Addr};
+
+	mod from_ipaddr {
+		use super::*;
+		use std::net::IpAddr;
+
+		mod v4 {
+			use super::*;
+			use std::net::Ipv4Addr;
+
+			#[test]
+			fn uses_max_netmask() {
+				let addr: IpAddr = "192.0.2.42".parse().unwrap();
+				let netaddr: NetAddr = NetAddr::from(addr);
+
+				assert_eq!(
+					netaddr,
+					NetAddr::V4(Netv4Addr::new(
+						Ipv4Addr::new(192, 0, 2, 42),
+						Ipv4Addr::from(u32::max_value())
+					))
+				);
+			}
+		}
+
+		mod v6 {
+			use super::*;
+			use std::net::Ipv6Addr;
+
+			#[test]
+			fn uses_max_netmask() {
+				let addr: IpAddr = "2001:db8:dead:beef::42".parse().unwrap();
+				let netaddr: NetAddr = NetAddr::from(addr);
+
+				assert_eq!(
+					netaddr,
+					NetAddr::V6(Netv6Addr::new(
+						Ipv6Addr::new(0x2001, 0xdb8, 0xdead, 0xbeef, 0, 0, 0, 0x0042),
+						Ipv6Addr::from(u128::max_value())
+					))
+				);
+			}
+		}
+	}
 
 	mod from_ipv4addr {
 		use super::*;
+		use std::net::Ipv4Addr;
 
 		#[test]
 		fn uses_max_netmask() {
@@ -138,6 +182,7 @@ mod tests {
 
 	mod from_ipv6addr {
 		use super::*;
+		use std::net::Ipv6Addr;
 
 		#[test]
 		fn uses_max_netmask() {
