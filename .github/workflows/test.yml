@@ -32,7 +32,6 @@ jobs:
     name: Run tests and measure coverage
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         rust: [stable]
     steps:
