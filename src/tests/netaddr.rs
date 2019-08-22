@@ -1,7 +1,5 @@
 use crate::*;
 
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
-
 #[test]
 fn hash_same() {
 	use std::collections::hash_map::DefaultHasher;
@@ -60,5 +58,3 @@ mod netv6addr {
 		);
 	}
 }
-
-mod contains;
