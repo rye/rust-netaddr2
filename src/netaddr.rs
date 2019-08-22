@@ -229,8 +229,8 @@ mod tests {
 		}
 
 		mod v4 {
-			use std::net::{IpAddr, Ipv4Addr};
 			use super::NetAddr;
+			use std::net::{IpAddr, Ipv4Addr};
 
 			#[test]
 			fn correct_network() {
@@ -269,8 +269,8 @@ mod tests {
 		}
 
 		mod v6 {
-			use std::net::{IpAddr, Ipv6Addr};
 			use super::NetAddr;
+			use std::net::{IpAddr, Ipv6Addr};
 
 			#[test]
 			fn v6_cidr_8() {
