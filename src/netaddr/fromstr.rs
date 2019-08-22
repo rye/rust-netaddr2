@@ -91,7 +91,7 @@ mod tests {
 		use std::net::{IpAddr, Ipv6Addr};
 
 		#[test]
-		fn v6_cidr_8() {
+		fn cidr_8_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/8".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -104,7 +104,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_cidr_128() {
+		fn cidr_128_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/128".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -119,7 +119,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_extended() {
+		fn extended_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1 ffff::0".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -132,7 +132,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_slashed() {
+		fn extended_slashed_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/128".parse().unwrap();
 			assert_eq!(
 				net.mask(),
