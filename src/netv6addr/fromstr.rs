@@ -1,5 +1,5 @@
-use crate::netaddr_error::NetAddrError;
-use crate::netv6addr::Netv6Addr;
+use super::Netv6Addr;
+use crate::NetAddrError;
 use core::str::FromStr;
 
 use std::net::Ipv6Addr;

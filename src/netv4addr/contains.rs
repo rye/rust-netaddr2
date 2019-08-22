@@ -1,7 +1,7 @@
+use super::Netv4Addr;
 use crate::traits::Contains;
 use crate::traits::Mask;
 
-use crate::netv4addr::Netv4Addr;
 
 impl Contains for Netv4Addr {
 	fn contains<T: Copy>(&self, other: &T) -> bool

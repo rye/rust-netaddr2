@@ -1,4 +1,4 @@
-use crate::netv6addr::Netv6Addr;
+use super::Netv6Addr;
 use crate::traits::Merge;
 use core::cmp::Ordering;
 use std::net::Ipv6Addr;

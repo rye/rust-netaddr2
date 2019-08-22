@@ -1,4 +1,4 @@
-use crate::netv6addr::Netv6Addr;
+use super::Netv6Addr;
 use std::net::Ipv6Addr;
 
 impl From<Ipv6Addr> for Netv6Addr {

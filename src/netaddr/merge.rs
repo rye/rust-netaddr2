@@ -1,4 +1,4 @@
-use crate::Merge;
+use crate::traits::Merge;
 use crate::NetAddr;
 use crate::Netv4Addr;
 use crate::Netv6Addr;

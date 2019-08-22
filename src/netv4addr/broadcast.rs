@@ -1,5 +1,5 @@
 use super::Netv4Addr;
-use crate::Broadcast;
+use crate::traits::Broadcast;
 use std::net::Ipv4Addr;
 
 impl Broadcast for Netv4Addr {

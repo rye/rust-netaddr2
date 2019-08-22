@@ -1,5 +1,5 @@
 use super::NetAddr;
-use crate::Broadcast;
+use crate::traits::Broadcast;
 use std::net::IpAddr;
 
 impl Broadcast for NetAddr {
