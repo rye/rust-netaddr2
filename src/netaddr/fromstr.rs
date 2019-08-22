@@ -31,6 +31,8 @@ mod tests {
 	fn addr_only() {
 		let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
 		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
+		let net: NetAddr = "ff02::1/zoop".parse().unwrap();
+		assert_eq!(net, "ff02::1/128".parse().unwrap());
 	}
 
 	#[test]
