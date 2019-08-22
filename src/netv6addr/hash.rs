@@ -1,12 +1,11 @@
-use crate::*;
-
-mod netv6addr {
-	use super::Netv6Addr;
+#[cfg(test)]
+mod tests {
+	use crate::Netv6Addr;
+	use std::hash::Hash;
 
 	#[test]
 	fn hash_same() {
 		use std::collections::hash_map::DefaultHasher;
-		use std::hash::Hash;
 		let mut hasher = DefaultHasher::new();
 		assert_eq!(
 			"2001:db8:dead:beef::1325/64"

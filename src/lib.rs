@@ -10,6 +10,3 @@ pub use netaddr_error::*;
 
 mod traits;
 pub use traits::*;
-
-#[cfg(test)]
-mod tests;
