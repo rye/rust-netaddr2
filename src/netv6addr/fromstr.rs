@@ -69,3 +69,13 @@ impl FromStr for Netv6Addr {
 		}
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn invalid_is_safe() {
+		let _: Result<Netv6Addr, _> = "zoop".parse::<Netv6Addr>();
+	}
+}
