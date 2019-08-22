@@ -63,4 +63,3 @@ mod netv6addr {
 
 mod cmp;
 mod contains;
-mod parse;
