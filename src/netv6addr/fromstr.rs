@@ -1,7 +1,6 @@
 use super::Netv6Addr;
 use crate::NetAddrError;
 use core::str::FromStr;
-
 use std::net::Ipv6Addr;
 
 impl FromStr for Netv6Addr {

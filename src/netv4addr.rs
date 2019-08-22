@@ -1,5 +1,4 @@
 use crate::traits::Mask;
-
 use std::net::Ipv4Addr;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
