@@ -28,14 +28,6 @@ mod tests {
 	}
 
 	#[test]
-	fn addr_only() {
-		let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
-		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
-		let net: NetAddr = "ff02::1/zoop".parse().unwrap();
-		assert_eq!(net, "ff02::1/128".parse().unwrap());
-	}
-
-	#[test]
 	fn addr_no_mask_returns_full_bitstring() {
 		let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
 		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
