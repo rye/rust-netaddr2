@@ -1,5 +1,4 @@
 use super::Netv4Addr;
-use crate::traits::Mask;
 use crate::NetAddrError;
 use core::str::FromStr;
 use std::net::Ipv4Addr;
@@ -61,9 +60,9 @@ impl FromStr for Netv4Addr {
 
 				let mask: Ipv4Addr = mask.into();
 
-				Ok(Self::new(addr.mask(&mask), mask))
+				Ok(Self::new(addr, mask))
 			}
-			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr.mask(&mask), mask)),
+			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr, mask)),
 			(Ok(addr), Err(_), Err(_)) => Ok(Self::from(addr)),
 			(Err(e), _, _) => Err(e.into()),
 		}
