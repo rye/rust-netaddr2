@@ -1,7 +1,6 @@
-use crate::netaddr_error::NetAddrError;
-use crate::netv6addr::Netv6Addr;
+use super::Netv6Addr;
+use crate::NetAddrError;
 use core::str::FromStr;
-
 use std::net::Ipv6Addr;
 
 impl FromStr for Netv6Addr {
@@ -67,5 +66,32 @@ impl FromStr for Netv6Addr {
 			(Ok(addr), Err(_), Err(_)) => Ok(Self::from(addr)),
 			(Err(e), _, _) => Err(e.into()),
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn invalid_is_safe() {
+		let _: Result<Netv6Addr, _> = "zoop".parse::<Netv6Addr>();
+	}
+
+	#[test]
+	fn addr_only_returns_full_bitstring() {
+		let net: Netv6Addr = "ff02::1/zoop".parse().unwrap();
+		assert_eq!(net, "ff02::1/128".parse().unwrap());
+	}
+
+	#[test]
+	fn non_addr_passes_out_error() {
+		let result = "zoop".parse::<Netv6Addr>();
+		assert_eq!(
+			result,
+			Err(NetAddrError::ParseError(
+				"could not split provided input".to_string()
+			))
+		);
 	}
 }

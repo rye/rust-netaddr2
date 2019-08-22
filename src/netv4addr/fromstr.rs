@@ -1,5 +1,4 @@
 use super::Netv4Addr;
-use crate::traits::Mask;
 use crate::NetAddrError;
 use core::str::FromStr;
 use std::net::Ipv4Addr;
@@ -61,11 +60,38 @@ impl FromStr for Netv4Addr {
 
 				let mask: Ipv4Addr = mask.into();
 
-				Ok(Self::new(addr.mask(&mask), mask))
+				Ok(Self::new(addr, mask))
 			}
-			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr.mask(&mask), mask)),
+			(Ok(addr), Err(_), Ok(mask)) => Ok(Self::new(addr, mask)),
 			(Ok(addr), Err(_), Err(_)) => Ok(Self::from(addr)),
 			(Err(e), _, _) => Err(e.into()),
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn invalid_is_safe() {
+		let _: Result<Netv4Addr, _> = "zoop".parse::<Netv4Addr>();
+	}
+
+	#[test]
+	fn addr_only_returns_full_bitstring() {
+		let net: Netv4Addr = "127.0.0.1/zoop".parse().unwrap();
+		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
+	}
+
+	#[test]
+	fn non_addr_passes_out_error() {
+		let result = "zoop".parse::<Netv4Addr>();
+		assert_eq!(
+			result,
+			Err(NetAddrError::ParseError(
+				"could not split provided input".to_string()
+			))
+		);
 	}
 }

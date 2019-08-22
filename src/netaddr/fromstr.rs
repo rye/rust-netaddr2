@@ -28,13 +28,7 @@ mod tests {
 	}
 
 	#[test]
-	fn addr_only() {
-		let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
-		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
-	}
-
-	#[test]
-	fn addr_no_mask_returns_full_bitstring() {
+	fn addr_only_returns_full_bitstring() {
 		let net: NetAddr = "127.0.0.1/zoop".parse().unwrap();
 		assert_eq!(net, "127.0.0.1/32".parse().unwrap());
 		let net: NetAddr = "ff02::1/zoop".parse().unwrap();
@@ -57,35 +51,35 @@ mod tests {
 		use std::net::{IpAddr, Ipv4Addr};
 
 		#[test]
-		fn correct_network() {
+		fn cidr_32_correct_network_and_netmask() {
 			let net: NetAddr = "192.0.2.0/32".parse().unwrap();
 			assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255)));
 			assert_eq!(net.addr(), IpAddr::V4(Ipv4Addr::new(192, 0, 2, 0)));
 		}
 
 		#[test]
-		fn localhost_8() {
+		fn cidr_8_correct_network_and_netmask() {
 			let net: NetAddr = "127.0.0.1/8".parse().unwrap();
 			assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
 			assert_eq!(net.addr(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 		}
 
 		#[test]
-		fn cidr_22() {
+		fn cidr_22_correct_network_and_netmask() {
 			let net: NetAddr = "192.168.16.1/22".parse().unwrap();
 			assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 255, 252, 0)));
 			assert_eq!(net.addr(), IpAddr::V4(Ipv4Addr::new(192, 168, 16, 0)));
 		}
 
 		#[test]
-		fn extended_localhost() {
+		fn localhost_extended_correct_network_and_netmask() {
 			let net: NetAddr = "127.0.0.1 255.0.0.0".parse().unwrap();
 			assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
 			assert_eq!(net.addr(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
 		}
 
 		#[test]
-		fn slashed_localhost() {
+		fn localhost_slashed_extended_correct_network_and_netmask() {
 			let net: NetAddr = "127.0.0.1/255.0.0.0".parse().unwrap();
 			assert_eq!(net.mask(), IpAddr::V4(Ipv4Addr::new(255, 0, 0, 0)));
 			assert_eq!(net.addr(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0)));
@@ -97,7 +91,7 @@ mod tests {
 		use std::net::{IpAddr, Ipv6Addr};
 
 		#[test]
-		fn v6_cidr_8() {
+		fn cidr_8_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/8".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -110,7 +104,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_cidr_128() {
+		fn cidr_128_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/128".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -125,7 +119,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_extended() {
+		fn extended_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1 ffff::0".parse().unwrap();
 			assert_eq!(
 				net.mask(),
@@ -138,7 +132,7 @@ mod tests {
 		}
 
 		#[test]
-		fn v6_slashed() {
+		fn extended_slashed_correct_network_and_netmask() {
 			let net: NetAddr = "ff02::1/128".parse().unwrap();
 			assert_eq!(
 				net.mask(),

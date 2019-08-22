@@ -1,5 +1,5 @@
 use super::Netv4Addr;
-use crate::Merge;
+use crate::traits::Merge;
 use core::cmp::Ordering;
 use std::net::Ipv4Addr;
 

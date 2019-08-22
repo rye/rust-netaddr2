@@ -1,6 +1,5 @@
+use super::Mask;
 use std::net::IpAddr;
-
-use crate::traits::Mask;
 
 impl Mask for IpAddr {
 	type Output = Result<Self, &'static str>;

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-	use crate::Netv6Addr;
+	use super::super::Netv6Addr;
 	use std::hash::Hash;
 
 	#[test]

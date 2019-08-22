@@ -1,5 +1,5 @@
 use super::NetAddr;
-use crate::Contains;
+use crate::traits::Contains;
 
 impl Contains for NetAddr {
 	fn contains<T: Copy>(&self, other: &T) -> bool
