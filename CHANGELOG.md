@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Breaking**: Use the recently-stabilized `Self` type alias in the code (requires Rust 1.37)
 
+### Removed
+- The `script/clippy` script.
+
 ## [0.2.0] - 2019-08-12
 ### Added
 - A Travis CI configuration for testing.
