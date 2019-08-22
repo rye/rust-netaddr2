@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Changed
+- **Breaking**: Use the recently-stabilized `Self` type alias in the code (requires Rust 1.37)
 
 ## [0.2.0] - 2019-08-12
 ### Added
