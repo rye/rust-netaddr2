@@ -1,22 +1,5 @@
 use crate::*;
 
-#[test]
-fn hash_same() {
-	use std::collections::hash_map::DefaultHasher;
-	use std::hash::Hash;
-	let mut hasher = DefaultHasher::new();
-	assert_eq!(
-		"192.0.2.26/29"
-			.parse::<NetAddr>()
-			.unwrap()
-			.hash(&mut hasher),
-		"192.0.2.26/29"
-			.parse::<NetAddr>()
-			.unwrap()
-			.hash(&mut hasher)
-	);
-}
-
 mod netv4addr {
 	use super::Netv4Addr;
 
