@@ -12,3 +12,20 @@ impl Broadcast for Netv4Addr {
 		broadcast.into()
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn returns_correct_address() {
+		let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+		assert_eq!(net.broadcast(), Ipv4Addr::new(127, 255, 255, 255));
+
+		let net: Netv4Addr = "192.168.69.25/29".parse().unwrap();
+		assert_eq!(net.broadcast(), Ipv4Addr::new(192, 168, 69, 31));
+
+		let net: Netv4Addr = "192.168.128.127/32".parse().unwrap();
+		assert_eq!(net.broadcast(), Ipv4Addr::new(192, 168, 128, 127));
+	}
+}
