@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Added
+- A lot of tests to the source code in a structured way.
+
 ### Changed
-- **Breaking**: Use the recently-stabilized `Self` type alias in the code (requires Rust 1.37)
+- **Breaking**: Restructured the API to use lots of modules.
+- **Breaking**: Use the recently-stabilized `Self` type alias in the code. (requires Rust 1.37)
+- Began using GitHub Actions for CI instead of CircleCI.
 
 ### Removed
 - The `script/clippy` script.
