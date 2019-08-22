@@ -19,3 +19,19 @@ impl From<AddrParseError> for NetAddrError {
 		Self::ParseError(other.to_string())
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	mod display {
+		use super::*;
+
+		#[test]
+		fn right_message() {
+			let error: NetAddrError = NetAddrError::ParseError("INNER_TEXT".into());
+			let result: &str = &format!("{}", error);
+			assert_eq!(result, "unable to parse address: INNER_TEXT");
+		}
+	}
+}
