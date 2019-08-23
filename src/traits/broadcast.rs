@@ -3,5 +3,6 @@
 pub trait Broadcast {
 	type Output;
 
+	/// Compute the broadcast address.
 	fn broadcast(&self) -> Self::Output;
 }
