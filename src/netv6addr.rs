@@ -1,6 +1,11 @@
 use crate::traits::Mask;
 use std::net::Ipv6Addr;
 
+/// A structure representing an IPv6 network.
+///
+/// Internally, this structure includes two values; an Ipv6Addr
+/// representing the network address (`addr`), and another
+/// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
 pub struct Netv6Addr {
 	mask: Ipv6Addr,
