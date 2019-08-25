@@ -9,6 +9,7 @@ use std::net::IpAddr;
 /// simple data structure that can be used in a variety of situations.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NetAddr {
+	/// An IPv4 network.
 	V4(Netv4Addr),
 	V6(Netv6Addr),
 }
