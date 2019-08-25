@@ -24,6 +24,7 @@ impl NetAddr {
 		}
 	}
 
+	/// Get the "network" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn addr(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(*v4.addr()),
