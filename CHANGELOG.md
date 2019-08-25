@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.4.0] - 2019-08-25
+### Changed
+- Made the `mask` and `addr` methods `const` and `pub` under the `Netv4Addr` and `Netv6Addr` types.
+
 ## [0.3.0] - 2019-08-22
 ### Added
 - A lot of tests to the source code in a structured way.
@@ -60,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An impl for `PartialOrd` on `NetAddr` for comparing two networks first by network address and then by netmask.
 - Tests for all of these Added features.
 
+[0.4.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.4.0
 [0.3.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.3.0
 [0.2.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.2.0
 [0.1.2]: https://github.com/rye/rust-netaddr2/releases/tag/v0.1.2
