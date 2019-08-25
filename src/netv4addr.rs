@@ -8,11 +8,11 @@ pub struct Netv4Addr {
 }
 
 impl Netv4Addr {
-	pub(crate) fn mask(&self) -> &Ipv4Addr {
+	pub(crate) const fn mask(&self) -> &Ipv4Addr {
 		&self.mask
 	}
 
-	pub(crate) fn addr(&self) -> &Ipv4Addr {
+	pub(crate) const fn addr(&self) -> &Ipv4Addr {
 		&self.addr
 	}
 
