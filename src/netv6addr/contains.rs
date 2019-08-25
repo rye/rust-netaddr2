@@ -8,7 +8,7 @@ impl Contains for Netv6Addr {
 		Self: From<T>,
 	{
 		let other: Self = Self::from(*other);
-		other.addr().mask(&self.mask()) == *self.addr()
+		other.addr().mask(self.mask()) == *self.addr()
 	}
 }
 
