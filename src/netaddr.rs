@@ -16,6 +16,7 @@ pub enum NetAddr {
 }
 
 impl NetAddr {
+	/// Get the "netmask" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn mask(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(*v4.mask()),
