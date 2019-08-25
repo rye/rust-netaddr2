@@ -11,6 +11,7 @@ use std::net::IpAddr;
 pub enum NetAddr {
 	/// An IPv4 network.
 	V4(Netv4Addr),
+	/// An IPv6 network.
 	V6(Netv6Addr),
 }
 
