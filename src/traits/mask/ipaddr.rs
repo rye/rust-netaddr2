@@ -6,8 +6,8 @@ impl Mask for IpAddr {
 
 	fn mask(&self, other: &Self) -> Self::Output {
 		match (self, other) {
-			(Self::V4(a), Self::V4(b)) => Ok(Self::V4(a.mask(&b))),
-			(Self::V6(a), Self::V6(b)) => Ok(Self::V6(a.mask(&b))),
+			(Self::V4(a), Self::V4(b)) => Ok(Self::V4(a.mask(b))),
+			(Self::V6(a), Self::V6(b)) => Ok(Self::V6(a.mask(b))),
 			(_, _) => Err("mismatched address types"),
 		}
 	}
