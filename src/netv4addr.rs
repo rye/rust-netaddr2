@@ -3,7 +3,7 @@ use std::net::Ipv4Addr;
 
 /// A structure representing an IPv4 network.
 ///
-/// Internally, this structure includes two values; an Ipv4Addr
+/// Internally, this structure includes two values; an `Ipv4Addr`
 /// representing the network address (`addr`), and another
 /// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
