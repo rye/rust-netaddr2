@@ -1,3 +1,5 @@
+//! A crate for parsing, representing, and manipulating network addresses.
+
 mod netaddr;
 mod netaddr_error;
 mod netv4addr;
