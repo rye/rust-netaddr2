@@ -1,12 +1,13 @@
+//! A crate for parsing, representing, and manipulating network addresses.
+
 mod netaddr;
+mod netaddr_error;
 mod netv4addr;
 mod netv6addr;
+mod traits;
+
 pub use netaddr::*;
+pub use netaddr_error::*;
 pub use netv4addr::*;
 pub use netv6addr::*;
-
-mod netaddr_error;
-pub use netaddr_error::*;
-
-mod traits;
 pub use traits::*;

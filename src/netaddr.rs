@@ -9,11 +9,14 @@ use std::net::IpAddr;
 /// simple data structure that can be used in a variety of situations.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NetAddr {
+	/// An IPv4 network.
 	V4(Netv4Addr),
+	/// An IPv6 network.
 	V6(Netv6Addr),
 }
 
 impl NetAddr {
+	/// Get the "netmask" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn mask(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(*v4.mask()),
@@ -21,6 +24,7 @@ impl NetAddr {
 		}
 	}
 
+	/// Get the "network" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn addr(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(*v4.addr()),
