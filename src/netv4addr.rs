@@ -48,3 +48,54 @@ mod fromstr;
 mod hash;
 mod merge;
 mod partialord;
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	mod mask {
+		use super::*;
+
+		#[test]
+		fn returns_mask_field() {
+			let netaddr: Netv4Addr = Netv4Addr {
+				mask: "255.255.255.255".parse().unwrap(),
+				addr: "0.0.0.0".parse().unwrap(),
+			};
+
+			assert_eq!(
+				netaddr.mask(),
+				&"255.255.255.255".parse::<Ipv4Addr>().unwrap()
+			);
+		}
+	}
+
+	mod addr {
+		use super::*;
+
+		#[test]
+		fn returns_addr_field() {
+			let netaddr: Netv4Addr = Netv4Addr {
+				mask: "255.255.255.255".parse().unwrap(),
+				addr: "0.0.0.0".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.addr(), &"0.0.0.0".parse::<Ipv4Addr>().unwrap());
+		}
+	}
+
+	mod new {
+		use super::*;
+
+		#[test]
+		fn masks_addr() {
+			let addr: Ipv4Addr = "192.168.16.32".parse().unwrap();
+			let mask: Ipv4Addr = "255.64.128.3".parse().unwrap();
+
+			let netaddr: Netv4Addr = Netv4Addr::new(addr, mask);
+
+			assert_eq!(netaddr.mask(), &mask);
+			assert_eq!(netaddr.addr(), &"192.0.0.0".parse::<Ipv4Addr>().unwrap());
+		}
+	}
+}
