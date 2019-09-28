@@ -25,3 +25,53 @@ impl Merge for Netv6Addr {
 		}
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn mergeable_networks_correct() {
+		let a: Netv6Addr = "2001:db8:dead:beef::/64".parse().unwrap();
+		let b: Netv6Addr = "2001:db8:dead:beee::/64".parse().unwrap();
+
+		assert_eq!(
+			a.merge(&b),
+			Some("2001:db8:dead:beee::/63".parse().unwrap())
+		);
+	}
+
+	#[test]
+	fn mergeable_networks_reflexive() {
+		let a: Netv6Addr = "2001:db8:dead:beef::/64".parse().unwrap();
+		let b: Netv6Addr = "2001:db8:dead:beee::/64".parse().unwrap();
+
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+
+	#[test]
+	fn nested_networks_takes_biggest() {
+		let a: Netv6Addr = "2001:db8:dead:beee::/63".parse().unwrap();
+		let b: Netv6Addr = "2001:db8:dead:beef::/64".parse().unwrap();
+
+		assert_eq!(a.merge(&b), Some(a));
+	}
+
+	#[test]
+	fn nested_networks_reflexive() {
+		let a: Netv6Addr = "2001:db8:dead:beee::/63".parse().unwrap();
+		let b: Netv6Addr = "2001:db8:dead:beef::/64".parse().unwrap();
+
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+
+	#[test]
+	fn adjacent_but_not_mergable_none() {
+		let a: Netv6Addr = "2001:db8:dead:beee::/64".parse().unwrap();
+		let b: Netv6Addr = "2001:db8:dead:beed::/64".parse().unwrap();
+
+		assert_eq!(a.merge(&b), None);
+		assert_eq!(b.merge(&a), None);
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+}

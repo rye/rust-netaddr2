@@ -25,3 +25,50 @@ impl Merge for Netv4Addr {
 		}
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn mergeable_networks_correct() {
+		let a: Netv4Addr = "10.0.0.0/24".parse().unwrap();
+		let b: Netv4Addr = "10.0.1.0/24".parse().unwrap();
+
+		assert_eq!(a.merge(&b), Some("10.0.0.0/23".parse().unwrap()));
+	}
+
+	#[test]
+	fn mergeable_networks_reflexive() {
+		let a: Netv4Addr = "10.0.0.0/24".parse().unwrap();
+		let b: Netv4Addr = "10.0.1.0/24".parse().unwrap();
+
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+
+	#[test]
+	fn nested_networks_takes_biggest() {
+		let a: Netv4Addr = "10.0.0.0/24".parse().unwrap();
+		let b: Netv4Addr = "10.0.0.0/23".parse().unwrap();
+
+		assert_eq!(a.merge(&b), Some(b));
+	}
+
+	#[test]
+	fn nested_networks_reflexive() {
+		let a: Netv4Addr = "10.0.0.0/24".parse().unwrap();
+		let b: Netv4Addr = "10.0.0.0/23".parse().unwrap();
+
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+
+	#[test]
+	fn adjacent_but_not_mergable_none() {
+		let a: Netv4Addr = "10.0.1.0/24".parse().unwrap();
+		let b: Netv4Addr = "10.0.2.0/24".parse().unwrap();
+
+		assert_eq!(a.merge(&b), None);
+		assert_eq!(b.merge(&a), None);
+		assert_eq!(a.merge(&b), b.merge(&a));
+	}
+}
