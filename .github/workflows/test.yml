@@ -44,10 +44,13 @@ jobs:
       run: |
         cargo test
     - name: Generate and upload coverage
-      if: matrix.rust == 'stable'
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         cargo install --force cargo-tarpaulin
         cargo tarpaulin --out Xml
         bash <(curl -s https://codecov.io/bash)
+    - uses: actions/upload-artifact@master
+      with:
+        name: cobertura.xml
+        path: cobertura.xml
