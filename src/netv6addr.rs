@@ -47,3 +47,60 @@ mod fromstr;
 mod hash;
 mod merge;
 mod partialord;
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	mod mask {
+		use super::*;
+
+		#[test]
+		fn returns_mask_field() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:ffff::0".parse().unwrap(),
+				addr: "2001:db8:dead:beef::0".parse().unwrap(),
+			};
+
+			assert_eq!(
+				netaddr.mask(),
+				&"ffff:ffff:ffff:ffff::0".parse::<Ipv6Addr>().unwrap()
+			);
+		}
+	}
+
+	mod addr {
+		use super::*;
+
+		#[test]
+		fn returns_addr_field() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:ffff::0".parse().unwrap(),
+				addr: "2001:db8:dead:beef::0".parse().unwrap(),
+			};
+
+			assert_eq!(
+				netaddr.addr(),
+				&"2001:db8:dead:beef::0".parse::<Ipv6Addr>().unwrap()
+			);
+		}
+	}
+
+	mod new {
+		use super::*;
+
+		#[test]
+		fn masks_addr() {
+			let addr: Ipv6Addr = "2001:db8:dead:beef::0".parse().unwrap();
+			let mask: Ipv6Addr = "ffff:ffff:ffff:ff00::0".parse().unwrap();
+
+			let netaddr: Netv6Addr = Netv6Addr::new(addr, mask);
+
+			assert_eq!(netaddr.mask(), &mask);
+			assert_eq!(
+				netaddr.addr(),
+				&"2001:db8:dead:be00::0".parse::<Ipv6Addr>().unwrap()
+			);
+		}
+	}
+}
