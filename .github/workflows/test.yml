@@ -50,3 +50,7 @@ jobs:
         cargo install --force cargo-tarpaulin
         cargo tarpaulin --out Xml
         bash <(curl -s https://codecov.io/bash)
+    - uses: actions/upload-artifact@master
+      with:
+        name: cobertura.xml
+        path: cobertura.xml
