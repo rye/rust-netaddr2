@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Added
+- Tests for the `Merge` trait.
+- Tests for the methods on the `Netv4Addr` and `Netv6Addr` structs.
+- Documentation for some items.
 
 ## [0.4.0] - 2019-08-25
 ### Changed
