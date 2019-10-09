@@ -42,6 +42,7 @@ impl Netv6Addr {
 }
 
 mod contains;
+mod display;
 mod from;
 mod fromstr;
 mod hash;

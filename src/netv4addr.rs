@@ -43,6 +43,7 @@ impl Netv4Addr {
 
 mod broadcast;
 mod contains;
+mod display;
 mod from;
 mod fromstr;
 mod hash;
