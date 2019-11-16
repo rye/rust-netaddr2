@@ -41,3 +41,8 @@ mod fromstr;
 mod hash;
 mod merge;
 mod partialord;
+
+#[cfg(feature = "serde")]
+mod de;
+#[cfg(feature = "serde")]
+mod ser;
