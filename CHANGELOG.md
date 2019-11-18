@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.6.1] - 2019-11-18
+### Added
+- Added the `serde` feature to the `docs.rs` metadata key
+
 ## [0.6.0] - 2019-11-18
 ### Added
 - Implementations for `serde::Serialize` and `serde::Deserialize` on core types, gated behind the `serde` feature
