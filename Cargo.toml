@@ -14,6 +14,10 @@ homepage = "https://rye.github.io/rust-netaddr2"
 categories = ["data-structures", "network-programming"]
 keywords = ["netaddr", "network", "address", "cidr"]
 
+[package.metadata.docs.rs]
+features = ["serde"]
+all-features = true
+
 [features]
 default = []
 
