@@ -52,8 +52,10 @@ jobs:
     - name: Cache target dir
       uses: actions/cache@v1
       with:
-        path: ~/.cargo/target
-        key: ${{ runner.os }}-cargo-target
+        path: target
+        key: ${{ runner.os }}-cargo-target-${{ hashFiles('target/*') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-target-
     - name: Generate and upload coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
