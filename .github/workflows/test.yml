@@ -40,9 +40,6 @@ jobs:
         rustup toolchain install ${{ matrix.rust }}
         rustup default ${{ matrix.rust }}
     - uses: actions/checkout@v1
-    - name: Run tests
-      run: |
-        cargo test --all-features
     - name: Cache cargo registry
       uses: actions/cache@v1
       with:
