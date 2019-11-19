@@ -56,6 +56,7 @@ jobs:
         key: ${{ runner.os }}-cargo-target-${{ hashFiles('target') }}
         restore-keys: |
           ${{ runner.os }}-cargo-target-
+      continue-on-error: true
     - name: Generate and upload coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
