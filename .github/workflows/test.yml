@@ -48,7 +48,7 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         cargo install --force cargo-tarpaulin
-        cargo tarpaulin --out Xml
+        cargo tarpaulin --all-features --out Xml
         bash <(curl -s https://codecov.io/bash)
     - uses: actions/upload-artifact@master
       with:
