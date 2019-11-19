@@ -48,11 +48,16 @@ jobs:
       with:
         path: ~/.cargo/registry
         key: ${{ runner.os }}-cargo-registry
+    - name: Cache cargo target dir
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/target
+        key: ${{ runner.os }}-cargo-target
     - name: Generate and upload coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
-        cargo install --force cargo-tarpaulin
+        env CARGO_TARGET_DIR=~/.cargo/target cargo install --force cargo-tarpaulin
         cargo tarpaulin --all-features --out Xml
         bash <(curl -s https://codecov.io/bash)
     - uses: actions/upload-artifact@master
