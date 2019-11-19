@@ -53,7 +53,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: target
-        key: ${{ runner.os }}-cargo-target
+        key: ${{ runner.os }}-cargo-target-${{ hashFiles('target/**/*') }}
     - name: Generate and upload coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
