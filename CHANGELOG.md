@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+
+## [0.7.0] - 2019-12-24
 ### Added
 - A new `Result<T, Error>` type, which is a sugar around the nascent `Error` type.
 
