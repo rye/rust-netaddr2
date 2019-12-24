@@ -6,3 +6,6 @@ pub enum Error {
 
 mod display;
 mod from;
+mod result;
+
+pub use result::*;
