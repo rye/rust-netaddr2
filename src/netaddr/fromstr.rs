@@ -1,4 +1,4 @@
-use super::{Error, Result, NetAddr};
+use super::{Error, NetAddr, Result};
 use crate::Netv4Addr;
 use crate::Netv6Addr;
 use core::str::FromStr;

@@ -1,6 +1,6 @@
-use crate::{Error, Result};
 use crate::Netv4Addr;
 use crate::Netv6Addr;
+use crate::{Error, Result};
 use std::net::IpAddr;
 
 /// A structure representing an IP network.
