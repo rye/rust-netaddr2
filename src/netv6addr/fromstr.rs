@@ -1,5 +1,5 @@
 use super::Netv6Addr;
-use crate::Error;
+use crate::{Error, Result};
 use core::str::FromStr;
 use std::net::Ipv6Addr;
 
@@ -38,7 +38,7 @@ impl FromStr for Netv6Addr {
 	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
 	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
 	/// ```
-	fn from_str(string: &str) -> Result<Self, Self::Err> {
+	fn from_str(string: &str) -> Result<Self> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs: &str = split[0];
@@ -75,7 +75,7 @@ mod tests {
 
 	#[test]
 	fn invalid_is_safe() {
-		let _: Result<Netv6Addr, _> = "zoop".parse::<Netv6Addr>();
+		let _: Result<Netv6Addr> = "zoop".parse::<Netv6Addr>();
 	}
 
 	#[test]

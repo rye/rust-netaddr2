@@ -1,4 +1,4 @@
-use super::{Error, NetAddr};
+use super::{Error, Result, NetAddr};
 use crate::Netv4Addr;
 use crate::Netv6Addr;
 use core::str::FromStr;
@@ -6,9 +6,9 @@ use core::str::FromStr;
 impl FromStr for NetAddr {
 	type Err = Error;
 
-	fn from_str(string: &str) -> Result<Self, Error> {
-		let as_v4: Result<Netv4Addr, Error> = string.parse::<Netv4Addr>();
-		let as_v6: Result<Netv6Addr, Error> = string.parse::<Netv6Addr>();
+	fn from_str(string: &str) -> Result<Self> {
+		let as_v4: Result<Netv4Addr> = string.parse::<Netv4Addr>();
+		let as_v6: Result<Netv6Addr> = string.parse::<Netv6Addr>();
 
 		match (as_v4, as_v6) {
 			(Ok(v4), _) => Ok(Self::V4(v4)),
@@ -24,7 +24,7 @@ mod tests {
 
 	#[test]
 	fn invalid_is_safe() {
-		let _: Result<NetAddr, _> = "zoop".parse::<NetAddr>();
+		let _: Result<NetAddr> = "zoop".parse::<NetAddr>();
 	}
 
 	#[test]

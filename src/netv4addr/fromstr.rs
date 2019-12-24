@@ -1,5 +1,5 @@
 use super::Netv4Addr;
-use crate::Error;
+use crate::{Error, Result};
 use core::str::FromStr;
 use std::net::Ipv4Addr;
 
@@ -38,7 +38,7 @@ impl FromStr for Netv4Addr {
 	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
 	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
 	/// ```
-	fn from_str(string: &str) -> Result<Self, Error> {
+	fn from_str(string: &str) -> Result<Self> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs: &str = split[0];
@@ -75,7 +75,7 @@ mod tests {
 
 	#[test]
 	fn invalid_is_safe() {
-		let _: Result<Netv4Addr, _> = "zoop".parse::<Netv4Addr>();
+		let _: Result<Netv4Addr> = "zoop".parse::<Netv4Addr>();
 	}
 
 	#[test]
