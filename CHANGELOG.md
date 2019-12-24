@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Added
+- A new `Result<T, Error>` type, which is a sugar around the nascent `Error` type.
+
+### Changed
+- Renamed the `NetAddrError` type to just `Error`.
 
 ## [0.6.1] - 2019-11-18
 ### Added
