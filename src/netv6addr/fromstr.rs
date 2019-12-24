@@ -1,10 +1,10 @@
 use super::Netv6Addr;
-use crate::NetAddrError;
+use crate::Error;
 use core::str::FromStr;
 use std::net::Ipv6Addr;
 
 impl FromStr for Netv6Addr {
-	type Err = NetAddrError;
+	type Err = Error;
 
 	/// Parse a `Netv6Addr` from a string
 	///
@@ -38,13 +38,13 @@ impl FromStr for Netv6Addr {
 	/// let mask: std::net::Ipv6Addr = "ffff:ffff::0".parse().unwrap();
 	/// assert_eq!(parsed, Netv6Addr::new(addr, mask))
 	/// ```
-	fn from_str(string: &str) -> Result<Self, NetAddrError> {
+	fn from_str(string: &str) -> Result<Self, Self::Err> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs: &str = split[0];
 		let rhs: &str = split
 			.get(1)
-			.ok_or_else(|| NetAddrError::ParseError("could not split provided input".to_string()))?;
+			.ok_or_else(|| Error::ParseError("could not split provided input".to_string()))?;
 
 		let address = lhs.parse::<Ipv6Addr>();
 		let cidr = rhs.parse::<u32>();
@@ -89,7 +89,7 @@ mod tests {
 		let result = "zoop".parse::<Netv6Addr>();
 		assert_eq!(
 			result,
-			Err(NetAddrError::ParseError(
+			Err(Error::ParseError(
 				"could not split provided input".to_string()
 			))
 		);

@@ -1,4 +1,4 @@
-use crate::NetAddrError;
+use crate::Error;
 use crate::Netv4Addr;
 use crate::Netv6Addr;
 use std::net::IpAddr;

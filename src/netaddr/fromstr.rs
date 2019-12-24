@@ -1,14 +1,14 @@
-use super::{NetAddr, NetAddrError};
+use super::{Error, NetAddr};
 use crate::Netv4Addr;
 use crate::Netv6Addr;
 use core::str::FromStr;
 
 impl FromStr for NetAddr {
-	type Err = NetAddrError;
+	type Err = Error;
 
-	fn from_str(string: &str) -> Result<Self, NetAddrError> {
-		let as_v4: Result<Netv4Addr, NetAddrError> = string.parse::<Netv4Addr>();
-		let as_v6: Result<Netv6Addr, NetAddrError> = string.parse::<Netv6Addr>();
+	fn from_str(string: &str) -> Result<Self, Error> {
+		let as_v4: Result<Netv4Addr, Error> = string.parse::<Netv4Addr>();
+		let as_v6: Result<Netv6Addr, Error> = string.parse::<Netv6Addr>();
 
 		match (as_v4, as_v6) {
 			(Ok(v4), _) => Ok(Self::V4(v4)),
@@ -40,7 +40,7 @@ mod tests {
 		let result = "zoop".parse::<NetAddr>();
 		assert_eq!(
 			result,
-			Err(NetAddrError::ParseError(
+			Err(Error::ParseError(
 				"could not split provided input".to_string()
 			))
 		);

@@ -1,10 +1,10 @@
 use super::Netv4Addr;
-use crate::NetAddrError;
+use crate::Error;
 use core::str::FromStr;
 use std::net::Ipv4Addr;
 
 impl FromStr for Netv4Addr {
-	type Err = NetAddrError;
+	type Err = Error;
 
 	/// Parse a `Netv4Addr` from a string
 	///
@@ -38,13 +38,13 @@ impl FromStr for Netv4Addr {
 	/// let mask: std::net::Ipv4Addr = "255.255.255.248".parse().unwrap();
 	/// assert_eq!(parsed, Netv4Addr::new(addr, mask));
 	/// ```
-	fn from_str(string: &str) -> Result<Self, NetAddrError> {
+	fn from_str(string: &str) -> Result<Self, Error> {
 		let split: Vec<&str> = string.split(|c| c == '/' || c == ' ').collect();
 
 		let lhs: &str = split[0];
 		let rhs: &str = split
 			.get(1)
-			.ok_or_else(|| NetAddrError::ParseError("could not split provided input".to_string()))?;
+			.ok_or_else(|| Error::ParseError("could not split provided input".to_string()))?;
 
 		let address = lhs.parse::<Ipv4Addr>();
 		let cidr = rhs.parse::<u32>();
@@ -89,7 +89,7 @@ mod tests {
 		let result = "zoop".parse::<Netv4Addr>();
 		assert_eq!(
 			result,
-			Err(NetAddrError::ParseError(
+			Err(Error::ParseError(
 				"could not split provided input".to_string()
 			))
 		);
