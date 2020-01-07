@@ -34,6 +34,11 @@ impl Netv4Addr {
 	/// let network = Ipv4Addr::new(127, 0, 1, 1);
 	/// let netmask = Ipv4Addr::new(255, 0, 0, 0);
 	/// let netaddr = Netv4Addr::new(network, netmask);
+	///
+	/// // We do need to have the `Contains` trait in scope to use it...
+	/// use netaddr2::Contains;
+	/// let test: Ipv4Addr = Ipv4Addr::new(127, 47, 23, 37);
+	/// assert!(netaddr.contains(&test));
 	/// ```
 	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
 		let addr = addr.mask(&mask);
