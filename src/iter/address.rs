@@ -6,7 +6,7 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 pub struct NetAddrAddressIterator {
 	net: NetAddr,
-	cur: IpAddr,
+	cur: Option<IpAddr>,
 }
 
 pub struct Netv4AddrAddressIterator {
