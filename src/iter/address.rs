@@ -67,12 +67,7 @@ mod tests {
 			let net: NetAddr = "127.0.16.0/32".parse().unwrap();
 
 			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
-
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.0".parse::<IpAddr>().unwrap())
-			);
-
+			assert_eq!(iterator.next(), "127.0.16.0".parse::<IpAddr>().ok());
 			assert_eq!(iterator.next(), None);
 		}
 
@@ -81,40 +76,14 @@ mod tests {
 			let net: NetAddr = "127.0.16.0/29".parse().unwrap();
 
 			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
-
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.0".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.1".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.2".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.3".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.4".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.5".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.6".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("127.0.16.7".parse::<IpAddr>().unwrap())
-			);
-
+			assert_eq!(iterator.next(), "127.0.16.0".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.1".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.2".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.3".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.4".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.5".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.6".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "127.0.16.7".parse::<IpAddr>().ok());
 			assert_eq!(iterator.next(), None);
 		}
 
@@ -123,16 +92,8 @@ mod tests {
 			let net: NetAddr = "255.255.255.255/31".parse().unwrap();
 
 			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
-
-			assert_eq!(
-				iterator.next(),
-				Some("255.255.255.254".parse::<IpAddr>().unwrap())
-			);
-			assert_eq!(
-				iterator.next(),
-				Some("255.255.255.255".parse::<IpAddr>().unwrap())
-			);
-
+			assert_eq!(iterator.next(), "255.255.255.254".parse::<IpAddr>().ok());
+			assert_eq!(iterator.next(), "255.255.255.255".parse::<IpAddr>().ok());
 			assert_eq!(iterator.next(), None);
 		}
 	}
