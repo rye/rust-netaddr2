@@ -7,7 +7,7 @@ pub struct AddressIterator<Network, Address> {
 
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
-	Address: Copy + super::offset::MaybeNext<u32>,
+	Address: Copy + super::offset::MaybeOffset<u32>,
 	Network: Copy + Contains,
 	Network: From<Address>,
 {
