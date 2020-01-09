@@ -2,17 +2,17 @@ use core::convert::TryInto;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-pub trait MaybeNext<T>: Sized {
+pub trait MaybeOffset<T>: Sized {
 	fn maybe_next(&self, offset: T) -> Option<Self>;
 }
 
-impl MaybeNext<u128> for Ipv6Addr {
+impl MaybeOffset<u128> for Ipv6Addr {
 	fn maybe_next(&self, offset: u128) -> Option<Self> {
 		u128::from(*self).checked_add(offset).map(Ipv6Addr::from)
 	}
 }
 
-impl MaybeNext<i32> for Ipv6Addr {
+impl MaybeOffset<i32> for Ipv6Addr {
 	fn maybe_next(&self, offset: i32) -> Option<Self> {
 		use core::i32::{MAX, MIN};
 
@@ -31,7 +31,7 @@ impl MaybeNext<i32> for Ipv6Addr {
 	}
 }
 
-impl MaybeNext<u32> for Ipv6Addr {
+impl MaybeOffset<u32> for Ipv6Addr {
 	fn maybe_next(&self, offset: u32) -> Option<Self> {
 		u128::from(*self)
 			.checked_add(offset.into())
@@ -39,13 +39,13 @@ impl MaybeNext<u32> for Ipv6Addr {
 	}
 }
 
-impl MaybeNext<u32> for Ipv4Addr {
+impl MaybeOffset<u32> for Ipv4Addr {
 	fn maybe_next(&self, offset: u32) -> Option<Self> {
 		u32::from(*self).checked_add(offset).map(Ipv4Addr::from)
 	}
 }
 
-impl MaybeNext<i32> for Ipv4Addr {
+impl MaybeOffset<i32> for Ipv4Addr {
 	fn maybe_next(&self, offset: i32) -> Option<Self> {
 		let addr: i64 = u32::from(*self).into();
 		let maybe_next: Option<u32> = addr
@@ -57,7 +57,7 @@ impl MaybeNext<i32> for Ipv4Addr {
 	}
 }
 
-impl MaybeNext<u128> for Ipv4Addr {
+impl MaybeOffset<u128> for Ipv4Addr {
 	fn maybe_next(&self, offset: u128) -> Option<Self> {
 		let offset: Option<u32> = offset.try_into().ok();
 		offset
@@ -67,7 +67,7 @@ impl MaybeNext<u128> for Ipv4Addr {
 	}
 }
 
-impl MaybeNext<i32> for IpAddr {
+impl MaybeOffset<i32> for IpAddr {
 	fn maybe_next(&self, offset: i32) -> Option<Self> {
 		match self {
 			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
@@ -76,7 +76,7 @@ impl MaybeNext<i32> for IpAddr {
 	}
 }
 
-impl MaybeNext<u32> for IpAddr {
+impl MaybeOffset<u32> for IpAddr {
 	fn maybe_next(&self, offset: u32) -> Option<Self> {
 		match self {
 			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
@@ -85,7 +85,7 @@ impl MaybeNext<u32> for IpAddr {
 	}
 }
 
-impl MaybeNext<u128> for IpAddr {
+impl MaybeOffset<u128> for IpAddr {
 	fn maybe_next(&self, offset: u128) -> Option<Self> {
 		match self {
 			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
