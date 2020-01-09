@@ -6,21 +6,21 @@ use crate::Contains;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-pub struct NetAddrAddressIterator {
-	net: NetAddr,
-	cur: Option<IpAddr>,
+pub struct AddressIterator<Network, Address> {
+	net: Network,
+	cur: Option<Address>,
 }
 
-impl Iterator for NetAddrAddressIterator {
+impl Iterator for AddressIterator<NetAddr, IpAddr> {
 	type Item = IpAddr;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		let cur: Option<IpAddr> = self.cur;
-		let next: Option<IpAddr> = match cur {
-			Some(IpAddr::V4(ipv4)) => u32::from(ipv4)
+		let cur: Option<Self::Item> = self.cur;
+		let next: Option<Self::Item> = match cur {
+			Some(IpAddr::V4(v4)) => u32::from(v4)
 				.checked_add(1)
 				.map(|next: u32| IpAddr::V4(Ipv4Addr::from(next))),
-			Some(IpAddr::V6(ipv6)) => u128::from(ipv6)
+			Some(IpAddr::V6(v6)) => u128::from(v6)
 				.checked_add(1)
 				.map(|next: u128| IpAddr::V6(Ipv6Addr::from(next))),
 			None => None,
@@ -44,27 +44,17 @@ impl Iterator for NetAddrAddressIterator {
 	}
 }
 
-pub struct Netv4AddrAddressIterator {
-	net: Netv4Addr,
-	cur: Ipv4Addr,
-}
-
-pub struct Netv6AddrAddressIterator {
-	net: Netv6Addr,
-	cur: Ipv6Addr,
-}
-
 #[cfg(test)]
 mod tests {
-	use super::NetAddrAddressIterator;
+	use super::AddressIterator;
 	use crate::NetAddr;
 	use std::net::IpAddr;
 
 	impl crate::NetAddr {
-		pub fn iter(&self) -> NetAddrAddressIterator {
-			NetAddrAddressIterator {
+		pub fn iter(&self) -> AddressIterator<NetAddr, IpAddr> {
+			AddressIterator {
 				net: *self,
-				cur: Some(self.addr())
+				cur: Some(self.addr()),
 			}
 		}
 	}
@@ -76,7 +66,7 @@ mod tests {
 		fn loopback_slash_32_produces_one_off() {
 			let net: NetAddr = "127.0.16.0/32".parse().unwrap();
 
-			let mut iterator: NetAddrAddressIterator = net.iter();
+			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
 
 			assert_eq!(
 				iterator.next(),
@@ -90,7 +80,7 @@ mod tests {
 		fn loopback_slash_29_produces_all_ips_in_network() {
 			let net: NetAddr = "127.0.16.0/29".parse().unwrap();
 
-			let mut iterator: NetAddrAddressIterator = net.iter();
+			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
 
 			assert_eq!(
 				iterator.next(),
@@ -132,14 +122,15 @@ mod tests {
 		fn loopback_max_value_properly_stops() {
 			let net: NetAddr = "255.255.255.255/31".parse().unwrap();
 
-			let mut iterator: NetAddrAddressIterator = net.iter();
+			let mut iterator: AddressIterator<NetAddr, IpAddr> = net.iter();
 
 			assert_eq!(
 				iterator.next(),
 				Some("255.255.255.254".parse::<IpAddr>().unwrap())
 			);
 			assert_eq!(
-				iterator.next(), Some("255.255.255.255".parse::<IpAddr>().unwrap())
+				iterator.next(),
+				Some("255.255.255.255".parse::<IpAddr>().unwrap())
 			);
 
 			assert_eq!(iterator.next(), None);
