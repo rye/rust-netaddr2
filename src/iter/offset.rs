@@ -2,18 +2,18 @@ use core::convert::TryInto;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-pub trait MaybeOffset<T>: Sized {
-	fn maybe_next(&self, offset: T) -> Option<Self>;
+pub trait Offset<T>: Sized {
+	fn offset(&self, offset: T) -> Option<Self>;
 }
 
-impl MaybeOffset<u128> for Ipv6Addr {
-	fn maybe_next(&self, offset: u128) -> Option<Self> {
+impl Offset<u128> for Ipv6Addr {
+	fn offset(&self, offset: u128) -> Option<Self> {
 		u128::from(*self).checked_add(offset).map(Ipv6Addr::from)
 	}
 }
 
-impl MaybeOffset<i32> for Ipv6Addr {
-	fn maybe_next(&self, offset: i32) -> Option<Self> {
+impl Offset<i32> for Ipv6Addr {
+	fn offset(&self, offset: i32) -> Option<Self> {
 		use core::i32::{MAX, MIN};
 
 		// Without using weird BigInt types, we need to use absolute
@@ -31,34 +31,34 @@ impl MaybeOffset<i32> for Ipv6Addr {
 	}
 }
 
-impl MaybeOffset<u32> for Ipv6Addr {
-	fn maybe_next(&self, offset: u32) -> Option<Self> {
+impl Offset<u32> for Ipv6Addr {
+	fn offset(&self, offset: u32) -> Option<Self> {
 		u128::from(*self)
 			.checked_add(offset.into())
 			.map(Ipv6Addr::from)
 	}
 }
 
-impl MaybeOffset<u32> for Ipv4Addr {
-	fn maybe_next(&self, offset: u32) -> Option<Self> {
+impl Offset<u32> for Ipv4Addr {
+	fn offset(&self, offset: u32) -> Option<Self> {
 		u32::from(*self).checked_add(offset).map(Ipv4Addr::from)
 	}
 }
 
-impl MaybeOffset<i32> for Ipv4Addr {
-	fn maybe_next(&self, offset: i32) -> Option<Self> {
+impl Offset<i32> for Ipv4Addr {
+	fn offset(&self, offset: i32) -> Option<Self> {
 		let addr: i64 = u32::from(*self).into();
-		let maybe_next: Option<u32> = addr
+		let offset: Option<u32> = addr
 			.checked_add(i64::from(offset))
 			.map(TryInto::try_into)
 			.map(Result::ok)
 			.flatten();
-		maybe_next.map(Ipv4Addr::from)
+		offset.map(Ipv4Addr::from)
 	}
 }
 
-impl MaybeOffset<u128> for Ipv4Addr {
-	fn maybe_next(&self, offset: u128) -> Option<Self> {
+impl Offset<u128> for Ipv4Addr {
+	fn offset(&self, offset: u128) -> Option<Self> {
 		let offset: Option<u32> = offset.try_into().ok();
 		offset
 			.map(|offset: u32| u32::from(*self).checked_add(offset))
@@ -67,29 +67,29 @@ impl MaybeOffset<u128> for Ipv4Addr {
 	}
 }
 
-impl MaybeOffset<i32> for IpAddr {
-	fn maybe_next(&self, offset: i32) -> Option<Self> {
+impl Offset<i32> for IpAddr {
+	fn offset(&self, offset: i32) -> Option<Self> {
 		match self {
-			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
-			IpAddr::V6(v6) => v6.maybe_next(offset).map(IpAddr::V6),
+			IpAddr::V4(v4) => v4.offset(offset).map(IpAddr::V4),
+			IpAddr::V6(v6) => v6.offset(offset).map(IpAddr::V6),
 		}
 	}
 }
 
-impl MaybeOffset<u32> for IpAddr {
-	fn maybe_next(&self, offset: u32) -> Option<Self> {
+impl Offset<u32> for IpAddr {
+	fn offset(&self, offset: u32) -> Option<Self> {
 		match self {
-			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
-			IpAddr::V6(v6) => v6.maybe_next(offset).map(IpAddr::V6),
+			IpAddr::V4(v4) => v4.offset(offset).map(IpAddr::V4),
+			IpAddr::V6(v6) => v6.offset(offset).map(IpAddr::V6),
 		}
 	}
 }
 
-impl MaybeOffset<u128> for IpAddr {
-	fn maybe_next(&self, offset: u128) -> Option<Self> {
+impl Offset<u128> for IpAddr {
+	fn offset(&self, offset: u128) -> Option<Self> {
 		match self {
-			IpAddr::V4(v4) => v4.maybe_next(offset).map(IpAddr::V4),
-			IpAddr::V6(v6) => v6.maybe_next(offset).map(IpAddr::V6),
+			IpAddr::V4(v4) => v4.offset(offset).map(IpAddr::V4),
+			IpAddr::V6(v6) => v6.offset(offset).map(IpAddr::V6),
 		}
 	}
 }
@@ -98,12 +98,12 @@ impl MaybeOffset<u128> for IpAddr {
 mod tests {
 	use super::*;
 
-	macro_rules! test_maybe_next {
+	macro_rules! test_offset {
 		($test_fn_name:ident, $addr_type:ty, $addr:literal, $amount:literal, $expected:literal) => {
 			#[test]
 			fn $test_fn_name() {
 				assert_eq!(
-					$addr.parse::<$addr_type>().unwrap().maybe_next($amount),
+					$addr.parse::<$addr_type>().unwrap().offset($amount),
 					$expected.parse::<$addr_type>().ok()
 				)
 			}
@@ -112,7 +112,7 @@ mod tests {
 			#[test]
 			fn $test_fn_name() {
 				assert_eq!(
-					$addr.parse::<$addr_type>().unwrap().maybe_next($amount),
+					$addr.parse::<$addr_type>().unwrap().offset($amount),
 					None
 				)
 			}
@@ -121,41 +121,41 @@ mod tests {
 
 	// Basic sanity checks here that the behavior works as expected
 
-	test_maybe_next!(v4_0u32, Ipv4Addr, "127.0.0.0", 0_u32, "127.0.0.0");
-	test_maybe_next!(v4_1u32, Ipv4Addr, "127.0.0.0", 1_u32, "127.0.0.1");
-	test_maybe_next!(v4_2u32, Ipv4Addr, "127.0.0.0", 2_u32, "127.0.0.2");
+	test_offset!(v4_0u32, Ipv4Addr, "127.0.0.0", 0_u32, "127.0.0.0");
+	test_offset!(v4_1u32, Ipv4Addr, "127.0.0.0", 1_u32, "127.0.0.1");
+	test_offset!(v4_2u32, Ipv4Addr, "127.0.0.0", 2_u32, "127.0.0.2");
 
-	test_maybe_next!(v6_0u32, Ipv6Addr, "2001:db8::", 0_u32, "2001:db8::0");
-	test_maybe_next!(v6_1u32, Ipv6Addr, "2001:db8::", 1_u32, "2001:db8::1");
-	test_maybe_next!(v6_2u32, Ipv6Addr, "2001:db8::", 2_u32, "2001:db8::2");
+	test_offset!(v6_0u32, Ipv6Addr, "2001:db8::", 0_u32, "2001:db8::0");
+	test_offset!(v6_1u32, Ipv6Addr, "2001:db8::", 1_u32, "2001:db8::1");
+	test_offset!(v6_2u32, Ipv6Addr, "2001:db8::", 2_u32, "2001:db8::2");
 
-	test_maybe_next!(a_v4_0u32, IpAddr, "127.0.0.0", 0_u32, "127.0.0.0");
-	test_maybe_next!(a_v4_1u32, IpAddr, "127.0.0.0", 1_u32, "127.0.0.1");
-	test_maybe_next!(a_v4_2u32, IpAddr, "127.0.0.0", 2_u32, "127.0.0.2");
+	test_offset!(a_v4_0u32, IpAddr, "127.0.0.0", 0_u32, "127.0.0.0");
+	test_offset!(a_v4_1u32, IpAddr, "127.0.0.0", 1_u32, "127.0.0.1");
+	test_offset!(a_v4_2u32, IpAddr, "127.0.0.0", 2_u32, "127.0.0.2");
 
-	test_maybe_next!(a_v6_0u32, IpAddr, "2001:db8::", 0_u32, "2001:db8::0");
-	test_maybe_next!(a_v6_1u32, IpAddr, "2001:db8::", 1_u32, "2001:db8::1");
-	test_maybe_next!(a_v6_2u32, IpAddr, "2001:db8::", 2_u32, "2001:db8::2");
+	test_offset!(a_v6_0u32, IpAddr, "2001:db8::", 0_u32, "2001:db8::0");
+	test_offset!(a_v6_1u32, IpAddr, "2001:db8::", 1_u32, "2001:db8::1");
+	test_offset!(a_v6_2u32, IpAddr, "2001:db8::", 2_u32, "2001:db8::2");
 
-	test_maybe_next!(v4_0i32, Ipv4Addr, "127.0.0.0", 0_i32, "127.0.0.0");
-	test_maybe_next!(v4_1i32, Ipv4Addr, "127.0.0.0", 1_i32, "127.0.0.1");
-	test_maybe_next!(v4_2i32, Ipv4Addr, "127.0.0.0", 2_i32, "127.0.0.2");
+	test_offset!(v4_0i32, Ipv4Addr, "127.0.0.0", 0_i32, "127.0.0.0");
+	test_offset!(v4_1i32, Ipv4Addr, "127.0.0.0", 1_i32, "127.0.0.1");
+	test_offset!(v4_2i32, Ipv4Addr, "127.0.0.0", 2_i32, "127.0.0.2");
 
-	test_maybe_next!(v6_0i32, Ipv6Addr, "2001:db8::", 0_i32, "2001:db8::0");
-	test_maybe_next!(v6_1i32, Ipv6Addr, "2001:db8::", 1_i32, "2001:db8::1");
-	test_maybe_next!(v6_2i32, Ipv6Addr, "2001:db8::", 2_i32, "2001:db8::2");
+	test_offset!(v6_0i32, Ipv6Addr, "2001:db8::", 0_i32, "2001:db8::0");
+	test_offset!(v6_1i32, Ipv6Addr, "2001:db8::", 1_i32, "2001:db8::1");
+	test_offset!(v6_2i32, Ipv6Addr, "2001:db8::", 2_i32, "2001:db8::2");
 
-	test_maybe_next!(a_v4_0i32, IpAddr, "127.0.0.0", 0_i32, "127.0.0.0");
-	test_maybe_next!(a_v4_1i32, IpAddr, "127.0.0.0", 1_i32, "127.0.0.1");
-	test_maybe_next!(a_v4_2i32, IpAddr, "127.0.0.0", 2_i32, "127.0.0.2");
+	test_offset!(a_v4_0i32, IpAddr, "127.0.0.0", 0_i32, "127.0.0.0");
+	test_offset!(a_v4_1i32, IpAddr, "127.0.0.0", 1_i32, "127.0.0.1");
+	test_offset!(a_v4_2i32, IpAddr, "127.0.0.0", 2_i32, "127.0.0.2");
 
-	test_maybe_next!(a_v6_0i32, IpAddr, "2001:db8::", 0_i32, "2001:db8::0");
-	test_maybe_next!(a_v6_1i32, IpAddr, "2001:db8::", 1_i32, "2001:db8::1");
-	test_maybe_next!(a_v6_2i32, IpAddr, "2001:db8::", 2_i32, "2001:db8::2");
+	test_offset!(a_v6_0i32, IpAddr, "2001:db8::", 0_i32, "2001:db8::0");
+	test_offset!(a_v6_1i32, IpAddr, "2001:db8::", 1_i32, "2001:db8::1");
+	test_offset!(a_v6_2i32, IpAddr, "2001:db8::", 2_i32, "2001:db8::2");
 
 	// Some more odd cases
 
-	test_maybe_next!(
+	test_offset!(
 		v4_sub_1i32,
 		Ipv4Addr,
 		"127.0.0.0",
@@ -163,10 +163,10 @@ mod tests {
 		"126.255.255.255"
 	);
 
-	test_maybe_next!(v4_min_minus_1i32, Ipv4Addr, "0.0.0.0", -1_i32, None);
-	test_maybe_next!(v4_max_plus_1i32, Ipv4Addr, "255.255.255.255", 1_i32, None);
+	test_offset!(v4_min_minus_1i32, Ipv4Addr, "0.0.0.0", -1_i32, None);
+	test_offset!(v4_max_plus_1i32, Ipv4Addr, "255.255.255.255", 1_i32, None);
 
-	test_maybe_next!(
+	test_offset!(
 		v6_sub_1i32,
 		Ipv6Addr,
 		"2001:db8::",
@@ -174,8 +174,8 @@ mod tests {
 		"2001:db7:ffff:ffff:ffff:ffff:ffff:ffff"
 	);
 
-	test_maybe_next!(v6_min_minus_1i32, Ipv6Addr, "::", -1_i32, None);
-	test_maybe_next!(
+	test_offset!(v6_min_minus_1i32, Ipv6Addr, "::", -1_i32, None);
+	test_offset!(
 		v6_max_plus_1i32,
 		Ipv6Addr,
 		"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",

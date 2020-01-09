@@ -7,7 +7,7 @@ pub struct AddressIterator<Network, Address> {
 
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
-	Address: Copy + super::offset::MaybeOffset<u32>,
+	Address: Copy + super::offset::Offset<u32>,
 	Network: Copy + Contains,
 	Network: From<Address>,
 {
@@ -15,7 +15,7 @@ where
 
 	fn next(&mut self) -> Option<Self::Item> {
 		let cur: Option<Self::Item> = self.cur;
-		let next: Option<Self::Item> = cur.map(|cur| cur.maybe_next(1_u32)).flatten();
+		let next: Option<Self::Item> = cur.map(|cur| cur.offset(1_u32)).flatten();
 
 		match (cur, next) {
 			(Some(cur), Some(next)) => {
