@@ -150,6 +150,36 @@ mod tests {
 	test_offset!(a_v6_1i32, IpAddr, "2001:db8::", 1_i32, "2001:db8::1");
 	test_offset!(a_v6_2i32, IpAddr, "2001:db8::", 2_i32, "2001:db8::2");
 
+	test_offset!(v4_0u128, Ipv4Addr, "127.0.0.0", 0_u128, "127.0.0.0");
+	test_offset!(v4_1u128, Ipv4Addr, "127.0.0.0", 1_u128, "127.0.0.1");
+	test_offset!(v4_2u128, Ipv4Addr, "127.0.0.0", 2_u128, "127.0.0.2");
+	test_offset!(v4_1024u128, Ipv4Addr, "127.0.0.0", 1024_u128, "127.0.4.0");
+	test_offset!(
+		v4_out_of_bounds,
+		Ipv4Addr,
+		"127.0.0.0",
+		0x100000000_u128,
+		None
+	);
+
+	test_offset!(v6_0u128, Ipv6Addr, "2001:db8::", 0_u128, "2001:db8::");
+	test_offset!(v6_1u128, Ipv6Addr, "2001:db8::", 1_u128, "2001:db8::1");
+	test_offset!(v6_2u128, Ipv6Addr, "2001:db8::", 2_u128, "2001:db8::2");
+	test_offset!(
+		v6_1024u128,
+		Ipv6Addr,
+		"2001:db8::",
+		1024_u128,
+		"2001:db8::400"
+	);
+	test_offset!(
+		v6_65536u128,
+		Ipv6Addr,
+		"2001:db8::",
+		65536_u128,
+		"2001:db8::1:0"
+	);
+
 	// Some more odd cases
 
 	test_offset!(
