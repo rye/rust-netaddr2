@@ -111,10 +111,7 @@ mod tests {
 		($test_fn_name:ident, $addr_type:ty, $addr:literal, $amount:literal, None) => {
 			#[test]
 			fn $test_fn_name() {
-				assert_eq!(
-					$addr.parse::<$addr_type>().unwrap().offset($amount),
-					None
-				)
+				assert_eq!($addr.parse::<$addr_type>().unwrap().offset($amount), None)
 			}
 		};
 	}
