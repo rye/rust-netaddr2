@@ -1,5 +1,7 @@
 use crate::Contains;
 
+use super::offset::Offset;
+
 pub struct AddressIterator<Network, Address> {
 	net: Network,
 	cur: Option<Address>,
@@ -7,9 +9,8 @@ pub struct AddressIterator<Network, Address> {
 
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
-	Address: Copy + super::offset::Offset<u32>,
-	Network: Copy + Contains,
-	Network: From<Address>,
+	Address: Copy + Offset<u32>,
+	Network: Copy + Contains + From<Address>,
 {
 	type Item = Address;
 
@@ -27,7 +28,7 @@ where
 				}
 			}
 			(Some(cur), None) => {
-				self.cur = next;
+				self.cur = None;
 				Some(cur)
 			}
 			(None, _) => None,
