@@ -30,7 +30,15 @@ impl<'de> Deserialize<'de> for Netv6Addr {
 #[cfg(test)]
 mod tests {
 	use super::Netv6Addr;
-	use serde_test::{assert_de_tokens, Token};
+	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
+
+	#[test]
+	fn malformed_produces_correct_error() {
+		assert_de_tokens_error::<Netv6Addr>(
+			&[Token::Str("asdf")],
+			"invalid value: string \"asdf\", expected a valid cidr/extended network address",
+		)
+	}
 
 	#[test]
 	fn test_de_cidr_localhost() {
