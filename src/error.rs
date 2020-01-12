@@ -1,4 +1,4 @@
-/// The error type for operations relating to the `NetAddr` type.
+/// The error type for operations relating to the `NetAddr` type
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
 	ParseError(String),
