@@ -1,6 +1,9 @@
+/// Masking one object with another
 pub trait Mask {
+	/// The result of masking
 	type Output;
 
+	/// Perform the mask
 	fn mask(&self, other: &Self) -> Self::Output;
 }
 

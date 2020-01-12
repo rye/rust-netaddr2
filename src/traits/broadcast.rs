@@ -1,8 +1,8 @@
-/// A trait encapsulating the operation of computing the broadcast
-/// address for applicable networks.
+/// Compute the "broadcast" address for supported networks.
 pub trait Broadcast {
+	/// The type of the broadcast address
 	type Output;
 
-	/// Compute the broadcast address.
+	/// Compute the broadcast address
 	fn broadcast(&self) -> Self::Output;
 }
