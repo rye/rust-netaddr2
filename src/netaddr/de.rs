@@ -30,7 +30,15 @@ impl<'de> Deserialize<'de> for NetAddr {
 #[cfg(test)]
 mod tests {
 	use super::NetAddr;
-	use serde_test::{assert_de_tokens, Token};
+	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
+
+	#[test]
+	fn malformed_produces_correct_error() {
+		assert_de_tokens_error::<NetAddr>(
+			&[Token::Str("asdf")],
+			"invalid value: string \"asdf\", expected a valid cidr/extended network address",
+		)
+	}
 
 	mod v4 {
 		use super::*;
