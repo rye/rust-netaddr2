@@ -15,7 +15,8 @@ impl<'de> de::Visitor<'de> for NetAddrVisitor {
 
 	fn visit_str<E: de::Error>(self, value: &str) -> Result<Self::Value, E> {
 		use core::str::FromStr;
-		Self::Value::from_str(value).map_err(de::Error::custom)
+		Self::Value::from_str(value)
+			.map_err(|_| de::Error::invalid_value(de::Unexpected::Str(value), &self))
 	}
 }
 
