@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Changed
+- Updated the `serde::de` behavior to be slightly more informative and standard.
 
 ## [0.7.1] - 2019-01-12
 ### Added
