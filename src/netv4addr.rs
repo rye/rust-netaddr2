@@ -202,4 +202,14 @@ mod tests {
 			assert_eq!(netaddr.len(), None);
 		}
 	}
+
+	mod is_empty {
+		use super::*;
+
+		#[test]
+		fn is_false() {
+			let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
+			assert!(!netaddr.is_empty());
+		}
+	}
 }
