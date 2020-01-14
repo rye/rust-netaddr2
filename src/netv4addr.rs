@@ -89,6 +89,13 @@ impl Netv4Addr {
 	pub fn len(&self) -> Option<u32> {
 		2_u32.checked_pow(u32::from(self.mask).count_zeros())
 	}
+
+	/// Determine if the network is empty.
+	///
+	/// (Plot twist, it isn't.)  Even a /32 has one device in it.
+	pub const fn is_empty(&self) -> bool {
+		false
+	}
 }
 
 mod broadcast;
