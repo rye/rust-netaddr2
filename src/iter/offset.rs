@@ -2,6 +2,8 @@ use core::convert::TryInto;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
+use crate::Netv4Addr;
+
 pub trait Offset<T>: Sized {
 	fn offset(&self, offset: T) -> Option<Self>;
 }
@@ -91,6 +93,14 @@ impl Offset<u128> for IpAddr {
 			IpAddr::V4(v4) => v4.offset(offset).map(IpAddr::V4),
 			IpAddr::V6(v6) => v6.offset(offset).map(IpAddr::V6),
 		}
+	}
+}
+
+impl Offset<u32> for Netv4Addr {
+	fn offset(&self, offset: u32) -> Option<Self> {
+		u32::from(*self.addr())
+			.checked_add(offset)
+			.map(|new_addr: u32| Netv4Addr::new(Ipv4Addr::from(new_addr), *self.mask()))
 	}
 }
 
