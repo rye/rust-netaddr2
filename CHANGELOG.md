@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `Netv4Addr`: Added a `len()` method for computing the number of addresses contained in a network.
+- New `AddressIterator` iterator type for iterating over a network's addresses.
 
 ## [0.10.0] - 2021-07-06
 
