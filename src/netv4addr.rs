@@ -193,14 +193,12 @@ mod tests {
 		#[test]
 		fn len_correct_max_mask() {
 			let netaddr: Netv4Addr = "0.0.0.0/32".parse().unwrap();
-
 			assert_eq!(netaddr.len(), Some(1));
 		}
 
 		#[test]
 		fn len_correct_min_mask() {
 			let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
-
 			assert_eq!(netaddr.len(), None);
 		}
 	}
