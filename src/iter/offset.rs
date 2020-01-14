@@ -2,7 +2,7 @@ use core::convert::TryInto;
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-use crate::Netv4Addr;
+use crate::{Netv4Addr, Netv6Addr};
 
 pub trait Offset<T>: Sized {
 	fn offset(&self, offset: T) -> Option<Self>;
@@ -101,6 +101,14 @@ impl Offset<u32> for Netv4Addr {
 		u32::from(*self.addr())
 			.checked_add(offset)
 			.map(|new_addr: u32| Netv4Addr::new(Ipv4Addr::from(new_addr), *self.mask()))
+	}
+}
+
+impl Offset<u128> for Netv6Addr {
+	fn offset(&self, offset: u128) -> Option<Self> {
+		u128::from(*self.addr())
+			.checked_add(offset)
+			.map(|new_addr: u128| Netv6Addr::new(Ipv6Addr::from(new_addr), *self.mask()))
 	}
 }
 
@@ -241,5 +249,27 @@ mod tests {
 		"0.0.0.0/24",
 		2_u32,
 		"0.0.0.0/24"
+	);
+
+	test_offset!(
+		netv6_min_slash_64_plus_0,
+		Netv6Addr,
+		"::/64",
+		0_u128,
+		"::/64"
+	);
+	test_offset!(
+		netv6_min_slash_64_plus_1,
+		Netv6Addr,
+		"::/64",
+		1_u128,
+		"::/64"
+	);
+	test_offset!(
+		netv6_min_slash_64_plus_2,
+		Netv6Addr,
+		"::/64",
+		2_u128,
+		"::/64"
 	);
 }
