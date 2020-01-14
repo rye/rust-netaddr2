@@ -81,14 +81,15 @@ impl Netv6Addr {
 	/// let netaddr: Netv6Addr = "::/0".parse().unwrap();
 	/// assert_eq!(netaddr.len(), None);
 	/// ```
-	pub fn len(&self) -> Option<u128> {
+	pub fn len(self) -> Option<u128> {
 		2_u128.checked_pow(u128::from(self.mask).count_zeros())
 	}
 
 	/// Determine if the network is empty.
 	///
 	/// (Plot twist, it isn't.)  Even a /128 has one device in it.
-	pub const fn is_empty(&self) -> bool {
+	#[allow(clippy::unused_self)]
+	pub const fn is_empty(self) -> bool {
 		false
 	}
 }
