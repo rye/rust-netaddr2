@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New `Netv6Addr#len() -> Option<u128>` method for computing the number of addresses contained in a network.
 - New `Netv4Addr#len() -> Option<u32>` method for computing the number of addresses contained in a network.
 - New `Netv4Addr#is_empty() -> bool` method for determining whether or not the network is empty.
 - New `AddressIterator` iterator type for iterating over a network's addresses.
