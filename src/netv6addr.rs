@@ -186,4 +186,20 @@ mod tests {
 			);
 		}
 	}
+
+	mod len {
+		use super::*;
+
+		#[test]
+		fn len_correct_max_mask() {
+			let netaddr: Netv6Addr = "::/128".parse().unwrap();
+			assert_eq!(netaddr.len(), Some(1));
+		}
+
+		#[test]
+		fn len_correct_min_mask() {
+			let netaddr: Netv6Addr = "::/0".parse().unwrap();
+			assert_eq!(netaddr.len(), None);
+		}
+	}
 }
