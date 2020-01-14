@@ -219,4 +219,27 @@ mod tests {
 		1_i32,
 		None
 	);
+
+	// Here the address and mask stay the same since adding a number less than
+	test_offset!(
+		netv4_min_slash_24_plus_0,
+		Netv4Addr,
+		"0.0.0.0/24",
+		0_u32,
+		"0.0.0.0/24"
+	);
+	test_offset!(
+		netv4_min_slash_24_plus_1,
+		Netv4Addr,
+		"0.0.0.0/24",
+		1_u32,
+		"0.0.0.0/24"
+	);
+	test_offset!(
+		netv4_min_slash_24_plus_2,
+		Netv4Addr,
+		"0.0.0.0/24",
+		2_u32,
+		"0.0.0.0/24"
+	);
 }
