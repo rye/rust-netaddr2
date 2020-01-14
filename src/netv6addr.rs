@@ -84,6 +84,13 @@ impl Netv6Addr {
 	pub fn len(&self) -> Option<u128> {
 		2_u128.checked_pow(u128::from(self.mask).count_zeros())
 	}
+
+	/// Determine if the network is empty.
+	///
+	/// (Plot twist, it isn't.)  Even a /128 has one device in it.
+	pub const fn is_empty(&self) -> bool {
+		false
+	}
 }
 
 mod contains;
