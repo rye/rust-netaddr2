@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `Netv4Addr`: Added a `len()` method for computing the number of addresses contained in a network.
+
 ## [0.10.0] - 2021-07-06
+
 ### Changed
+
 - **Breaking**: `Netv4Addr::addr`, `Netv4Addr::mask`, `Netv6Addr::addr`, and `Netv6Addr::mask` all now return `Ipv4Addr` or `Ipv6Addr` respectively instead of `&Ipv4Addr` or `&Ipv6Addr`.
 
 - **Breaking**: Replaced the `derive`'d `Ord` impl with our own explicit implementation.
@@ -24,81 +30,114 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adjusted CI configuration
 
 ## [0.9.0] - 2020-02-26
+
 ### Changed
+
 - **Breaking**: Adjusted the signature of the `Contains` trait to take a type parameter.
 
   Most users should not be affected in any way by this change, as the `.contains()` method still has the same syntax.
   However, the types for which containment can be checked are now explicitly enumerated.
 
 ## [0.8.0] - 2020-02-26
+
 ### Added
+
 - `is_cidr` method on `NetAddr`, `Netv4Addr`, and `Netv6Addr` to return whether the represented netaddr is CIDR or not.
 
 ### Changed
+
 - Updated the `serde::de` behavior to be slightly more informative and standard.
 
 ## [0.7.1] - 2019-01-12
+
 ### Added
+
 - Documented a few undocumented types.
 
 ## [0.7.0] - 2019-12-24
+
 ### Added
+
 - A new `Result<T, Error>` type, which is a sugar around the nascent `Error` type.
 
 ### Changed
+
 - Renamed the `NetAddrError` type to just `Error`.
 
 ## [0.6.1] - 2019-11-18
+
 ### Added
+
 - Added the `serde` feature to the `docs.rs` metadata key
 
 ## [0.6.0] - 2019-11-18
+
 ### Added
+
 - Implementations for `serde::Serialize` and `serde::Deserialize` on core types, gated behind the `serde` feature
 
 ## [0.5.0] - 2019-10-20
+
 ### Added
+
 - Implementation for `core::fmt::Display` on the `NetAddr` enum and the `Netv4Addr` and `Netv6Addr` structs.
 
 ## [0.4.1] - 2019-09-29
+
 ### Added
+
 - Tests for the `Merge` trait.
 - Tests for the methods on the `Netv4Addr` and `Netv6Addr` structs.
 - Documentation for some items.
 
 ## [0.4.0] - 2019-08-25
+
 ### Changed
+
 - Made the `mask` and `addr` methods `const` and `pub` under the `Netv4Addr` and `Netv6Addr` types.
 
 ## [0.3.0] - 2019-08-22
+
 ### Added
+
 - A lot of tests to the source code in a structured way.
 
 ### Changed
+
 - **Breaking**: Restructured the API to use lots of modules.
 - **Breaking**: Use the recently-stabilized `Self` type alias in the code. (requires Rust 1.37)
 - Began using GitHub Actions for CI instead of CircleCI.
 
 ### Removed
+
 - The `script/clippy` script.
 
 ## [0.2.0] - 2019-08-12
+
 ### Added
+
 - A Travis CI configuration for testing.
 
 ### Changed
+
 - Existing API to use traits.
 
 ## [0.1.2] - 2019-07-23
+
 ### Fixed
+
 - SPDX identifier for `Apache-2.0` in the manifest, allowing releases to be published.
 
 ## [0.1.1] - 2019-07-23
+
 ### Added
+
 - A `CHANGELOG.md` file.
 
 ## [0.1.0] - 2019-07-23
+
 ### Added
+
 - `NetAddr` enum with two variants (`V4`, `V6`), each containing the respective `Ipv\dAddr` class.
 - `#[derive]`-ed impls for `Copy`, `Clone`, `Debug`, `PartialEq`, `Eq`, `Ord`, and `Hash` on `NetAddr`.
 - `NetAddr#netmask` method to return the netmask address in `IpAddr` form.
