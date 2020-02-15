@@ -11,6 +11,15 @@ where
 	cur: Option<Address>,
 }
 
+impl<Network, Address> AddressIterator<Network, Address>
+where
+	Network: Contains + From<Address>
+{
+	pub(crate) fn new(net: Network, cur: Option<Address>) -> Self {
+		Self { net, cur }
+	}
+}
+
 /// Implementation of the [`Iterator`] trait for [`AddressIterator`].
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
@@ -105,15 +114,6 @@ mod tests {
 
 		use crate::NetAddr;
 		use std::net::IpAddr;
-
-		impl crate::NetAddr {
-			pub fn iter(&self) -> AddressIterator<NetAddr, IpAddr> {
-				AddressIterator {
-					net: *self,
-					cur: Some(self.addr()),
-				}
-			}
-		}
 
 		mod v4 {
 			use super::*;
