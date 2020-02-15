@@ -1,3 +1,4 @@
+use crate::AddressIterator;
 use crate::Netv4Addr;
 use crate::Netv6Addr;
 use crate::{Error, Result};
@@ -42,6 +43,11 @@ impl NetAddr {
 			Self::V4(v4) => v4.is_cidr(),
 			Self::V6(v6) => v6.is_cidr(),
 		}
+	}
+
+	/// Produce an iterator over the _contained addresses_ of this `NetAddr`.
+	pub fn iter(&self) -> AddressIterator<NetAddr, IpAddr> {
+		AddressIterator::new(*self, Some(self.addr()))
 	}
 }
 
