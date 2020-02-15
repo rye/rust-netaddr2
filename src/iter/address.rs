@@ -2,7 +2,11 @@ use crate::Contains;
 
 use super::offset::Offset;
 
-pub struct AddressIterator<Network, Address> {
+/// An iterator over a network's _contained addresses_.
+pub struct AddressIterator<Network, Address>
+where
+	Network: Contains + From<Address>
+{
 	net: Network,
 	cur: Option<Address>,
 }
