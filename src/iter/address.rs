@@ -15,7 +15,7 @@ where
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
 	Address: Copy + Offset<u32>,
-	Network: Copy + Contains + From<Address>,
+	Network: Contains + From<Address>,
 {
 	type Item = Address;
 
