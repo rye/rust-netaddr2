@@ -5,7 +5,7 @@ use super::offset::Offset;
 /// An iterator over a network's _contained addresses_.
 pub struct AddressIterator<Network, Address>
 where
-	Network: Contains + From<Address>
+	Network: Contains + From<Address>,
 {
 	net: Network,
 	cur: Option<Address>,
