@@ -7,6 +7,7 @@ pub struct AddressIterator<Network, Address> {
 	cur: Option<Address>,
 }
 
+/// Implementation of the [`Iterator`] trait for [`AddressIterator`].
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
 	Address: Copy + Offset<u32>,
