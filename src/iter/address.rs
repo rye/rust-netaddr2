@@ -14,6 +14,10 @@ where
 {
 	type Item = Address;
 
+	/// Produce the next item.
+	///
+	/// The current address is offset by `1_u32` using the [`Offset`] trait, which
+	/// may produce `None`.
 	fn next(&mut self) -> Option<Self::Item> {
 		let cur: Option<Self::Item> = self.cur;
 		let next: Option<Self::Item> = cur.map(|cur| cur.offset(1_u32)).flatten();
