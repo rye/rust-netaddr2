@@ -18,6 +18,9 @@ keywords = ["netaddr", "network", "address", "cidr"]
 features = ["serde"]
 all-features = true
 
+[badges]
+maintenance = { status = "actively-developed" }
+
 [features]
 default = []
 
