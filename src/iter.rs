@@ -1,3 +1,5 @@
+//! Traits for iteration over `NetAddr` types.
+
 mod address;
 mod offset;
 mod sibling;
