@@ -15,7 +15,7 @@ categories = ["data-structures", "network-programming"]
 keywords = ["netaddr", "network", "address", "cidr"]
 
 [package.metadata.docs.rs]
-features = ["serde"]
+features = ["serde", "unstable"]
 all-features = true
 
 [badges]
@@ -23,6 +23,7 @@ maintenance = { status = "actively-developed" }
 
 [features]
 default = []
+unstable = []
 
 [dependencies]
 serde = { version = "~1", optional = true }
