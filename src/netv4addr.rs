@@ -102,6 +102,30 @@ mod tests {
 		}
 	}
 
+	mod is_cidr {
+		use super::*;
+
+		#[test]
+		fn non_cidr_returns_false() {
+			let netaddr: Netv4Addr = Netv4Addr {
+				mask: "255.127.255.0".parse().unwrap(),
+				addr: "0.0.0.0".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), false);
+		}
+
+		#[test]
+		fn cidr_returns_true() {
+			let netaddr: Netv4Addr = Netv4Addr {
+				mask: "255.224.0.0".parse().unwrap(),
+				addr: "0.0.0.0".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), true);
+		}
+	}
+
 	mod new {
 		use super::*;
 

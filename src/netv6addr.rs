@@ -99,6 +99,30 @@ mod tests {
 		}
 	}
 
+	mod is_cidr {
+		use super::*;
+
+		#[test]
+		fn non_cidr_returns_false() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:7f7f::0".parse().unwrap(),
+				addr: "::".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), false);
+		}
+
+		#[test]
+		fn cidr_returns_true() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:fffc::0".parse().unwrap(),
+				addr: "::".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), true);
+		}
+	}
+
 	mod new {
 		use super::*;
 
