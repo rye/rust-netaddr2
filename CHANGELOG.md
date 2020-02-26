@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Breaking**: Adjusted the signature of the `Contains` trait to take a type parameter.
 
+  Most users should not be affected in any way by this change, as the `.contains()` method still has the same syntax.
+  However, the types for which containment can be checked are now explicitly enumerated.
+
 ## [0.8.0] - 2020-02-26
 ### Added
 - `is_cidr` method on `NetAddr`, `Netv4Addr`, and `Netv6Addr` to return whether the represented netaddr is CIDR or not.
