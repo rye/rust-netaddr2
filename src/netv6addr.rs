@@ -21,6 +21,13 @@ impl Netv6Addr {
 		&self.addr
 	}
 
+	pub fn is_cidr(&self) -> bool {
+		let mask: u128 = self.mask.into();
+		let ones: u32 = mask.count_ones();
+		let cidr_mask: u128 = u128::max_value().checked_shl(128 - ones).unwrap_or(0);
+		mask == cidr_mask
+	}
+
 	/// Create a new `Netv6Addr` from the given `addr` and `mask`.
 	///
 	/// Masks the given `addr` value with the given `mask` before
