@@ -31,6 +31,18 @@ impl NetAddr {
 			Self::V6(v6) => IpAddr::V6(*v6.addr()),
 		}
 	}
+
+	/// Return whether the inner `Netv4Addr` or `Netv6Addr` is CIDR.
+	///
+	/// A `Netv4Addr` or `Netv6Addr` is CIDR if and only if its underlying
+	/// netmask is "left contigous"; that is, if its bit pattern is a given
+	/// number of ones followed by a remaining group of zeroes.
+	pub fn is_cidr(&self) -> bool {
+		match self {
+			Self::V4(v4) => v4.is_cidr(),
+			Self::V6(v6) => v6.is_cidr(),
+		}
+	}
 }
 
 mod broadcast;
