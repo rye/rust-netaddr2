@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+
+## [0.8.0] - 2020-02-26
+### Added
+- `is_cidr` method on `NetAddr`, `Netv4Addr`, and `Netv6Addr` to return whether the represented netaddr is CIDR or not.
+
 ### Changed
 - Updated the `serde::de` behavior to be slightly more informative and standard.
 
@@ -95,6 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An impl for `PartialOrd` on `NetAddr` for comparing two networks first by network address and then by netmask.
 - Tests for all of these Added features.
 
+[0.8.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.8.0
 [0.7.1]: https://github.com/rye/rust-netaddr2/releases/tag/v0.7.1
 [0.7.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.7.0
 [0.6.1]: https://github.com/rye/rust-netaddr2/releases/tag/v0.6.1
