@@ -2,9 +2,27 @@ use super::Netv6Addr;
 use crate::traits::Contains;
 use crate::traits::Mask;
 
+impl Contains<std::net::IpAddr> for Netv6Addr {
+	fn contains(&self, other: &std::net::IpAddr) -> bool {
+		match other {
+			std::net::IpAddr::V6(other) => self.contains(other),
+			_ => false
+		}
+	}
+}
+
 impl Contains<std::net::Ipv6Addr> for Netv6Addr {
 	fn contains(&self, other: &std::net::Ipv6Addr) -> bool {
 		other.mask(self.mask()) == *self.addr()
+	}
+}
+
+impl Contains<crate::NetAddr> for Netv6Addr {
+	fn contains(&self, other: &crate::NetAddr) -> bool {
+		match other {
+			crate::NetAddr::V6(other) => self.contains(other),
+			_ => false
+		}
 	}
 }
 
