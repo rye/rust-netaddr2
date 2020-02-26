@@ -6,7 +6,7 @@ impl Contains<std::net::IpAddr> for Netv4Addr {
 	fn contains(&self, other: &std::net::IpAddr) -> bool {
 		match other {
 			std::net::IpAddr::V4(other) => self.contains(other),
-			_ => false
+			_ => false,
 		}
 	}
 }
@@ -21,7 +21,7 @@ impl Contains<crate::NetAddr> for Netv4Addr {
 	fn contains(&self, other: &crate::NetAddr) -> bool {
 		match other {
 			crate::NetAddr::V4(other) => self.contains(other),
-			_ => false
+			_ => false,
 		}
 	}
 }
