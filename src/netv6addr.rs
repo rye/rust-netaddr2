@@ -21,6 +21,13 @@ impl Netv6Addr {
 		&self.addr
 	}
 
+	pub fn is_cidr(&self) -> bool {
+		let mask: u128 = self.mask.into();
+		let ones: u32 = mask.count_ones();
+		let cidr_mask: u128 = u128::max_value().checked_shl(128 - ones).unwrap_or(0);
+		mask == cidr_mask
+	}
+
 	/// Create a new `Netv6Addr` from the given `addr` and `mask`.
 	///
 	/// Masks the given `addr` value with the given `mask` before
@@ -89,6 +96,30 @@ mod tests {
 				netaddr.addr(),
 				&"2001:db8:dead:beef::0".parse::<Ipv6Addr>().unwrap()
 			);
+		}
+	}
+
+	mod is_cidr {
+		use super::*;
+
+		#[test]
+		fn non_cidr_returns_false() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:7f7f::0".parse().unwrap(),
+				addr: "::".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), false);
+		}
+
+		#[test]
+		fn cidr_returns_true() {
+			let netaddr: Netv6Addr = Netv6Addr {
+				mask: "ffff:ffff:ffff:fffc::0".parse().unwrap(),
+				addr: "::".parse().unwrap(),
+			};
+
+			assert_eq!(netaddr.is_cidr(), true);
 		}
 	}
 
