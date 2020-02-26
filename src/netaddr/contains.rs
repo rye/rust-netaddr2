@@ -1,11 +1,8 @@
 use super::NetAddr;
 use crate::traits::Contains;
 
-impl Contains for NetAddr {
-	fn contains<T: Copy>(&self, other: &T) -> bool
-	where
-		Self: From<T>,
-	{
+impl Contains<std::net::IpAddr> for NetAddr {
+	fn contains(&self, other: &std::net::IpAddr) -> bool {
 		let other: Self = Self::from(*other);
 		match (self, other) {
 			(Self::V4(netaddr), Self::V4(other)) => netaddr.contains(&other),
@@ -14,6 +11,18 @@ impl Contains for NetAddr {
 		}
 	}
 }
+
+impl Contains<NetAddr> for NetAddr {
+	fn contains(&self, other: &NetAddr) -> bool {
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(Self::V4(netaddr), Self::V4(other)) => netaddr.contains(&other),
+			(Self::V6(netaddr), Self::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
+
 
 #[cfg(test)]
 mod tests {

@@ -2,12 +2,14 @@ use super::Netv4Addr;
 use crate::traits::Contains;
 use crate::traits::Mask;
 
-impl Contains for Netv4Addr {
-	fn contains<T: Copy>(&self, other: &T) -> bool
-	where
-		Self: From<T>,
-	{
-		let other: Self = Self::from(*other);
+impl Contains<std::net::Ipv4Addr> for Netv4Addr {
+	fn contains(&self, other: &std::net::Ipv4Addr) -> bool {
+		other.mask(self.mask()) == *self.addr()
+	}
+}
+
+impl Contains<Netv4Addr> for Netv4Addr {
+	fn contains(&self, other: &Netv4Addr) -> bool {
 		other.addr().mask(self.mask()) == *self.addr()
 	}
 }
