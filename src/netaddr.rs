@@ -58,3 +58,44 @@ mod partialord;
 mod de;
 #[cfg(feature = "serde")]
 mod ser;
+
+#[cfg(test)]
+mod tests {
+	use super::NetAddr;
+
+	mod is_cidr {
+		use super::*;
+
+		mod v4 {
+			use super::*;
+
+			#[test]
+			fn non_cidr_returns_false() {
+				let netaddr: NetAddr = "0.0.0.0/255.255.127.0".parse().unwrap();
+				assert_eq!(netaddr.is_cidr(), false);
+			}
+
+			#[test]
+			fn cidr_returns_true() {
+				let netaddr: NetAddr = "0.0.0.0/255.255.192.0".parse().unwrap();
+				assert_eq!(netaddr.is_cidr(), true);
+			}
+		}
+
+		mod v6 {
+			use super::*;
+
+			#[test]
+			fn non_cidr_returns_false() {
+				let netaddr: NetAddr = "::/ffff:ffff:fff::".parse().unwrap();
+				assert_eq!(netaddr.is_cidr(), false);
+			}
+
+			#[test]
+			fn cidr_returns_true() {
+				let netaddr: NetAddr = "::/ffff:ffff:fffc::".parse().unwrap();
+				assert_eq!(netaddr.is_cidr(), true);
+			}
+		}
+	}
+}
