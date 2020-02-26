@@ -12,6 +12,26 @@ impl Contains<std::net::IpAddr> for NetAddr {
 	}
 }
 
+impl Contains<std::net::Ipv4Addr> for NetAddr {
+	fn contains(&self, other: &std::net::Ipv4Addr) -> bool {
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(Self::V4(netaddr), Self::V4(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
+
+impl Contains<std::net::Ipv6Addr> for NetAddr {
+	fn contains(&self, other: &std::net::Ipv6Addr) -> bool {
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(Self::V6(netaddr), Self::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
+
 impl Contains<NetAddr> for NetAddr {
 	fn contains(&self, other: &NetAddr) -> bool {
 		let other: Self = Self::from(*other);
@@ -23,6 +43,25 @@ impl Contains<NetAddr> for NetAddr {
 	}
 }
 
+impl Contains<crate::Netv4Addr> for NetAddr {
+	fn contains(&self, other: &crate::Netv4Addr) -> bool {
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(Self::V4(netaddr), Self::V4(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
+
+impl Contains<crate::Netv6Addr> for NetAddr {
+	fn contains(&self, other: &crate::Netv6Addr) -> bool {
+		let other: Self = Self::from(*other);
+		match (self, other) {
+			(Self::V6(netaddr), Self::V6(other)) => netaddr.contains(&other),
+			(_, _) => false,
+		}
+	}
+}
 
 #[cfg(test)]
 mod tests {
