@@ -21,6 +21,7 @@ impl Netv4Addr {
 		&self.addr
 	}
 
+	#[allow(clippy::trivially_copy_pass_by_ref)]
 	pub fn is_cidr(&self) -> bool {
 		let mask: u32 = self.mask.into();
 		let ones: u32 = mask.count_ones();
