@@ -1,0 +1,10 @@
+branch: true
+llvm: true
+output-type: lcov
+output-path: ./lcov.info
+prefix-dir: /home/runner/work/rust-netaddr2/rust-netaddr2/
+
+ignore:
+- "/*"
+- "C:/*"
+- "../*"
