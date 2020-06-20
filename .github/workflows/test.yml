@@ -1,4 +1,4 @@
-name: Check, test, and build the code
+name: Check and Test
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [stable, beta, nightly]
+        rust: [stable, beta]
     steps:
     - name: Install the appropriate Rust toolchain
       run: |
