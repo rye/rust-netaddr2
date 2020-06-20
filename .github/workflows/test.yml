@@ -22,11 +22,11 @@ jobs:
     - name: Run rustfmt
       run: |
         rustup component add rustfmt
-        cargo fmt -- --check
+        cargo fmt --all -- --check
     - name: Run clippy
       run: |
         rustup component add clippy
-        cargo clippy --all-features -- -D clippy::all -W clippy::cargo -W clippy::pedantic
+        cargo clippy --workspace --all-features --all-targets -- -D clippy::all -W clippy::cargo -W clippy::pedantic
 
   test:
     name: Run tests and measure coverage
