@@ -13,6 +13,16 @@
 //! and users who have used that set of structs will hopefully find this API
 //! quite naturally similar.
 
+#[cfg(test)]
+#[macro_use]
+mod util {
+	macro_rules! pu {
+		($value:literal # $t:ty) => {
+			$value.parse::<$t>().unwrap()
+		};
+	}
+}
+
 mod error;
 mod netaddr;
 mod netv4addr;

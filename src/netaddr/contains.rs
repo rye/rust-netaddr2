@@ -61,12 +61,6 @@ mod tests {
 	use crate::NetAddr;
 	use std::net::IpAddr;
 
-	macro_rules! pu {
-		($value:literal # $t:ty) => {
-			$value.parse::<$t>().unwrap()
-		};
-	}
-
 	macro_rules! assert_contains {
 		($a:expr, $b:expr) => {
 			assert!($a.contains(&$b));
