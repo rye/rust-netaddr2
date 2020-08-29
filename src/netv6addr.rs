@@ -6,7 +6,7 @@ use std::net::Ipv6Addr;
 /// Internally, this structure includes two values; an `Ipv6Addr`
 /// representing the network address (`addr`), and another
 /// representing the netmask (`mask`).
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv6Addr {
 	mask: Ipv6Addr,
 	addr: Ipv6Addr,
@@ -54,6 +54,7 @@ mod from;
 mod fromstr;
 mod hash;
 mod merge;
+mod ord;
 mod partialord;
 
 #[cfg(feature = "serde")]

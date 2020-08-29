@@ -6,7 +6,7 @@ use std::net::Ipv4Addr;
 /// Internally, this structure includes two values; an `Ipv4Addr`
 /// representing the network address (`addr`), and another
 /// representing the netmask (`mask`).
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv4Addr {
 	mask: Ipv4Addr,
 	addr: Ipv4Addr,
@@ -61,6 +61,7 @@ mod from;
 mod fromstr;
 mod hash;
 mod merge;
+mod ord;
 mod partialord;
 
 #[cfg(feature = "serde")]
