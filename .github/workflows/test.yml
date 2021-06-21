@@ -3,12 +3,12 @@ name: Check and Test
 on:
   push:
   schedule:
-  - cron: 15 */6 * * *
+  - cron: 0 0 * * *
 
 jobs:
   check:
     name: Check the code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -26,11 +26,11 @@ jobs:
     - name: Run clippy
       run: |
         rustup component add clippy
-        cargo clippy --color always --workspace --all-features --all-targets -- -D clippy::all -W clippy::cargo -W clippy::pedantic -W clippy::cognitive-complexity
+        cargo clippy --workspace --all-features --all-targets -- -D clippy::all -W clippy::cargo -W clippy::pedantic -W clippy::cognitive-complexity
 
   test:
     name: Test the code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -47,7 +47,7 @@ jobs:
 
   coverage:
     name: Measure test coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         rust: [nightly]
@@ -61,8 +61,16 @@ jobs:
       run: |
         cargo test --workspace --all-features --no-fail-fast
       env:
-        CARGO_INCREMENTAL: '0'
-        RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off'
+        CARGO_INCREMENTAL: 0
+        RUSTFLAGS: >
+          -Zprofile
+          -Ccodegen-units=1
+          -Copt-level=0
+          -Clink-dead-code
+          -Coverflow-checks=off
+          -Zpanic_abort_tests
+          -Cpanic=abort
+        RUSTDOCFLAGS: '-Cpanic=abort'
     - uses: actions-rs/grcov@v0.1
       with:
         config: .grcov.yml
