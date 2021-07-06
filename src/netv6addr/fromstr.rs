@@ -52,11 +52,7 @@ impl FromStr for Netv6Addr {
 
 		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u128 = u128::max_value()
-					^ match u128::max_value().checked_shr(cidr) {
-						Some(k) => k,
-						None => 0_u128,
-					};
+				let mask: u128 = u128::max_value() ^ u128::max_value().checked_shr(cidr).unwrap_or(0_u128);
 
 				let mask: Ipv6Addr = mask.into();
 
