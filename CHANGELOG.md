@@ -121,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An impl for `PartialOrd` on `NetAddr` for comparing two networks first by network address and then by netmask.
 - Tests for all of these Added features.
 
+[0.10.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.10.0
 [0.9.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.9.0
 [0.8.0]: https://github.com/rye/rust-netaddr2/releases/tag/v0.8.0
 [0.7.1]: https://github.com/rye/rust-netaddr2/releases/tag/v0.7.1
