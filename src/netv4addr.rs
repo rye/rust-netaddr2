@@ -8,8 +8,8 @@ use std::net::Ipv4Addr;
 /// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv4Addr {
-	mask: Ipv4Addr,
 	addr: Ipv4Addr,
+	mask: Ipv4Addr,
 }
 
 impl Netv4Addr {

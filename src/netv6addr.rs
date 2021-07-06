@@ -8,8 +8,8 @@ use std::net::Ipv6Addr;
 /// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv6Addr {
-	mask: Ipv6Addr,
 	addr: Ipv6Addr,
+	mask: Ipv6Addr,
 }
 
 impl Netv6Addr {
