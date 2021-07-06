@@ -8,17 +8,17 @@ use std::net::Ipv6Addr;
 /// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv6Addr {
-	mask: Ipv6Addr,
 	addr: Ipv6Addr,
+	mask: Ipv6Addr,
 }
 
 impl Netv6Addr {
-	pub const fn mask(&self) -> &Ipv6Addr {
-		&self.mask
+	pub const fn mask(&self) -> Ipv6Addr {
+		self.mask
 	}
 
-	pub const fn addr(&self) -> &Ipv6Addr {
-		&self.addr
+	pub const fn addr(&self) -> Ipv6Addr {
+		self.addr
 	}
 
 	pub fn is_cidr(&self) -> bool {
@@ -78,7 +78,7 @@ mod tests {
 
 			assert_eq!(
 				netaddr.mask(),
-				&"ffff:ffff:ffff:ffff::0".parse::<Ipv6Addr>().unwrap()
+				"ffff:ffff:ffff:ffff::0".parse::<Ipv6Addr>().unwrap()
 			);
 		}
 	}
@@ -95,7 +95,7 @@ mod tests {
 
 			assert_eq!(
 				netaddr.addr(),
-				&"2001:db8:dead:beef::0".parse::<Ipv6Addr>().unwrap()
+				"2001:db8:dead:beef::0".parse::<Ipv6Addr>().unwrap()
 			);
 		}
 	}
@@ -110,7 +110,7 @@ mod tests {
 				addr: "::".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), false);
+			assert!(!netaddr.is_cidr());
 		}
 
 		#[test]
@@ -120,7 +120,7 @@ mod tests {
 				addr: "::".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), true);
+			assert!(netaddr.is_cidr());
 		}
 	}
 
@@ -134,10 +134,10 @@ mod tests {
 
 			let netaddr: Netv6Addr = Netv6Addr::new(addr, mask);
 
-			assert_eq!(netaddr.mask(), &mask);
+			assert_eq!(netaddr.mask(), mask);
 			assert_eq!(
 				netaddr.addr(),
-				&"2001:db8:dead:be00::0".parse::<Ipv6Addr>().unwrap()
+				"2001:db8:dead:be00::0".parse::<Ipv6Addr>().unwrap()
 			);
 		}
 	}

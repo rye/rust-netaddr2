@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.10.0] - 2021-07-06
+### Changed
+- **Breaking**: `Netv4Addr::addr`, `Netv4Addr::mask`, `Netv6Addr::addr`, and `Netv6Addr::mask` all now return `Ipv4Addr` or `Ipv6Addr` respectively instead of `&Ipv4Addr` or `&Ipv6Addr`.
+
+- **Breaking**: Replaced the `derive`'d `Ord` impl with our own explicit implementation.
+  If you were using our old ordering, bare in mind that the behavior has changed.
+
+  Previously, we just used the derived `Ord` comparison on the underlying `Ip<...>Addr` structs in field-wise ordering.
+  Now, a `Net<...>Addr` struct is considered greater than another if its `addr` is equal but its mask is greater, or otherwise if its `addr` is greater.
+  For example, `1.0.0.0/8` < `2.0.0.0/8`, `1.0.0.0/7` < `1.0.0.0/8`, etc.
+
+- Internal fixes for the tests
+- Adjusted CI configuration
+
 ## [0.9.0] - 2020-02-26
 ### Changed
 - **Breaking**: Adjusted the signature of the `Contains` trait to take a type parameter.

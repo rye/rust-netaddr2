@@ -52,12 +52,7 @@ impl FromStr for Netv4Addr {
 
 		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u32 = u32::max_value()
-					^ match u32::max_value().checked_shr(cidr) {
-						Some(k) => k,
-						None => 0_u32,
-					};
-
+				let mask: u32 = u32::max_value() ^ u32::max_value().checked_shr(cidr).unwrap_or(0_u32);
 				let mask: Ipv4Addr = mask.into();
 
 				Ok(Self::new(addr, mask))

@@ -8,17 +8,17 @@ use std::net::Ipv4Addr;
 /// representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv4Addr {
-	mask: Ipv4Addr,
 	addr: Ipv4Addr,
+	mask: Ipv4Addr,
 }
 
 impl Netv4Addr {
-	pub const fn mask(&self) -> &Ipv4Addr {
-		&self.mask
+	pub const fn mask(&self) -> Ipv4Addr {
+		self.mask
 	}
 
-	pub const fn addr(&self) -> &Ipv4Addr {
-		&self.addr
+	pub const fn addr(&self) -> Ipv4Addr {
+		self.addr
 	}
 
 	#[allow(clippy::trivially_copy_pass_by_ref)]
@@ -85,7 +85,7 @@ mod tests {
 
 			assert_eq!(
 				netaddr.mask(),
-				&"255.255.255.255".parse::<Ipv4Addr>().unwrap()
+				"255.255.255.255".parse::<Ipv4Addr>().unwrap()
 			);
 		}
 	}
@@ -100,7 +100,7 @@ mod tests {
 				addr: "0.0.0.0".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.addr(), &"0.0.0.0".parse::<Ipv4Addr>().unwrap());
+			assert_eq!(netaddr.addr(), "0.0.0.0".parse::<Ipv4Addr>().unwrap());
 		}
 	}
 
@@ -114,7 +114,7 @@ mod tests {
 				addr: "0.0.0.0".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), false);
+			assert!(!netaddr.is_cidr());
 		}
 
 		#[test]
@@ -124,7 +124,7 @@ mod tests {
 				addr: "0.0.0.0".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), true);
+			assert!(netaddr.is_cidr());
 		}
 	}
 
@@ -138,8 +138,8 @@ mod tests {
 
 			let netaddr: Netv4Addr = Netv4Addr::new(addr, mask);
 
-			assert_eq!(netaddr.mask(), &mask);
-			assert_eq!(netaddr.addr(), &"192.0.0.0".parse::<Ipv4Addr>().unwrap());
+			assert_eq!(netaddr.mask(), mask);
+			assert_eq!(netaddr.addr(), "192.0.0.0".parse::<Ipv4Addr>().unwrap());
 		}
 	}
 }

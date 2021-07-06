@@ -3,8 +3,8 @@ use core::cmp::Ordering;
 
 impl Ord for Netv6Addr {
 	fn cmp(&self, other: &Self) -> Ordering {
-		match self.addr().cmp(other.addr()) {
-			Ordering::Equal => self.mask().cmp(other.mask()),
+		match self.addr().cmp(&other.addr()) {
+			Ordering::Equal => self.mask().cmp(&other.mask()),
 			ordering => ordering,
 		}
 	}
