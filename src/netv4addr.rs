@@ -114,7 +114,7 @@ mod tests {
 				addr: "0.0.0.0".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), false);
+			assert!(!netaddr.is_cidr());
 		}
 
 		#[test]
@@ -124,7 +124,7 @@ mod tests {
 				addr: "0.0.0.0".parse().unwrap(),
 			};
 
-			assert_eq!(netaddr.is_cidr(), true);
+			assert!(netaddr.is_cidr());
 		}
 	}
 
