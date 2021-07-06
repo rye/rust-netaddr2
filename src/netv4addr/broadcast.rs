@@ -6,8 +6,8 @@ impl Broadcast for Netv4Addr {
 	type Output = Ipv4Addr;
 
 	fn broadcast(&self) -> Ipv4Addr {
-		let netmask: u32 = (*self.mask()).into();
-		let network: u32 = (*self.addr()).into();
+		let netmask: u32 = self.mask().into();
+		let network: u32 = self.addr().into();
 		let broadcast: u32 = network | !netmask;
 		broadcast.into()
 	}

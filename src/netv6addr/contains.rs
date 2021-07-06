@@ -13,7 +13,7 @@ impl Contains<std::net::IpAddr> for Netv6Addr {
 
 impl Contains<std::net::Ipv6Addr> for Netv6Addr {
 	fn contains(&self, other: &std::net::Ipv6Addr) -> bool {
-		other.mask(self.mask()) == *self.addr()
+		other.mask(&self.mask()) == self.addr()
 	}
 }
 
@@ -28,7 +28,7 @@ impl Contains<crate::NetAddr> for Netv6Addr {
 
 impl Contains<Netv6Addr> for Netv6Addr {
 	fn contains(&self, other: &Netv6Addr) -> bool {
-		other.addr().mask(self.mask()) == *self.addr()
+		other.addr().mask(&self.mask()) == self.addr()
 	}
 }
 

@@ -19,16 +19,16 @@ impl NetAddr {
 	/// Get the "netmask" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn mask(&self) -> IpAddr {
 		match self {
-			Self::V4(v4) => IpAddr::V4(*v4.mask()),
-			Self::V6(v6) => IpAddr::V6(*v6.mask()),
+			Self::V4(v4) => IpAddr::V4(v4.mask()),
+			Self::V6(v6) => IpAddr::V6(v6.mask()),
 		}
 	}
 
 	/// Get the "network" part of the inner `Netv4Addr` or the `Netv6Addr`.
 	pub fn addr(&self) -> IpAddr {
 		match self {
-			Self::V4(v4) => IpAddr::V4(*v4.addr()),
-			Self::V6(v6) => IpAddr::V6(*v6.addr()),
+			Self::V4(v4) => IpAddr::V4(v4.addr()),
+			Self::V6(v6) => IpAddr::V6(v6.addr()),
 		}
 	}
 
