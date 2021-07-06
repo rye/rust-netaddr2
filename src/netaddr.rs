@@ -72,13 +72,13 @@ mod tests {
 			#[test]
 			fn non_cidr_returns_false() {
 				let netaddr: NetAddr = "0.0.0.0/255.255.127.0".parse().unwrap();
-				assert_eq!(netaddr.is_cidr(), false);
+				assert!(!netaddr.is_cidr());
 			}
 
 			#[test]
 			fn cidr_returns_true() {
 				let netaddr: NetAddr = "0.0.0.0/255.255.192.0".parse().unwrap();
-				assert_eq!(netaddr.is_cidr(), true);
+				assert!(netaddr.is_cidr());
 			}
 		}
 
@@ -88,13 +88,13 @@ mod tests {
 			#[test]
 			fn non_cidr_returns_false() {
 				let netaddr: NetAddr = "::/ffff:ffff:fff::".parse().unwrap();
-				assert_eq!(netaddr.is_cidr(), false);
+				assert!(!netaddr.is_cidr());
 			}
 
 			#[test]
 			fn cidr_returns_true() {
 				let netaddr: NetAddr = "::/ffff:ffff:fffc::".parse().unwrap();
-				assert_eq!(netaddr.is_cidr(), true);
+				assert!(netaddr.is_cidr());
 			}
 		}
 	}
