@@ -7,10 +7,10 @@ impl Merge for Netv4Addr {
 	type Output = Option<Self>;
 
 	fn merge(&self, other: &Self) -> Self::Output {
-		let addr: u32 = self.addr().clone().into();
-		let mask: u32 = self.mask().clone().into();
-		let other_addr: u32 = other.addr().clone().into();
-		let other_mask: u32 = other.mask().clone().into();
+		let addr: u32 = (*self.addr()).into();
+		let mask: u32 = (*self.mask()).into();
+		let other_addr: u32 = (*other.addr()).into();
+		let other_mask: u32 = (*other.mask()).into();
 
 		let mask: u32 = match mask.cmp(&other_mask) {
 			Ordering::Equal => mask << 1,
