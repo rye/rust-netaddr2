@@ -27,17 +27,16 @@ impl Iterator for SubnetIterator<Netv4Addr, Netv4Addr> {
 					Some(next) => {
 						if self.net.contains(&next) {
 							self.cur = Some(next);
-							Some(cur)
 						} else {
 							self.cur = None;
-							Some(cur)
 						}
 					}
 					None => {
 						self.cur = None;
-						Some(cur)
 					}
-				}
+				};
+
+				Some(cur)
 			}
 			// If self.cur exists but isn't contained in self.net, it isn't a subnet.
 			Some(_) => None,
@@ -64,17 +63,16 @@ impl Iterator for SubnetIterator<Netv6Addr, Netv6Addr> {
 					Some(next) => {
 						if self.net.contains(&next) {
 							self.cur = Some(next);
-							Some(cur)
 						} else {
 							self.cur = None;
-							Some(cur)
 						}
 					}
 					None => {
 						self.cur = None;
-						Some(cur)
 					}
-				}
+				};
+
+				Some(cur)
 			}
 			// If self.cur exists but isn't contained in self.net, it isn't a subnet.
 			Some(_) => None,
