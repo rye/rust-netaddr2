@@ -98,17 +98,17 @@ impl Offset<u128> for IpAddr {
 
 impl Offset<u32> for Netv4Addr {
 	fn offset(&self, offset: u32) -> Option<Self> {
-		u32::from(*self.addr())
+		u32::from(self.addr())
 			.checked_add(offset)
-			.map(|new_addr: u32| Netv4Addr::new(Ipv4Addr::from(new_addr), *self.mask()))
+			.map(|new_addr: u32| Netv4Addr::new(Ipv4Addr::from(new_addr), self.mask()))
 	}
 }
 
 impl Offset<u128> for Netv6Addr {
 	fn offset(&self, offset: u128) -> Option<Self> {
-		u128::from(*self.addr())
+		u128::from(self.addr())
 			.checked_add(offset)
-			.map(|new_addr: u128| Netv6Addr::new(Ipv6Addr::from(new_addr), *self.mask()))
+			.map(|new_addr: u128| Netv6Addr::new(Ipv6Addr::from(new_addr), self.mask()))
 	}
 }
 

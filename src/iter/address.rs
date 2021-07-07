@@ -68,7 +68,7 @@ mod tests {
 			pub fn iter(&self) -> AddressIterator<Netv4Addr, Ipv4Addr> {
 				AddressIterator {
 					net: *self,
-					cur: Some(*self.addr()),
+					cur: Some(self.addr()),
 				}
 			}
 		}
