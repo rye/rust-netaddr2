@@ -97,6 +97,13 @@ impl Netv4Addr {
 	pub const fn is_empty(self) -> bool {
 		false
 	}
+
+	pub fn addresses(&self) -> crate::AddressIterator<Self, Ipv4Addr> {
+		crate::AddressIterator {
+			net: *self,
+			cur: Some(self.addr()),
+		}
+	}
 }
 
 mod broadcast;
