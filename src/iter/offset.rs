@@ -4,8 +4,8 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use crate::{Netv4Addr, Netv6Addr};
 
-pub trait Offset<T>: Sized {
-	fn offset(&self, offset: T) -> Option<Self>;
+pub trait Offset<O>: Sized {
+	fn offset(&self, offset: O) -> Option<Self>;
 }
 
 impl Offset<u128> for Ipv6Addr {
