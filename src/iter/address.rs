@@ -25,8 +25,8 @@ pub struct AddressIterator<Network, Address>
 where
 	Network: Contains<Address> + From<Address>,
 {
-	net: Network,
-	cur: Option<Address>,
+	pub(crate) net: Network,
+	pub(crate) cur: Option<Address>,
 }
 
 impl<Network, Address> AddressIterator<Network, Address>
