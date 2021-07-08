@@ -8,6 +8,7 @@ mod sibling;
 mod subnet;
 
 pub use address::*;
+pub use offset::*;
 #[cfg(feature = "unstable")]
 pub use sibling::*;
 #[cfg(feature = "unstable")]
