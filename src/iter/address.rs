@@ -1,6 +1,4 @@
-use crate::Contains;
-
-use super::offset::Offset;
+use crate::{Contains, Offset};
 
 /// An iterator over a network's _contained addresses_.
 pub struct AddressIterator<Network, Address>
