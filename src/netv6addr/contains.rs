@@ -1,6 +1,9 @@
-use super::Netv6Addr;
-use crate::traits::Contains;
-use crate::traits::Mask;
+use std::net::{IpAddr, Ipv6Addr};
+
+use crate::{
+	traits::{Contains, Mask},
+	NetAddr, Netv6Addr,
+};
 
 impl Contains<std::net::IpAddr> for Netv6Addr {
 	fn contains(&self, other: &std::net::IpAddr) -> bool {
