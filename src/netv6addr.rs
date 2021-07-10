@@ -13,14 +13,17 @@ pub struct Netv6Addr {
 }
 
 impl Netv6Addr {
+	#[must_use]
 	pub const fn mask(&self) -> Ipv6Addr {
 		self.mask
 	}
 
+	#[must_use]
 	pub const fn addr(&self) -> Ipv6Addr {
 		self.addr
 	}
 
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		let mask: u128 = self.mask.into();
 		let ones: u32 = mask.count_ones();
@@ -42,6 +45,7 @@ impl Netv6Addr {
 	/// let netmask = Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0);
 	/// let netaddr = Netv6Addr::new(network, netmask);
 	/// ```
+	#[must_use]
 	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
@@ -81,6 +85,7 @@ impl Netv6Addr {
 	/// let netaddr: Netv6Addr = "::/0".parse().unwrap();
 	/// assert_eq!(netaddr.len(), None);
 	/// ```
+	#[must_use]
 	pub fn len(self) -> Option<u128> {
 		2_u128.checked_pow(u128::from(self.mask).count_zeros())
 	}
@@ -89,6 +94,7 @@ impl Netv6Addr {
 	///
 	/// (Plot twist, it isn't.)  Even a /128 has one device in it.
 	#[allow(clippy::unused_self)]
+	#[must_use]
 	pub const fn is_empty(self) -> bool {
 		false
 	}

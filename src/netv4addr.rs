@@ -12,15 +12,17 @@ pub struct Netv4Addr {
 }
 
 impl Netv4Addr {
+	#[must_use]
 	pub const fn mask(&self) -> Ipv4Addr {
 		self.mask
 	}
 
+	#[must_use]
 	pub const fn addr(&self) -> Ipv4Addr {
 		self.addr
 	}
 
-	#[allow(clippy::trivially_copy_pass_by_ref)]
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		let mask: u32 = self.mask.into();
 		let ones: u32 = mask.count_ones();
@@ -47,6 +49,7 @@ impl Netv4Addr {
 	/// let test: Ipv4Addr = Ipv4Addr::new(127, 47, 23, 37);
 	/// assert!(netaddr.contains(&test));
 	/// ```
+	#[must_use]
 	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
@@ -86,6 +89,7 @@ impl Netv4Addr {
 	/// let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
 	/// assert_eq!(netaddr.len(), None);
 	/// ```
+	#[must_use]
 	pub fn len(self) -> Option<u32> {
 		2_u32.checked_pow(u32::from(self.mask).count_zeros())
 	}
@@ -94,10 +98,12 @@ impl Netv4Addr {
 	///
 	/// (Plot twist, it isn't.)  Even a /32 has one device in it.
 	#[allow(clippy::unused_self)]
+	#[must_use]
 	pub const fn is_empty(self) -> bool {
 		false
 	}
 
+	#[must_use]
 	pub fn addresses(&self) -> crate::AddressIterator<Self, Ipv4Addr> {
 		crate::AddressIterator {
 			net: *self,

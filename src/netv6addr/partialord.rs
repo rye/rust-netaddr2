@@ -21,7 +21,7 @@ mod tests {
 		let a: Netv6Addr = "2001:db8:0:0::0/64".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:1::0/64".parse().unwrap();
 
-		assert_eq!(a.partial_cmp(&b), Some(Ordering::Less))
+		assert_eq!(a.partial_cmp(&b), Some(Ordering::Less));
 	}
 
 	#[test]
@@ -29,7 +29,7 @@ mod tests {
 		let a: Netv6Addr = "2001:db8:0:0::0/63".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:0::0/64".parse().unwrap();
 
-		assert_eq!(a.partial_cmp(&b), Some(Ordering::Less))
+		assert_eq!(a.partial_cmp(&b), Some(Ordering::Less));
 	}
 
 	#[test]
@@ -37,7 +37,7 @@ mod tests {
 		let a: Netv6Addr = "ff02::1/16".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:1::0/64".parse().unwrap();
 
-		assert_eq!(a.partial_cmp(&b), Some(Ordering::Greater))
+		assert_eq!(a.partial_cmp(&b), Some(Ordering::Greater));
 	}
 
 	#[test]
@@ -45,6 +45,6 @@ mod tests {
 		let a: Netv6Addr = "2001:db8:dead:beef::0/64".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:dead:beef::0/64".parse().unwrap();
 
-		assert_eq!(a.partial_cmp(&b), Some(Ordering::Equal))
+		assert_eq!(a.partial_cmp(&b), Some(Ordering::Equal));
 	}
 }

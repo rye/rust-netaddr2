@@ -1,3 +1,4 @@
+use netaddr2::Contains;
 use netaddr2::NetAddr;
 
 use std::net::IpAddr;
@@ -19,7 +20,7 @@ fn main() {
 	assert_eq!(net.mask(), "255.0.0.0".parse::<IpAddr>().unwrap());
 
 	// Now, to check containment, just this:
-	use netaddr2::Contains;
+
 	assert!(net.contains(&"127.42.33.87".parse::<IpAddr>().unwrap()));
 	assert!(net.contains(&"127.0.0.1".parse::<IpAddr>().unwrap()));
 	assert!(!net.contains(&"128.0.0.0".parse::<IpAddr>().unwrap()));

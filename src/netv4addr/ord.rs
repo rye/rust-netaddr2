@@ -20,7 +20,7 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "2.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -28,7 +28,7 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/7".parse().unwrap();
 		let b: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -36,7 +36,7 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "0.0.0.0/24".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Greater)
+		assert_eq!(a.cmp(&b), Ordering::Greater);
 	}
 
 	#[test]
@@ -44,6 +44,6 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Equal)
+		assert_eq!(a.cmp(&b), Ordering::Equal);
 	}
 }

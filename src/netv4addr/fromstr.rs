@@ -69,8 +69,8 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn invalid_is_safe() {
-		let _: Result<Netv4Addr> = "zoop".parse::<Netv4Addr>();
+	fn invalid_does_not_panic() {
+		std::mem::drop("zoop".parse::<Netv4Addr>());
 	}
 
 	#[test]

@@ -32,7 +32,7 @@ mod tests {
 		#[test]
 		fn non_cidr() {
 			let addr: NetAddr = "127.0.0.1/251.255.255.0".parse().unwrap();
-			assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0")
+			assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0");
 		}
 	}
 
@@ -63,7 +63,7 @@ mod tests {
 			assert_eq!(
 				format!("{}", addr),
 				"2001:db8:dead:bccf::/ffff:ffff:ffff:fddf::"
-			)
+			);
 		}
 	}
 }

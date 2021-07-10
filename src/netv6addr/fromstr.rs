@@ -70,8 +70,8 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn invalid_is_safe() {
-		let _: Result<Netv6Addr> = "zoop".parse::<Netv6Addr>();
+	fn invalid_does_not_panic() {
+		std::mem::drop("zoop".parse::<Netv6Addr>());
 	}
 
 	#[test]

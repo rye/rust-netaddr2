@@ -24,7 +24,7 @@ mod tests {
 
 	#[test]
 	fn invalid_is_safe() {
-		let _: Result<NetAddr> = "zoop".parse::<NetAddr>();
+		std::mem::drop("zoop".parse::<NetAddr>());
 	}
 
 	#[test]

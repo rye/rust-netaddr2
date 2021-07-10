@@ -4,17 +4,32 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use crate::{Netv4Addr, Netv6Addr};
 
+/// An equivalent of the addition/subtraction operation, intended for use with `Ipv4Addr` and
+/// `Ipv6Addr`.
+///
+/// The type parameter `O` describes the type of the offset value.
 pub trait Offset<O>: Sized {
+	/// Performs the offset operation.
 	fn offset(&self, offset: O) -> Option<Self>;
 }
 
 impl Offset<u128> for Ipv6Addr {
+	/// Performs the offset operation.
+	///
+	/// Returns `Some(Ipv6Addr)` if `u128::checked_add` succeeds, otherwise returns `None`.
 	fn offset(&self, offset: u128) -> Option<Self> {
 		u128::from(*self).checked_add(offset).map(Ipv6Addr::from)
 	}
 }
 
 impl Offset<i32> for Ipv6Addr {
+	/// Performs the offset operation.
+	///
+	/// First, converts the absolute value of the passed `offset` into a `u128`, then, depending on
+	/// the sign of `offset` calls either `u128::checked_add` or `u128::checked_sub` on the passed
+	/// value.
+	///
+	/// Returns `Some(Ipv6Addr)` if the arithmetic on the address succeeds, otherwise returns `None`.
 	fn offset(&self, offset: i32) -> Option<Self> {
 		use core::i32::{MAX, MIN};
 
@@ -24,11 +39,10 @@ impl Offset<i32> for Ipv6Addr {
 
 		// This is a simple "if positive, use checked_add, if negative, use checked_sub" conditional
 		offset_abs
-			.map(|abs: u128| match offset {
+			.and_then(|abs: u128| match offset {
 				0..=MAX => u128::from(*self).checked_add(abs),
 				MIN..=-1 => u128::from(*self).checked_sub(abs),
 			})
-			.flatten()
 			.map(Ipv6Addr::from)
 	}
 }
@@ -53,8 +67,7 @@ impl Offset<i32> for Ipv4Addr {
 		let offset: Option<u32> = addr
 			.checked_add(i64::from(offset))
 			.map(TryInto::try_into)
-			.map(Result::ok)
-			.flatten();
+			.and_then(Result::ok);
 		offset.map(Ipv4Addr::from)
 	}
 }
@@ -63,8 +76,7 @@ impl Offset<u128> for Ipv4Addr {
 	fn offset(&self, offset: u128) -> Option<Self> {
 		let offset: Option<u32> = offset.try_into().ok();
 		offset
-			.map(|offset: u32| u32::from(*self).checked_add(offset))
-			.flatten()
+			.and_then(|offset: u32| u32::from(*self).checked_add(offset))
 			.map(Ipv4Addr::from)
 	}
 }
@@ -176,7 +188,7 @@ mod tests {
 		v4_out_of_bounds,
 		Ipv4Addr,
 		"127.0.0.0",
-		0x100000000_u128,
+		0x1_0000_0000_u128,
 		None
 	);
 

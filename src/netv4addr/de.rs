@@ -37,7 +37,7 @@ mod tests {
 		assert_de_tokens_error::<Netv4Addr>(
 			&[Token::Str("asdf")],
 			"invalid value: string \"asdf\", expected a valid cidr/extended network address",
-		)
+		);
 	}
 
 	#[test]

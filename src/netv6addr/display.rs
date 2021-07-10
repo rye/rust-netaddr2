@@ -48,6 +48,6 @@ mod tests {
 		assert_eq!(
 			format!("{}", addr),
 			"2001:db8:dead:bccf::/ffff:ffff:ffff:fddf::"
-		)
+		);
 	}
 }

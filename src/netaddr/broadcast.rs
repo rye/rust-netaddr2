@@ -8,7 +8,7 @@ impl Broadcast for NetAddr {
 	fn broadcast(&self) -> Self::Output {
 		match self {
 			Self::V4(netaddr) => Some(IpAddr::from(netaddr.broadcast())),
-			_ => None,
+			Self::V6(_) => None,
 		}
 	}
 }

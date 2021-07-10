@@ -18,6 +18,7 @@ pub enum NetAddr {
 
 impl NetAddr {
 	/// Get the "netmask" part of the inner `Netv4Addr` or the `Netv6Addr`.
+	#[must_use]
 	pub fn mask(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(v4.mask()),
@@ -26,6 +27,7 @@ impl NetAddr {
 	}
 
 	/// Get the "network" part of the inner `Netv4Addr` or the `Netv6Addr`.
+	#[must_use]
 	pub fn addr(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(v4.addr()),
@@ -38,6 +40,7 @@ impl NetAddr {
 	/// A `Netv4Addr` or `Netv6Addr` is CIDR if and only if its underlying
 	/// netmask is "left contigous"; that is, if its bit pattern is a given
 	/// number of ones followed by a remaining group of zeroes.
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		match self {
 			Self::V4(v4) => v4.is_cidr(),
@@ -46,6 +49,7 @@ impl NetAddr {
 	}
 
 	/// Produce an iterator over the _contained addresses_ of this `NetAddr`.
+	#[must_use]
 	pub fn iter(&self) -> AddressIterator<NetAddr, IpAddr> {
 		AddressIterator::new(*self, Some(self.addr()))
 	}

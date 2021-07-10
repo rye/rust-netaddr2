@@ -1,13 +1,8 @@
-use crate::Contains;
-
-use crate::{Netv4Addr, Netv6Addr};
-
-use super::offset::Offset;
-
-pub struct SubnetIterator<Network, Subnet> {
-	net: Network,
-	cur: Option<Subnet>,
-}
+use crate::{
+	iter::SubnetIterator,
+	traits::{Contains, Offset},
+	Netv4Addr, Netv6Addr,
+};
 
 impl Iterator for SubnetIterator<Netv4Addr, Netv4Addr> {
 	type Item = Netv4Addr;
@@ -19,9 +14,8 @@ impl Iterator for SubnetIterator<Netv4Addr, Netv4Addr> {
 			Some(cur) if self.net.contains(&cur) => {
 				let device_count: Option<u32> = cur.len();
 
-				let next: Option<Netv4Addr> = device_count
-					.map(|device_count: u32| cur.offset(device_count))
-					.flatten();
+				let next: Option<Netv4Addr> =
+					device_count.and_then(|device_count: u32| cur.offset(device_count));
 
 				match next {
 					Some(next) => {
@@ -39,8 +33,7 @@ impl Iterator for SubnetIterator<Netv4Addr, Netv4Addr> {
 				Some(cur)
 			}
 			// If self.cur exists but isn't contained in self.net, it isn't a subnet.
-			Some(_) => None,
-			None => None,
+			Some(_) | None => None,
 		}
 	}
 }
@@ -55,9 +48,8 @@ impl Iterator for SubnetIterator<Netv6Addr, Netv6Addr> {
 			Some(cur) if self.net.contains(&cur) => {
 				let device_count: Option<u128> = cur.len();
 
-				let next: Option<Netv6Addr> = device_count
-					.map(|device_count: u128| cur.offset(device_count))
-					.flatten();
+				let next: Option<Netv6Addr> =
+					device_count.and_then(|device_count: u128| cur.offset(device_count));
 
 				match next {
 					Some(next) => {
@@ -75,8 +67,7 @@ impl Iterator for SubnetIterator<Netv6Addr, Netv6Addr> {
 				Some(cur)
 			}
 			// If self.cur exists but isn't contained in self.net, it isn't a subnet.
-			Some(_) => None,
-			None => None,
+			Some(_) | None => None,
 		}
 	}
 }
@@ -92,6 +83,7 @@ mod tests {
 		use std::net::Ipv4Addr;
 
 		impl crate::Netv4Addr {
+			#[must_use]
 			pub fn subnets(&self, mask: Ipv4Addr) -> SubnetIterator<Netv4Addr, Netv4Addr> {
 				SubnetIterator {
 					net: *self,
@@ -173,6 +165,7 @@ mod tests {
 		use std::net::Ipv6Addr;
 
 		impl crate::Netv6Addr {
+			#[must_use]
 			pub fn subnets(&self, mask: Ipv6Addr) -> SubnetIterator<Netv6Addr, Netv6Addr> {
 				SubnetIterator {
 					net: *self,
