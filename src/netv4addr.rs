@@ -166,7 +166,6 @@ mod tests {
 	}
 
 	mod is_cidr {
-
 		use crate::netv4addr::Netv4Addr;
 
 		#[test]
@@ -208,7 +207,6 @@ mod tests {
 	}
 
 	mod len {
-
 		use crate::netv4addr::Netv4Addr;
 
 		#[test]
