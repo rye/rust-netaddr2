@@ -5,8 +5,8 @@ use crate::{netaddr::NetAddr, traits::Contains};
 impl Contains<IpAddr> for NetAddr {
 	fn contains(&self, other: &IpAddr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 		}
 	}
 }
@@ -14,7 +14,7 @@ impl Contains<IpAddr> for NetAddr {
 impl Contains<Ipv4Addr> for NetAddr {
 	fn contains(&self, other: &Ipv4Addr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
 			Self::V6(_) => false,
 		}
 	}
@@ -23,7 +23,7 @@ impl Contains<Ipv4Addr> for NetAddr {
 impl Contains<Ipv6Addr> for NetAddr {
 	fn contains(&self, other: &Ipv6Addr) -> bool {
 		match self {
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 			Self::V4(_) => false,
 		}
 	}
@@ -32,8 +32,8 @@ impl Contains<Ipv6Addr> for NetAddr {
 impl Contains<NetAddr> for NetAddr {
 	fn contains(&self, other: &NetAddr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 		}
 	}
 }
@@ -41,7 +41,7 @@ impl Contains<NetAddr> for NetAddr {
 impl Contains<crate::netv4addr::Netv4Addr> for NetAddr {
 	fn contains(&self, other: &crate::netv4addr::Netv4Addr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
 			Self::V6(_) => false,
 		}
 	}
@@ -50,7 +50,7 @@ impl Contains<crate::netv4addr::Netv4Addr> for NetAddr {
 impl Contains<crate::netv6addr::Netv6Addr> for NetAddr {
 	fn contains(&self, other: &crate::netv6addr::Netv6Addr) -> bool {
 		match self {
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 			Self::V4(_) => false,
 		}
 	}
