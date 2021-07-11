@@ -38,8 +38,8 @@ impl Contains<NetAddr> for NetAddr {
 	}
 }
 
-impl Contains<crate::Netv4Addr> for NetAddr {
-	fn contains(&self, other: &crate::Netv4Addr) -> bool {
+impl Contains<crate::netv4addr::Netv4Addr> for NetAddr {
+	fn contains(&self, other: &crate::netv4addr::Netv4Addr) -> bool {
 		match self {
 			Self::V4(netaddr) => netaddr.contains(other),
 			Self::V6(_) => false,
@@ -47,8 +47,8 @@ impl Contains<crate::Netv4Addr> for NetAddr {
 	}
 }
 
-impl Contains<crate::Netv6Addr> for NetAddr {
-	fn contains(&self, other: &crate::Netv6Addr) -> bool {
+impl Contains<crate::netv6addr::Netv6Addr> for NetAddr {
+	fn contains(&self, other: &crate::netv6addr::Netv6Addr) -> bool {
 		match self {
 			Self::V6(netaddr) => netaddr.contains(other),
 			Self::V4(_) => false,

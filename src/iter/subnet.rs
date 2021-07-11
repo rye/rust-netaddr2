@@ -80,7 +80,7 @@ mod tests {
 
 		use crate::{iter::SubnetIterator, netv4addr::Netv4Addr};
 
-		impl crate::Netv4Addr {
+		impl Netv4Addr {
 			#[must_use]
 			pub fn subnets(&self, mask: Ipv4Addr) -> SubnetIterator<Netv4Addr, Netv4Addr> {
 				SubnetIterator {
@@ -170,7 +170,7 @@ mod tests {
 
 		use crate::{iter::SubnetIterator, netv6addr::Netv6Addr};
 
-		impl crate::Netv6Addr {
+		impl Netv6Addr {
 			#[must_use]
 			pub fn subnets(&self, mask: Ipv6Addr) -> SubnetIterator<Netv6Addr, Netv6Addr> {
 				SubnetIterator {

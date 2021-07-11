@@ -17,7 +17,7 @@ impl Contains<Ipv4Addr> for Netv4Addr {
 	}
 }
 
-impl Contains<crate::NetAddr> for Netv4Addr {
+impl Contains<NetAddr> for Netv4Addr {
 	fn contains(&self, other: &NetAddr) -> bool {
 		match other {
 			NetAddr::V4(other) => self.contains(other),

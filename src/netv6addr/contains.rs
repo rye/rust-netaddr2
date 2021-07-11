@@ -20,8 +20,8 @@ impl Contains<Ipv6Addr> for Netv6Addr {
 	}
 }
 
-impl Contains<crate::NetAddr> for Netv6Addr {
-	fn contains(&self, other: &crate::NetAddr) -> bool {
+impl Contains<NetAddr> for Netv6Addr {
+	fn contains(&self, other: &NetAddr) -> bool {
 		match other {
 			NetAddr::V6(other) => self.contains(other),
 			NetAddr::V4(_) => false,
