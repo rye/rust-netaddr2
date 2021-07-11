@@ -1,7 +1,9 @@
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+
 use crate::{netaddr::NetAddr, traits::Contains};
 
-impl Contains<std::net::IpAddr> for NetAddr {
-	fn contains(&self, other: &std::net::IpAddr) -> bool {
+impl Contains<IpAddr> for NetAddr {
+	fn contains(&self, other: &IpAddr) -> bool {
 		match self {
 			Self::V4(netaddr) => netaddr.contains(other),
 			Self::V6(netaddr) => netaddr.contains(other),
@@ -9,8 +11,8 @@ impl Contains<std::net::IpAddr> for NetAddr {
 	}
 }
 
-impl Contains<std::net::Ipv4Addr> for NetAddr {
-	fn contains(&self, other: &std::net::Ipv4Addr) -> bool {
+impl Contains<Ipv4Addr> for NetAddr {
+	fn contains(&self, other: &Ipv4Addr) -> bool {
 		match self {
 			Self::V4(netaddr) => netaddr.contains(other),
 			Self::V6(_) => false,
@@ -18,8 +20,8 @@ impl Contains<std::net::Ipv4Addr> for NetAddr {
 	}
 }
 
-impl Contains<std::net::Ipv6Addr> for NetAddr {
-	fn contains(&self, other: &std::net::Ipv6Addr) -> bool {
+impl Contains<Ipv6Addr> for NetAddr {
+	fn contains(&self, other: &Ipv6Addr) -> bool {
 		match self {
 			Self::V6(netaddr) => netaddr.contains(other),
 			Self::V4(_) => false,
