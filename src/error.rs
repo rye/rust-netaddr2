@@ -9,3 +9,11 @@ mod from;
 
 mod result;
 pub use result::*;
+
+#[cfg(test)]
+mod tests {
+	#[test]
+	fn parse_error_construction() {
+		let _error: crate::Error = crate::Error::ParseError("yote".to_string());
+	}
+}
