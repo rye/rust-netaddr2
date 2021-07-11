@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer};
 
-use super::Netv4Addr;
+use crate::netv4addr::Netv4Addr;
 
 #[cfg(feature = "serde")]
 struct Netv4AddrVisitor;
@@ -29,7 +29,8 @@ impl<'de> Deserialize<'de> for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
+
 	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
 
 	#[test]

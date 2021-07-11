@@ -1,5 +1,6 @@
-use super::Mask;
 use std::net::Ipv6Addr;
+
+use crate::traits::Mask;
 
 impl Mask for Ipv6Addr {
 	type Output = Self;
@@ -11,7 +12,9 @@ impl Mask for Ipv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use std::net::Ipv6Addr;
+
+	use crate::traits::Mask;
 
 	#[test]
 	fn returns_correct_answer() {

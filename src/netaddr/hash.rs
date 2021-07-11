@@ -1,13 +1,14 @@
 #[cfg(test)]
 mod tests {
-	use crate::NetAddr;
-	use std::hash::Hash;
+	use std::{
+		collections::hash_map::DefaultHasher,
+		hash::{Hash, Hasher},
+	};
+
+	use crate::netaddr::NetAddr;
 
 	#[test]
 	fn hash_same() {
-		use std::collections::hash_map::DefaultHasher;
-		use std::hash::Hasher;
-
 		let actual = {
 			let mut hasher = DefaultHasher::new();
 			"192.0.2.26/29"

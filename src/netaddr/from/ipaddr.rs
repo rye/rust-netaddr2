@@ -1,5 +1,6 @@
-use crate::NetAddr;
 use std::net::IpAddr;
+
+use crate::netaddr::NetAddr;
 
 impl From<IpAddr> for NetAddr {
 	fn from(addr: IpAddr) -> Self {
@@ -12,12 +13,10 @@ impl From<IpAddr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod v4 {
-		use super::*;
-		use crate::Netv4Addr;
-		use std::net::Ipv4Addr;
+		use std::net::{IpAddr, Ipv4Addr};
+
+		use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 		#[test]
 		fn uses_max_netmask() {
@@ -35,9 +34,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
-		use crate::Netv6Addr;
-		use std::net::Ipv6Addr;
+		use std::net::{IpAddr, Ipv6Addr};
+
+		use crate::{netaddr::NetAddr, netv6addr::Netv6Addr};
 
 		#[test]
 		fn uses_max_netmask() {

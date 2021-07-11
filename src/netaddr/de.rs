@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer};
 
-use super::NetAddr;
+use crate::netaddr::NetAddr;
 
 #[cfg(feature = "serde")]
 struct NetAddrVisitor;
@@ -29,8 +29,9 @@ impl<'de> Deserialize<'de> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
+	use crate::netaddr::NetAddr;
+
+	use serde_test::{assert_de_tokens_error, Token};
 
 	#[test]
 	fn malformed_produces_correct_error() {
@@ -41,7 +42,9 @@ mod tests {
 	}
 
 	mod v4 {
-		use super::*;
+		use serde_test::{assert_de_tokens, Token};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn test_de_cidr_localhost() {
@@ -59,7 +62,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use serde_test::{assert_de_tokens, Token};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn test_de_cidr_localhost() {

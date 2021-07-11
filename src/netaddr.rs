@@ -1,8 +1,6 @@
-use crate::AddressIterator;
-use crate::Netv4Addr;
-use crate::Netv6Addr;
-use crate::{Error, Result};
 use std::net::IpAddr;
+
+use crate::{iter::AddressIterator, netv4addr::Netv4Addr, netv6addr::Netv6Addr};
 
 /// A structure representing an IP network.
 ///
@@ -71,13 +69,9 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-
 	mod is_cidr {
-		use super::*;
-
 		mod v4 {
-			use super::*;
+			use crate::netaddr::NetAddr;
 
 			#[test]
 			fn non_cidr_returns_false() {
@@ -93,7 +87,7 @@ mod tests {
 		}
 
 		mod v6 {
-			use super::*;
+			use crate::netaddr::NetAddr;
 
 			#[test]
 			fn non_cidr_returns_false() {

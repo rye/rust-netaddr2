@@ -1,10 +1,9 @@
 #[cfg(test)]
 mod tests {
-	use crate::NetAddr;
-	use std::cmp::Ordering;
-
 	mod v4 {
-		use super::*;
+		use std::cmp::Ordering;
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn different_networks() {
@@ -40,7 +39,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use std::cmp::Ordering;
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn different_networks() {

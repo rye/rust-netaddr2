@@ -1,5 +1,6 @@
-use crate::netv6addr::Netv6Addr;
 use core::cmp::Ordering;
+
+use crate::netv6addr::Netv6Addr;
 
 impl PartialOrd for Netv6Addr {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -13,8 +14,9 @@ impl PartialOrd for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv6Addr;
 	use core::cmp::Ordering;
+
+	use crate::netv6addr::Netv6Addr;
 
 	#[test]
 	fn different_networks() {

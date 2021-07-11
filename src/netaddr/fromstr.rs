@@ -1,7 +1,6 @@
-use super::{Error, NetAddr, Result};
-use crate::Netv4Addr;
-use crate::Netv6Addr;
 use core::str::FromStr;
+
+use crate::{netaddr::NetAddr, netv4addr::Netv4Addr, netv6addr::Netv6Addr, Error, Result};
 
 impl FromStr for NetAddr {
 	type Err = Error;
@@ -20,7 +19,7 @@ impl FromStr for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netaddr::NetAddr, Error};
 
 	#[test]
 	fn invalid_is_safe() {
@@ -47,8 +46,9 @@ mod tests {
 	}
 
 	mod v4 {
-		use super::NetAddr;
 		use std::net::{IpAddr, Ipv4Addr};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr_32_correct_network_and_netmask() {
@@ -87,8 +87,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::NetAddr;
 		use std::net::{IpAddr, Ipv6Addr};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr_8_correct_network_and_netmask() {

@@ -1,7 +1,8 @@
-use super::Netv6Addr;
-use crate::{Error, Result};
 use core::str::FromStr;
+
 use std::net::Ipv6Addr;
+
+use crate::{netv6addr::Netv6Addr, Error, Result};
 
 impl FromStr for Netv6Addr {
 	type Err = Error;
@@ -67,7 +68,7 @@ impl FromStr for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netv6addr::Netv6Addr, Error};
 
 	#[test]
 	fn invalid_does_not_panic() {

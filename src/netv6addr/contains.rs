@@ -37,7 +37,8 @@ impl Contains<Netv6Addr> for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Ipv6Addr;
+	use std::net::Ipv6Addr;
+
 	use crate::{traits::Contains, Netv6Addr};
 
 	#[test]

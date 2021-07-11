@@ -1,5 +1,6 @@
-use super::Netv4Addr;
 use core::cmp::Ordering;
+
+use crate::netv4addr::Netv4Addr;
 
 impl Ord for Netv4Addr {
 	fn cmp(&self, other: &Self) -> Ordering {
@@ -12,8 +13,9 @@ impl Ord for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
 	use core::cmp::Ordering;
+
+	use crate::netv4addr::Netv4Addr;
 
 	#[test]
 	fn different_networks() {

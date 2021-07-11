@@ -1,11 +1,11 @@
-use crate::traits::Mask;
 use std::net::Ipv6Addr;
+
+use crate::traits::Mask;
 
 /// A structure representing an IPv6 network.
 ///
-/// Internally, this structure includes two values; an `Ipv6Addr`
-/// representing the network address (`addr`), and another
-/// representing the netmask (`mask`).
+/// Internally, this structure includes two values; an `Ipv6Addr` representing
+/// the network address (`addr`), and another representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv6Addr {
 	addr: Ipv6Addr,
@@ -116,10 +116,10 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod mask {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn returns_mask_field() {
@@ -136,7 +136,9 @@ mod tests {
 	}
 
 	mod addr {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn returns_addr_field() {
@@ -153,7 +155,7 @@ mod tests {
 	}
 
 	mod is_cidr {
-		use super::*;
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn non_cidr_returns_false() {
@@ -177,7 +179,9 @@ mod tests {
 	}
 
 	mod new {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn masks_addr() {
@@ -195,7 +199,7 @@ mod tests {
 	}
 
 	mod len {
-		use super::*;
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn len_correct_max_mask() {
@@ -211,7 +215,7 @@ mod tests {
 	}
 
 	mod is_empty {
-		use super::*;
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn is_false() {

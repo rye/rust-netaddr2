@@ -1,22 +1,30 @@
-use serde::{de, Deserialize, Deserializer};
+use core::{
+	fmt::{self, Formatter},
+	str::FromStr,
+};
 
-use super::Netv6Addr;
+#[cfg(feature = "serde")]
+use serde::{
+	de::{self, Error, Visitor},
+	Deserialize, Deserializer,
+};
+
+use crate::netv6addr::Netv6Addr;
 
 #[cfg(feature = "serde")]
 struct Netv6AddrVisitor;
 
 #[cfg(feature = "serde")]
-impl<'de> de::Visitor<'de> for Netv6AddrVisitor {
+impl<'de> Visitor<'de> for Netv6AddrVisitor {
 	type Value = Netv6Addr;
 
-	fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+	fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
 		formatter.write_str("a valid cidr/extended network address")
 	}
 
-	fn visit_str<E: de::Error>(self, value: &str) -> Result<Self::Value, E> {
-		use core::str::FromStr;
+	fn visit_str<E: Error>(self, value: &str) -> Result<Self::Value, E> {
 		Self::Value::from_str(value)
-			.map_err(|_| de::Error::invalid_value(de::Unexpected::Str(value), &self))
+			.map_err(|_| Error::invalid_value(de::Unexpected::Str(value), &self))
 	}
 }
 
@@ -29,8 +37,9 @@ impl<'de> Deserialize<'de> for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv6Addr;
 	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
+
+	use crate::netv6addr::Netv6Addr;
 
 	#[test]
 	fn malformed_produces_correct_error() {

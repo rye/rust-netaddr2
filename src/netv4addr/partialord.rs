@@ -1,4 +1,5 @@
-use super::Netv4Addr;
+use crate::netv4addr::Netv4Addr;
+
 use core::cmp::Ordering;
 
 impl PartialOrd for Netv4Addr {
@@ -13,7 +14,8 @@ impl PartialOrd for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
+
 	use core::cmp::Ordering;
 
 	#[test]

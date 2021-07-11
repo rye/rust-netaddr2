@@ -1,5 +1,4 @@
-use super::NetAddr;
-use crate::traits::Contains;
+use crate::{netaddr::NetAddr, traits::Contains};
 
 impl Contains<std::net::IpAddr> for NetAddr {
 	fn contains(&self, other: &std::net::IpAddr) -> bool {
@@ -57,10 +56,6 @@ impl Contains<crate::Netv6Addr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	use crate::NetAddr;
-	use std::net::IpAddr;
-
 	macro_rules! assert_contains {
 		($a:expr, $b:expr) => {
 			assert!($a.contains(&$b));
@@ -92,9 +87,12 @@ mod tests {
 	}
 
 	mod v4 {
-		use super::*;
-		use crate::{Netv4Addr, Netv6Addr};
-		use std::net::{Ipv4Addr, Ipv6Addr};
+		use crate::{
+			netaddr::{NetAddr, Netv4Addr, Netv6Addr},
+			traits::Contains,
+		};
+
+		use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 		#[test]
 		fn ipaddr_v4() {
@@ -156,9 +154,12 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
-		use crate::{Netv4Addr, Netv6Addr};
-		use std::net::{Ipv4Addr, Ipv6Addr};
+		use crate::{
+			netaddr::{NetAddr, Netv4Addr, Netv6Addr},
+			traits::Contains,
+		};
+
+		use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 		#[test]
 		fn ipaddr_v4() {

@@ -1,8 +1,9 @@
-use super::Netv4Addr;
-use core::fmt;
+use core::fmt::{Display, Formatter, Result};
 
-impl fmt::Display for Netv4Addr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+use crate::netv4addr::Netv4Addr;
+
+impl Display for Netv4Addr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		let mask: u32 = self.mask().into();
 		let ones = mask.count_ones();
 		let cidr_mask: u32 = u32::max_value().checked_shl(32 - ones).unwrap_or(0);
@@ -17,7 +18,7 @@ impl fmt::Display for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
 
 	#[test]
 	fn cidr() {

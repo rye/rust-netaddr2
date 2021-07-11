@@ -1,6 +1,6 @@
-use super::NetAddr;
-use crate::traits::Broadcast;
 use std::net::IpAddr;
+
+use crate::{netaddr::NetAddr, traits::Broadcast};
 
 impl Broadcast for NetAddr {
 	type Output = Option<IpAddr>;
@@ -15,13 +15,11 @@ impl Broadcast for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	use crate::NetAddr;
-	use std::net::IpAddr;
 
 	mod v4 {
-		use super::*;
-		use std::net::Ipv4Addr;
+		use std::net::{IpAddr, Ipv4Addr};
+
+		use crate::{netaddr::NetAddr, traits::Broadcast};
 
 		#[test]
 		fn returns_correct_address() {
@@ -46,7 +44,7 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use crate::{netaddr::NetAddr, traits::Broadcast};
 
 		#[test]
 		fn returns_none() {

@@ -1,6 +1,6 @@
 use std::net::{IpAddr, Ipv4Addr};
 
-use crate::{traits::Contains, traits::Mask, NetAddr, Netv4Addr};
+use crate::{netaddr::NetAddr, netv4addr::Netv4Addr, traits::Contains, traits::Mask};
 
 impl Contains<IpAddr> for Netv4Addr {
 	fn contains(&self, other: &IpAddr) -> bool {
@@ -34,10 +34,9 @@ impl Contains<Netv4Addr> for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use std::net::Ipv4Addr;
-
 	mod cidr {
-		use super::Ipv4Addr;
+		use std::net::Ipv4Addr;
+
 		use crate::{Contains, Netv4Addr};
 
 		#[test]
@@ -57,7 +56,8 @@ mod tests {
 	}
 
 	mod non_cidr {
-		use super::Ipv4Addr;
+		use std::net::Ipv4Addr;
+
 		use crate::{Contains, Netv4Addr};
 
 		#[test]

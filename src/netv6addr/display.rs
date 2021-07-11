@@ -1,8 +1,9 @@
-use super::Netv6Addr;
-use core::fmt;
+use core::fmt::{Display, Formatter, Result};
 
-impl fmt::Display for Netv6Addr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+use crate::netv6addr::Netv6Addr;
+
+impl Display for Netv6Addr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		let mask: u128 = self.mask().into();
 		let ones = mask.count_ones();
 		let cidr_mask: u128 = u128::max_value().checked_shl(128 - ones).unwrap_or(0);
@@ -17,7 +18,7 @@ impl fmt::Display for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv6Addr;
+	use crate::netv6addr::Netv6Addr;
 
 	#[test]
 	fn cidr() {

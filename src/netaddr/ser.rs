@@ -1,6 +1,6 @@
-use super::NetAddr;
-
 use serde::{Serialize, Serializer};
+
+use crate::netaddr::NetAddr;
 
 #[cfg(feature = "serde")]
 impl Serialize for NetAddr {
@@ -11,11 +11,10 @@ impl Serialize for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-	use serde_test::{assert_tokens, Token};
-
 	mod v4 {
-		use super::*;
+		use crate::netaddr::NetAddr;
+
+		use serde_test::{assert_tokens, Token};
 
 		#[test]
 		fn test_ser_cidr_localhost() {
@@ -33,7 +32,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use crate::netaddr::NetAddr;
+
+		use serde_test::{assert_tokens, Token};
 
 		#[test]
 		fn test_ser_cidr_localhost() {

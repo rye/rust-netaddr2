@@ -1,5 +1,6 @@
-use crate::traits::Mask;
 use std::net::Ipv4Addr;
+
+use crate::traits::Mask;
 
 /// A structure representing an IPv4 network.
 ///
@@ -129,10 +130,10 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod mask {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn returns_mask_field() {
@@ -149,7 +150,9 @@ mod tests {
 	}
 
 	mod addr {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn returns_addr_field() {
@@ -163,7 +166,8 @@ mod tests {
 	}
 
 	mod is_cidr {
-		use super::*;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn non_cidr_returns_false() {
@@ -187,7 +191,9 @@ mod tests {
 	}
 
 	mod new {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn masks_addr() {
@@ -202,7 +208,8 @@ mod tests {
 	}
 
 	mod len {
-		use super::*;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn len_correct_max_mask() {
@@ -218,7 +225,7 @@ mod tests {
 	}
 
 	mod is_empty {
-		use super::*;
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn is_false() {

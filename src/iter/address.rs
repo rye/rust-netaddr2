@@ -48,15 +48,12 @@ where
 
 #[cfg(test)]
 mod tests {
-	use super::AddressIterator;
-
 	mod netv4addr {
-		use super::*;
-
-		use crate::Netv4Addr;
 		use std::net::Ipv4Addr;
 
-		impl crate::Netv4Addr {
+		use crate::{iter::AddressIterator, netv4addr::Netv4Addr};
+
+		impl Netv4Addr {
 			#[must_use]
 			pub fn iter(&self) -> AddressIterator<Netv4Addr, Ipv4Addr> {
 				AddressIterator {
@@ -71,15 +68,18 @@ mod tests {
 			let net: Netv4Addr = "127.0.16.0/32".parse().unwrap();
 
 			let mut it: AddressIterator<Netv4Addr, Ipv4Addr> = net.iter();
+
 			assert_eq!(it.next(), "127.0.16.0".parse::<Ipv4Addr>().ok());
+
 			assert_eq!(it.next(), None);
 		}
 
 		#[test]
-		fn loopback_slash_29_produces_one_off() {
+		fn loopback_slash_29_yields_8_elements() {
 			let net: Netv4Addr = "127.0.16.0/29".parse().unwrap();
 
 			let mut it: AddressIterator<Netv4Addr, Ipv4Addr> = net.iter();
+
 			assert_eq!(it.next(), "127.0.16.0".parse::<Ipv4Addr>().ok());
 			assert_eq!(it.next(), "127.0.16.1".parse::<Ipv4Addr>().ok());
 			assert_eq!(it.next(), "127.0.16.2".parse::<Ipv4Addr>().ok());
@@ -88,6 +88,7 @@ mod tests {
 			assert_eq!(it.next(), "127.0.16.5".parse::<Ipv4Addr>().ok());
 			assert_eq!(it.next(), "127.0.16.6".parse::<Ipv4Addr>().ok());
 			assert_eq!(it.next(), "127.0.16.7".parse::<Ipv4Addr>().ok());
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -96,20 +97,88 @@ mod tests {
 			let net: Netv4Addr = "255.255.255.255/31".parse().unwrap();
 
 			let mut it: AddressIterator<Netv4Addr, Ipv4Addr> = net.iter();
+
 			assert_eq!(it.next(), "255.255.255.254".parse::<Ipv4Addr>().ok());
 			assert_eq!(it.next(), "255.255.255.255".parse::<Ipv4Addr>().ok());
+
+			assert_eq!(it.next(), None);
+		}
+	}
+
+	mod netv6addr {
+		use std::net::Ipv6Addr;
+
+		use crate::{iter::AddressIterator, netv6addr::Netv6Addr};
+
+		impl Netv6Addr {
+			#[must_use]
+			pub fn iter(&self) -> AddressIterator<Netv6Addr, Ipv6Addr> {
+				AddressIterator {
+					net: *self,
+					cur: Some(self.addr()),
+				}
+			}
+		}
+
+		#[test]
+		fn loopback_slash_128_produces_one_off() {
+			let net: Netv6Addr = "::1/128".parse().unwrap();
+
+			let mut it: AddressIterator<Netv6Addr, Ipv6Addr> = net.iter();
+
+			assert_eq!(it.next(), "::1".parse::<Ipv6Addr>().ok());
+
+			assert_eq!(it.next(), None);
+		}
+
+		#[test]
+		fn loopback_slash_125_yields_8_elements() {
+			let net: Netv6Addr = "::1/125".parse().unwrap();
+
+			let mut it: AddressIterator<Netv6Addr, Ipv6Addr> = net.iter();
+
+			assert_eq!(it.next(), "::0".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::1".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::2".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::3".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::4".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::5".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::6".parse::<Ipv6Addr>().ok());
+			assert_eq!(it.next(), "::7".parse::<Ipv6Addr>().ok());
+
+			assert_eq!(it.next(), None);
+		}
+
+		#[test]
+		fn max_value_properly_stops() {
+			let net: Netv6Addr = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:fffe/127"
+				.parse()
+				.unwrap();
+
+			let mut it: AddressIterator<Netv6Addr, Ipv6Addr> = net.iter();
+
+			assert_eq!(
+				it.next(),
+				"ffff:ffff:ffff:ffff:ffff:ffff:ffff:fffe"
+					.parse::<Ipv6Addr>()
+					.ok()
+			);
+			assert_eq!(
+				it.next(),
+				"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+					.parse::<Ipv6Addr>()
+					.ok()
+			);
+
 			assert_eq!(it.next(), None);
 		}
 	}
 
 	mod netaddr {
-		use super::*;
-
-		use crate::NetAddr;
-		use std::net::IpAddr;
-
 		mod v4 {
-			use super::*;
+			use std::net::IpAddr;
+
+			use crate::{iter::AddressIterator, netaddr::NetAddr};
 
 			#[test]
 			fn loopback_slash_32_produces_one_off() {
@@ -137,7 +206,7 @@ mod tests {
 			}
 
 			#[test]
-			fn loopback_max_value_properly_stops() {
+			fn max_value_properly_stops() {
 				let net: NetAddr = "255.255.255.255/31".parse().unwrap();
 
 				let mut it: AddressIterator<NetAddr, IpAddr> = net.iter();
@@ -148,9 +217,10 @@ mod tests {
 		}
 
 		mod v6 {
-			use super::*;
+			use std::net::IpAddr;
 
-			#[test]
+			use crate::{iter::AddressIterator, netaddr::NetAddr};
+
 			#[test]
 			fn slash_128_produces_one_off() {
 				let net: NetAddr = "2001:db8::1/128".parse().unwrap();
@@ -177,7 +247,7 @@ mod tests {
 			}
 
 			#[test]
-			fn loopback_max_value_properly_stops() {
+			fn max_value_properly_stops() {
 				let net: NetAddr = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/127"
 					.parse()
 					.unwrap();

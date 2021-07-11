@@ -126,7 +126,9 @@ impl Offset<u128> for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+
+	use crate::{netv4addr::Netv4Addr, netv6addr::Netv6Addr, traits::Offset};
 
 	macro_rules! test_offset {
 		($test_fn_name:ident, $addr_type:ty, $addr:literal, $amount:literal, $expected:literal) => {

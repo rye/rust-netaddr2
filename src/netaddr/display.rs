@@ -1,8 +1,9 @@
-use super::NetAddr;
-use core::fmt;
+use core::fmt::{Display, Formatter, Result};
 
-impl fmt::Display for NetAddr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+use crate::netaddr::NetAddr;
+
+impl Display for NetAddr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		match self {
 			Self::V4(addr) => write!(f, "{}", addr),
 			Self::V6(addr) => write!(f, "{}", addr),
@@ -12,10 +13,8 @@ impl fmt::Display for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-
 	mod v4 {
-		use super::NetAddr;
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr() {
@@ -37,7 +36,7 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::NetAddr;
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr() {

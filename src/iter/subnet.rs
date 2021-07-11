@@ -74,13 +74,11 @@ impl Iterator for SubnetIterator<Netv6Addr, Netv6Addr> {
 
 #[cfg(test)]
 mod tests {
-	use super::SubnetIterator;
 
 	mod netv4addr {
-		use super::*;
-
-		use crate::Netv4Addr;
 		use std::net::Ipv4Addr;
+
+		use crate::{iter::SubnetIterator, netv4addr::Netv4Addr};
 
 		impl crate::Netv4Addr {
 			#[must_use]
@@ -99,6 +97,7 @@ mod tests {
 			let mask: Ipv4Addr = "255.0.0.0".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv4Addr, Netv4Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -109,7 +108,9 @@ mod tests {
 			let mask: Ipv4Addr = "255.255.255.0".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv4Addr, Netv4Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), Some("127.16.32.0/24".parse().unwrap()));
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -120,8 +121,10 @@ mod tests {
 			let mask: Ipv4Addr = "255.255.255.128".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv4Addr, Netv4Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), Some("127.16.32.0/25".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.128/25".parse().unwrap()));
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -132,10 +135,12 @@ mod tests {
 			let mask: Ipv4Addr = "255.255.255.192".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv4Addr, Netv4Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), Some("127.16.32.0/26".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.64/26".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.128/26".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.192/26".parse().unwrap()));
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -146,6 +151,7 @@ mod tests {
 			let mask: Ipv4Addr = "255.255.255.224".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv4Addr, Netv4Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), Some("127.16.32.0/27".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.32/27".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.64/27".parse().unwrap()));
@@ -154,15 +160,15 @@ mod tests {
 			assert_eq!(it.next(), Some("127.16.32.160/27".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.192/27".parse().unwrap()));
 			assert_eq!(it.next(), Some("127.16.32.224/27".parse().unwrap()));
+
 			assert_eq!(it.next(), None);
 		}
 	}
 
 	mod netv6addr {
-		use super::*;
-
-		use crate::Netv6Addr;
 		use std::net::Ipv6Addr;
+
+		use crate::{iter::SubnetIterator, netv6addr::Netv6Addr};
 
 		impl crate::Netv6Addr {
 			#[must_use]
@@ -181,6 +187,7 @@ mod tests {
 			let mask: Ipv6Addr = "ffff:ffff::".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv6Addr, Netv6Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -191,7 +198,9 @@ mod tests {
 			let mask: Ipv6Addr = "ffff:ffff:ffff:ffff::".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv6Addr, Netv6Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), Some("2001:db8:dead:beef::/64".parse().unwrap()));
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -202,8 +211,10 @@ mod tests {
 			let mask: Ipv6Addr = "ffff:ffff:ffff:ffff::".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv6Addr, Netv6Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), "2001:db8:dead:beee::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beef::/64".parse().ok());
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -214,10 +225,12 @@ mod tests {
 			let mask: Ipv6Addr = "ffff:ffff:ffff:ffff::".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv6Addr, Netv6Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), "2001:db8:dead:beec::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beed::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beee::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beef::/64".parse().ok());
+
 			assert_eq!(it.next(), None);
 		}
 
@@ -228,6 +241,7 @@ mod tests {
 			let mask: Ipv6Addr = "ffff:ffff:ffff:ffff::".parse().unwrap();
 
 			let mut it: SubnetIterator<Netv6Addr, Netv6Addr> = outer.subnets(mask);
+
 			assert_eq!(it.next(), "2001:db8:dead:bee8::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:bee9::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beea::/64".parse().ok());
@@ -236,6 +250,7 @@ mod tests {
 			assert_eq!(it.next(), "2001:db8:dead:beed::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beee::/64".parse().ok());
 			assert_eq!(it.next(), "2001:db8:dead:beef::/64".parse().ok());
+
 			assert_eq!(it.next(), None);
 		}
 	}

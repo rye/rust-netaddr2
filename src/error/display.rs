@@ -1,5 +1,6 @@
-use super::Error;
 use core::fmt::{self, Display, Formatter};
+
+use crate::error::Error;
 
 impl Display for Error {
 	fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
@@ -11,7 +12,7 @@ impl Display for Error {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::error::Error;
 
 	#[test]
 	fn right_message() {

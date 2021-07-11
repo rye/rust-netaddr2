@@ -1,6 +1,6 @@
-use super::Netv4Addr;
-use crate::traits::Broadcast;
 use std::net::Ipv4Addr;
+
+use crate::{netv4addr::Netv4Addr, traits::Broadcast};
 
 impl Broadcast for Netv4Addr {
 	type Output = Ipv4Addr;
@@ -15,7 +15,9 @@ impl Broadcast for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use std::net::Ipv4Addr;
+
+	use crate::{netv4addr::Netv4Addr, traits::Broadcast};
 
 	#[test]
 	fn returns_correct_address() {
