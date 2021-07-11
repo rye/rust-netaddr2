@@ -35,23 +35,89 @@ impl Contains<Netv4Addr> for Netv4Addr {
 #[cfg(test)]
 mod tests {
 	mod cidr {
-		use std::net::Ipv4Addr;
+		use crate::{netv4addr::Netv4Addr, traits::Contains};
 
-		use crate::{Contains, Netv4Addr};
+		mod ipaddr {
+			mod v4 {
+				use std::net::IpAddr;
 
-		#[test]
-		fn ip() {
-			let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
-			assert!(net.contains(&Ipv4Addr::new(127, 0, 0, 1)));
-			assert!(net.contains(&Ipv4Addr::new(127, 127, 255, 1)));
-			assert!(!net.contains(&Ipv4Addr::new(64, 0, 0, 0)));
+				use crate::{netv4addr::Netv4Addr, traits::Contains};
+
+				#[test]
+				fn loopback_contains_some_loopback_ips() {
+					let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+					assert!(net.contains(&"127.0.0.1".parse::<IpAddr>().unwrap()));
+					assert!(net.contains(&"127.128.42.0".parse::<IpAddr>().unwrap()));
+				}
+
+				#[test]
+				fn loopback_does_not_contain_some_others() {
+					let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+					assert!(!net.contains(&"64.0.0.0".parse::<IpAddr>().unwrap()));
+				}
+			}
+
+			mod v6 {
+				use std::net::{IpAddr, Ipv6Addr};
+
+				use crate::{netv4addr::Netv4Addr, traits::Contains};
+
+				#[test]
+				fn returns_false() {
+					let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+					assert!(!net.contains(&IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 0))));
+				}
+			}
 		}
 
-		#[test]
-		fn net() {
-			let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
-			let net_inner: Netv4Addr = "127.128.0.1/24".parse().unwrap();
-			assert!(net.contains(&net_inner));
+		mod ipv4addr {
+			use std::net::Ipv4Addr;
+
+			use crate::{netv4addr::Netv4Addr, traits::Contains};
+
+			#[test]
+			fn loopback_contains_loopback() {
+				let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+				assert!(net.contains(&Ipv4Addr::new(127, 0, 0, 1)));
+				assert!(net.contains(&Ipv4Addr::new(127, 127, 255, 1)));
+				assert!(!net.contains(&Ipv4Addr::new(64, 0, 0, 0)));
+			}
+		}
+
+		mod netaddr {
+
+			mod v4 {
+				use crate::{netaddr::NetAddr, netv4addr::Netv4Addr, traits::Contains};
+
+				#[test]
+				fn loopback_contains_subnet() {
+					let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+					let net_subnet: NetAddr = "127.127.42.1/24".parse().unwrap();
+					assert!(net.contains(&net_subnet));
+				}
+			}
+
+			mod v6 {
+				use crate::{netaddr::NetAddr, netv4addr::Netv4Addr, traits::Contains};
+
+				#[test]
+				fn loopback_does_not_contain_some_v6() {
+					let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+					let other: NetAddr = "::1/17".parse().unwrap();
+					assert!(!net.contains(&other));
+				}
+			}
+		}
+
+		mod netv4addr {
+			use crate::{netv4addr::Netv4Addr, traits::Contains};
+
+			#[test]
+			fn loopback_contains_subnet() {
+				let net: Netv4Addr = "127.0.0.1/8".parse().unwrap();
+				let net_subnet: Netv4Addr = "127.127.42.1/24".parse().unwrap();
+				assert!(net.contains(&net_subnet));
+			}
 		}
 	}
 
