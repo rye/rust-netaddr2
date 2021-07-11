@@ -102,6 +102,7 @@ mod tests {
 			assert_contains!(net, "127.0.0.1" # IpAddr);
 			assert_contains!(net, "127.127.255.1" # IpAddr);
 			assert_not_contains!(net, "64.73.69.2" # IpAddr);
+			assert_not_contains!(net, "255.255.255.255" # IpAddr);
 		}
 
 		#[test]
