@@ -20,7 +20,7 @@ mod tests {
 		let netaddr: NetAddr = NetAddr::from(addr);
 		assert_eq!(
 			netaddr,
-			NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::max_value())))
+			NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::MAX)))
 		);
 	}
 }

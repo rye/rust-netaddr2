@@ -20,7 +20,7 @@ mod tests {
 		let netaddr: NetAddr = NetAddr::from(addr);
 		assert_eq!(
 			netaddr,
-			NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value())))
+			NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::MAX)))
 		);
 	}
 }

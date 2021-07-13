@@ -27,7 +27,7 @@ impl Netv4Addr {
 	pub fn is_cidr(&self) -> bool {
 		let mask: u32 = self.mask.into();
 		let ones: u32 = mask.count_ones();
-		let cidr_mask: u32 = u32::max_value().checked_shl(32 - ones).unwrap_or(0);
+		let cidr_mask: u32 = u32::MAX.checked_shl(32 - ones).unwrap_or(0);
 		mask == cidr_mask
 	}
 

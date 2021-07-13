@@ -31,8 +31,6 @@ impl Offset<i32> for Ipv6Addr {
 	///
 	/// Returns `Some(Ipv6Addr)` if the arithmetic on the address succeeds, otherwise returns `None`.
 	fn offset(&self, offset: i32) -> Option<Self> {
-		use core::i32::{MAX, MIN};
-
 		// Without using weird BigInt types, we need to use absolute
 		// values and checked arithmetic.
 		let offset_abs: Option<u128> = offset.abs().try_into().ok();
@@ -40,8 +38,8 @@ impl Offset<i32> for Ipv6Addr {
 		// This is a simple "if positive, use checked_add, if negative, use checked_sub" conditional
 		offset_abs
 			.and_then(|abs: u128| match offset {
-				0..=MAX => u128::from(*self).checked_add(abs),
-				MIN..=-1 => u128::from(*self).checked_sub(abs),
+				0..=i32::MAX => u128::from(*self).checked_add(abs),
+				i32::MIN..=-1 => u128::from(*self).checked_sub(abs),
 			})
 			.map(Ipv6Addr::from)
 	}

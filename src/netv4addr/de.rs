@@ -9,7 +9,7 @@ struct Netv4AddrVisitor;
 impl<'de> de::Visitor<'de> for Netv4AddrVisitor {
 	type Value = Netv4Addr;
 
-	fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+	fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 		formatter.write_str("a valid cidr/extended network address")
 	}
 

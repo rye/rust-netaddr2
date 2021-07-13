@@ -6,7 +6,7 @@ impl Display for Netv4Addr {
 	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		let mask: u32 = self.mask().into();
 		let ones = mask.count_ones();
-		let cidr_mask: u32 = u32::max_value().checked_shl(32 - ones).unwrap_or(0);
+		let cidr_mask: u32 = u32::MAX.checked_shl(32 - ones).unwrap_or(0);
 
 		if mask == cidr_mask {
 			write!(f, "{}/{}", self.addr(), ones)

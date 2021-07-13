@@ -27,7 +27,7 @@ mod tests {
 				netaddr,
 				NetAddr::V4(Netv4Addr::new(
 					Ipv4Addr::new(192, 0, 2, 42),
-					Ipv4Addr::from(u32::max_value())
+					Ipv4Addr::from(u32::MAX)
 				))
 			);
 		}
@@ -47,7 +47,7 @@ mod tests {
 				netaddr,
 				NetAddr::V6(Netv6Addr::new(
 					Ipv6Addr::new(0x2001, 0xdb8, 0xdead, 0xbeef, 0, 0, 0, 0x0042),
-					Ipv6Addr::from(u128::max_value())
+					Ipv6Addr::from(u128::MAX)
 				))
 			);
 		}

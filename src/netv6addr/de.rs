@@ -18,7 +18,7 @@ struct Netv6AddrVisitor;
 impl<'de> Visitor<'de> for Netv6AddrVisitor {
 	type Value = Netv6Addr;
 
-	fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+	fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
 		formatter.write_str("a valid cidr/extended network address")
 	}
 
