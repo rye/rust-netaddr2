@@ -1,7 +1,8 @@
-use super::Netv4Addr;
-use crate::traits::Merge;
 use core::cmp::Ordering;
+
 use std::net::Ipv4Addr;
+
+use crate::{netv4addr::Netv4Addr, traits::Merge};
 
 impl Merge for Netv4Addr {
 	type Output = Option<Self>;
@@ -28,7 +29,7 @@ impl Merge for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netv4addr::Netv4Addr, traits::Merge};
 
 	#[test]
 	fn mergeable_networks_correct() {

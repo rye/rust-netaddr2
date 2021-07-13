@@ -1,29 +1,30 @@
-use super::NetAddr;
-use crate::traits::Contains;
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-impl Contains<std::net::IpAddr> for NetAddr {
-	fn contains(&self, other: &std::net::IpAddr) -> bool {
+use crate::{netaddr::NetAddr, traits::Contains};
+
+impl Contains<IpAddr> for NetAddr {
+	fn contains(&self, other: &IpAddr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 		}
 	}
 }
 
-impl Contains<std::net::Ipv4Addr> for NetAddr {
-	fn contains(&self, other: &std::net::Ipv4Addr) -> bool {
+impl Contains<Ipv4Addr> for NetAddr {
+	fn contains(&self, other: &Ipv4Addr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			_ => false,
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(_) => false,
 		}
 	}
 }
 
-impl Contains<std::net::Ipv6Addr> for NetAddr {
-	fn contains(&self, other: &std::net::Ipv6Addr) -> bool {
+impl Contains<Ipv6Addr> for NetAddr {
+	fn contains(&self, other: &Ipv6Addr) -> bool {
 		match self {
-			Self::V6(netaddr) => netaddr.contains(other),
-			_ => false,
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
+			Self::V4(_) => false,
 		}
 	}
 }
@@ -31,36 +32,32 @@ impl Contains<std::net::Ipv6Addr> for NetAddr {
 impl Contains<NetAddr> for NetAddr {
 	fn contains(&self, other: &NetAddr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			Self::V6(netaddr) => netaddr.contains(other),
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
 		}
 	}
 }
 
-impl Contains<crate::Netv4Addr> for NetAddr {
-	fn contains(&self, other: &crate::Netv4Addr) -> bool {
+impl Contains<crate::netv4addr::Netv4Addr> for NetAddr {
+	fn contains(&self, other: &crate::netv4addr::Netv4Addr) -> bool {
 		match self {
-			Self::V4(netaddr) => netaddr.contains(other),
-			_ => false,
+			Self::V4(netvxaddr) => netvxaddr.contains(other),
+			Self::V6(_) => false,
 		}
 	}
 }
 
-impl Contains<crate::Netv6Addr> for NetAddr {
-	fn contains(&self, other: &crate::Netv6Addr) -> bool {
+impl Contains<crate::netv6addr::Netv6Addr> for NetAddr {
+	fn contains(&self, other: &crate::netv6addr::Netv6Addr) -> bool {
 		match self {
-			Self::V6(netaddr) => netaddr.contains(other),
-			_ => false,
+			Self::V6(netvxaddr) => netvxaddr.contains(other),
+			Self::V4(_) => false,
 		}
 	}
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	use crate::NetAddr;
-	use std::net::IpAddr;
-
 	macro_rules! assert_contains {
 		($a:expr, $b:expr) => {
 			assert!($a.contains(&$b));
@@ -92,9 +89,12 @@ mod tests {
 	}
 
 	mod v4 {
-		use super::*;
-		use crate::{Netv4Addr, Netv6Addr};
-		use std::net::{Ipv4Addr, Ipv6Addr};
+		use crate::{
+			netaddr::{NetAddr, Netv4Addr, Netv6Addr},
+			traits::Contains,
+		};
+
+		use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 		#[test]
 		fn ipaddr_v4() {
@@ -102,6 +102,7 @@ mod tests {
 			assert_contains!(net, "127.0.0.1" # IpAddr);
 			assert_contains!(net, "127.127.255.1" # IpAddr);
 			assert_not_contains!(net, "64.73.69.2" # IpAddr);
+			assert_not_contains!(net, "255.255.255.255" # IpAddr);
 		}
 
 		#[test]
@@ -156,9 +157,12 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
-		use crate::{Netv4Addr, Netv6Addr};
-		use std::net::{Ipv4Addr, Ipv6Addr};
+		use crate::{
+			netaddr::{NetAddr, Netv4Addr, Netv6Addr},
+			traits::Contains,
+		};
+
+		use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 		#[test]
 		fn ipaddr_v4() {

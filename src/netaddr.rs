@@ -1,7 +1,6 @@
-use crate::Netv4Addr;
-use crate::Netv6Addr;
-use crate::{Error, Result};
 use std::net::IpAddr;
+
+use crate::{iter::AddressIterator, netv4addr::Netv4Addr, netv6addr::Netv6Addr};
 
 /// A structure representing an IP network.
 ///
@@ -17,6 +16,7 @@ pub enum NetAddr {
 
 impl NetAddr {
 	/// Get the "netmask" part of the inner `Netv4Addr` or the `Netv6Addr`.
+	#[must_use]
 	pub fn mask(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(v4.mask()),
@@ -25,6 +25,7 @@ impl NetAddr {
 	}
 
 	/// Get the "network" part of the inner `Netv4Addr` or the `Netv6Addr`.
+	#[must_use]
 	pub fn addr(&self) -> IpAddr {
 		match self {
 			Self::V4(v4) => IpAddr::V4(v4.addr()),
@@ -37,11 +38,18 @@ impl NetAddr {
 	/// A `Netv4Addr` or `Netv6Addr` is CIDR if and only if its underlying
 	/// netmask is "left contigous"; that is, if its bit pattern is a given
 	/// number of ones followed by a remaining group of zeroes.
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		match self {
 			Self::V4(v4) => v4.is_cidr(),
 			Self::V6(v6) => v6.is_cidr(),
 		}
+	}
+
+	/// Produce an iterator over the _contained addresses_ of this `NetAddr`.
+	#[must_use]
+	pub fn iter(&self) -> AddressIterator<NetAddr, IpAddr> {
+		AddressIterator::new(*self, Some(self.addr()))
 	}
 }
 
@@ -61,13 +69,9 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-
 	mod is_cidr {
-		use super::*;
-
 		mod v4 {
-			use super::*;
+			use crate::netaddr::NetAddr;
 
 			#[test]
 			fn non_cidr_returns_false() {
@@ -83,7 +87,7 @@ mod tests {
 		}
 
 		mod v6 {
-			use super::*;
+			use crate::netaddr::NetAddr;
 
 			#[test]
 			fn non_cidr_returns_false() {

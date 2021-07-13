@@ -1,4 +1,4 @@
-use super::Netv4Addr;
+use crate::netv4addr::Netv4Addr;
 
 use serde::{Serialize, Serializer};
 
@@ -11,7 +11,8 @@ impl Serialize for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
+
 	use serde_test::{assert_tokens, Token};
 
 	#[test]

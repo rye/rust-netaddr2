@@ -1,4 +1,4 @@
-use crate::{NetAddr, Netv4Addr};
+use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 impl From<Netv4Addr> for NetAddr {
 	fn from(netaddr: Netv4Addr) -> Self {
@@ -8,7 +8,7 @@ impl From<Netv4Addr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 	#[test]
 	fn wraps_given_value_in_v4_variant() {

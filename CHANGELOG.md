@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
 ## Unreleased
+### Added
+- New `SubnetIterator` iterator type for iterating over a network's subnets.
+- New `Netv6Addr#len() -> Option<u128>` method for computing the number of addresses contained in a network.
+- New `Netv6Addr#is_empty() -> bool` method for determining whether or not the network is empty.
+- New `Netv4Addr#len() -> Option<u32>` method for computing the number of addresses contained in a network.
+- New `Netv4Addr#is_empty() -> bool` method for determining whether or not the network is empty.
+- New `AddressIterator` iterator type for iterating over a network's addresses.
 
 ## [0.10.0] - 2021-07-06
 ### Changed

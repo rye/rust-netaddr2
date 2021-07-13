@@ -1,5 +1,6 @@
-use crate::netv6addr::Netv6Addr;
 use core::cmp::Ordering;
+
+use crate::netv6addr::Netv6Addr;
 
 impl Ord for Netv6Addr {
 	fn cmp(&self, other: &Self) -> Ordering {
@@ -12,15 +13,16 @@ impl Ord for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv6Addr;
 	use core::cmp::Ordering;
+
+	use crate::netv6addr::Netv6Addr;
 
 	#[test]
 	fn different_networks() {
 		let a: Netv6Addr = "2001:db8:0:0::0/64".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:1::0/64".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -28,7 +30,7 @@ mod tests {
 		let a: Netv6Addr = "2001:db8:0:0::0/63".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:0::0/64".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -36,7 +38,7 @@ mod tests {
 		let a: Netv6Addr = "ff02::1/16".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:0:1::0/64".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Greater)
+		assert_eq!(a.cmp(&b), Ordering::Greater);
 	}
 
 	#[test]
@@ -44,6 +46,6 @@ mod tests {
 		let a: Netv6Addr = "2001:db8:dead:beef::0/64".parse().unwrap();
 		let b: Netv6Addr = "2001:db8:dead:beef::0/64".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Equal)
+		assert_eq!(a.cmp(&b), Ordering::Equal);
 	}
 }

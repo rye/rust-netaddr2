@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer};
 
-use super::NetAddr;
+use crate::netaddr::NetAddr;
 
 #[cfg(feature = "serde")]
 struct NetAddrVisitor;
@@ -9,7 +9,7 @@ struct NetAddrVisitor;
 impl<'de> de::Visitor<'de> for NetAddrVisitor {
 	type Value = NetAddr;
 
-	fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+	fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 		formatter.write_str("a valid cidr/extended network address")
 	}
 
@@ -29,19 +29,22 @@ impl<'de> Deserialize<'de> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
+	use crate::netaddr::NetAddr;
+
+	use serde_test::{assert_de_tokens_error, Token};
 
 	#[test]
 	fn malformed_produces_correct_error() {
 		assert_de_tokens_error::<NetAddr>(
 			&[Token::Str("asdf")],
 			"invalid value: string \"asdf\", expected a valid cidr/extended network address",
-		)
+		);
 	}
 
 	mod v4 {
-		use super::*;
+		use serde_test::{assert_de_tokens, Token};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn test_de_cidr_localhost() {
@@ -59,7 +62,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use serde_test::{assert_de_tokens, Token};
+
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn test_de_cidr_localhost() {

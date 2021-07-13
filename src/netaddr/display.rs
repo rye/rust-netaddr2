@@ -1,8 +1,9 @@
-use super::NetAddr;
-use core::fmt;
+use core::fmt::{Display, Formatter, Result};
 
-impl fmt::Display for NetAddr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+use crate::netaddr::NetAddr;
+
+impl Display for NetAddr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		match self {
 			Self::V4(addr) => write!(f, "{}", addr),
 			Self::V6(addr) => write!(f, "{}", addr),
@@ -12,10 +13,8 @@ impl fmt::Display for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::NetAddr;
-
 	mod v4 {
-		use super::NetAddr;
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr() {
@@ -32,12 +31,12 @@ mod tests {
 		#[test]
 		fn non_cidr() {
 			let addr: NetAddr = "127.0.0.1/251.255.255.0".parse().unwrap();
-			assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0")
+			assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0");
 		}
 	}
 
 	mod v6 {
-		use super::NetAddr;
+		use crate::netaddr::NetAddr;
 
 		#[test]
 		fn cidr() {
@@ -63,7 +62,7 @@ mod tests {
 			assert_eq!(
 				format!("{}", addr),
 				"2001:db8:dead:bccf::/ffff:ffff:ffff:fddf::"
-			)
+			);
 		}
 	}
 }

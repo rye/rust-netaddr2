@@ -1,5 +1,6 @@
-use super::Mask;
 use std::net::IpAddr;
+
+use crate::traits::Mask;
 
 impl Mask for IpAddr {
 	type Output = Result<Self, &'static str>;
@@ -15,10 +16,10 @@ impl Mask for IpAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod v4 {
-		use super::*;
+		use std::net::IpAddr;
+
+		use crate::traits::Mask;
 
 		#[test]
 		fn bidirectionally_returns_ok() {
@@ -72,7 +73,9 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use std::net::IpAddr;
+
+		use crate::traits::Mask;
 
 		#[test]
 		fn bidirectionally_returns_ok() {

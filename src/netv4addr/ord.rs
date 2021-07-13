@@ -1,5 +1,6 @@
-use super::Netv4Addr;
 use core::cmp::Ordering;
+
+use crate::netv4addr::Netv4Addr;
 
 impl Ord for Netv4Addr {
 	fn cmp(&self, other: &Self) -> Ordering {
@@ -12,15 +13,16 @@ impl Ord for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
 	use core::cmp::Ordering;
+
+	use crate::netv4addr::Netv4Addr;
 
 	#[test]
 	fn different_networks() {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "2.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -28,7 +30,7 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/7".parse().unwrap();
 		let b: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Less)
+		assert_eq!(a.cmp(&b), Ordering::Less);
 	}
 
 	#[test]
@@ -36,7 +38,7 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "0.0.0.0/24".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Greater)
+		assert_eq!(a.cmp(&b), Ordering::Greater);
 	}
 
 	#[test]
@@ -44,6 +46,6 @@ mod tests {
 		let a: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 		let b: Netv4Addr = "1.0.0.0/8".parse().unwrap();
 
-		assert_eq!(a.cmp(&b), Ordering::Equal)
+		assert_eq!(a.cmp(&b), Ordering::Equal);
 	}
 }

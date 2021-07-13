@@ -1,7 +1,8 @@
-use super::Netv6Addr;
-use crate::traits::Merge;
 use core::cmp::Ordering;
+
 use std::net::Ipv6Addr;
+
+use crate::{netv6addr::Netv6Addr, traits::Merge};
 
 impl Merge for Netv6Addr {
 	type Output = Option<Self>;
@@ -28,7 +29,7 @@ impl Merge for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netv6addr::Netv6Addr, traits::Merge};
 
 	#[test]
 	fn mergeable_networks_correct() {

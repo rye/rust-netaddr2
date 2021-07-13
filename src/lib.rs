@@ -24,13 +24,19 @@ mod util {
 }
 
 mod error;
-mod netaddr;
-mod netv4addr;
-mod netv6addr;
-mod traits;
-
 pub use error::*;
+
+mod iter;
+pub use iter::*;
+
+mod netaddr;
 pub use netaddr::*;
+
+mod netv4addr;
 pub use netv4addr::*;
+
+mod netv6addr;
 pub use netv6addr::*;
+
+mod traits;
 pub use traits::*;

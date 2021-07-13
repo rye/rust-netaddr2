@@ -1,5 +1,6 @@
-use crate::NetAddr;
 use std::net::IpAddr;
+
+use crate::netaddr::NetAddr;
 
 impl From<IpAddr> for NetAddr {
 	fn from(addr: IpAddr) -> Self {
@@ -12,12 +13,10 @@ impl From<IpAddr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod v4 {
-		use super::*;
-		use crate::Netv4Addr;
-		use std::net::Ipv4Addr;
+		use std::net::{IpAddr, Ipv4Addr};
+
+		use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 		#[test]
 		fn uses_max_netmask() {
@@ -28,16 +27,16 @@ mod tests {
 				netaddr,
 				NetAddr::V4(Netv4Addr::new(
 					Ipv4Addr::new(192, 0, 2, 42),
-					Ipv4Addr::from(u32::max_value())
+					Ipv4Addr::from(u32::MAX)
 				))
 			);
 		}
 	}
 
 	mod v6 {
-		use super::*;
-		use crate::Netv6Addr;
-		use std::net::Ipv6Addr;
+		use std::net::{IpAddr, Ipv6Addr};
+
+		use crate::{netaddr::NetAddr, netv6addr::Netv6Addr};
 
 		#[test]
 		fn uses_max_netmask() {
@@ -48,7 +47,7 @@ mod tests {
 				netaddr,
 				NetAddr::V6(Netv6Addr::new(
 					Ipv6Addr::new(0x2001, 0xdb8, 0xdead, 0xbeef, 0, 0, 0, 0x0042),
-					Ipv6Addr::from(u128::max_value())
+					Ipv6Addr::from(u128::MAX)
 				))
 			);
 		}

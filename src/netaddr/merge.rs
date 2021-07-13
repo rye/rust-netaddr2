@@ -1,7 +1,4 @@
-use crate::traits::Merge;
-use crate::NetAddr;
-use crate::Netv4Addr;
-use crate::Netv6Addr;
+use crate::{netaddr::NetAddr, netv4addr::Netv4Addr, netv6addr::Netv6Addr, traits::Merge};
 
 impl Merge for NetAddr {
 	type Output = Option<Self>;
@@ -17,10 +14,8 @@ impl Merge for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod v4 {
-		use super::*;
+		use crate::{netaddr::NetAddr, traits::Merge};
 
 		#[test]
 		fn mergeable_networks_correct() {
@@ -66,7 +61,7 @@ mod tests {
 	}
 
 	mod v6 {
-		use super::*;
+		use crate::{netaddr::NetAddr, traits::Merge};
 
 		#[test]
 		fn mergeable_networks_correct() {

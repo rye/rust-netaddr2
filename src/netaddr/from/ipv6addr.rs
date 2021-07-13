@@ -1,5 +1,6 @@
-use crate::{NetAddr, Netv6Addr};
 use std::net::Ipv6Addr;
+
+use crate::{netaddr::NetAddr, netv6addr::Netv6Addr};
 
 impl From<Ipv6Addr> for NetAddr {
 	fn from(addr: Ipv6Addr) -> Self {
@@ -9,8 +10,9 @@ impl From<Ipv6Addr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
 	use std::net::Ipv6Addr;
+
+	use crate::{netaddr::NetAddr, netv6addr::Netv6Addr};
 
 	#[test]
 	fn uses_max_netmask() {
@@ -18,7 +20,7 @@ mod tests {
 		let netaddr: NetAddr = NetAddr::from(addr);
 		assert_eq!(
 			netaddr,
-			NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::max_value())))
+			NetAddr::V6(Netv6Addr::new(addr, Ipv6Addr::from(u128::MAX)))
 		);
 	}
 }

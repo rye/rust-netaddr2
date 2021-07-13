@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer};
 
-use super::Netv4Addr;
+use crate::netv4addr::Netv4Addr;
 
 #[cfg(feature = "serde")]
 struct Netv4AddrVisitor;
@@ -9,7 +9,7 @@ struct Netv4AddrVisitor;
 impl<'de> de::Visitor<'de> for Netv4AddrVisitor {
 	type Value = Netv4Addr;
 
-	fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+	fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 		formatter.write_str("a valid cidr/extended network address")
 	}
 
@@ -29,7 +29,8 @@ impl<'de> Deserialize<'de> for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
+
 	use serde_test::{assert_de_tokens, assert_de_tokens_error, Token};
 
 	#[test]
@@ -37,7 +38,7 @@ mod tests {
 		assert_de_tokens_error::<Netv4Addr>(
 			&[Token::Str("asdf")],
 			"invalid value: string \"asdf\", expected a valid cidr/extended network address",
-		)
+		);
 	}
 
 	#[test]

@@ -1,11 +1,11 @@
-use crate::traits::Mask;
 use std::net::Ipv4Addr;
+
+use crate::traits::Mask;
 
 /// A structure representing an IPv4 network.
 ///
-/// Internally, this structure includes two values; an `Ipv4Addr`
-/// representing the network address (`addr`), and another
-/// representing the netmask (`mask`).
+/// Internally, this structure includes two values; an `Ipv4Addr` representing
+/// the network address (`addr`), and another representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv4Addr {
 	addr: Ipv4Addr,
@@ -13,19 +13,21 @@ pub struct Netv4Addr {
 }
 
 impl Netv4Addr {
+	#[must_use]
 	pub const fn mask(&self) -> Ipv4Addr {
 		self.mask
 	}
 
+	#[must_use]
 	pub const fn addr(&self) -> Ipv4Addr {
 		self.addr
 	}
 
-	#[allow(clippy::trivially_copy_pass_by_ref)]
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		let mask: u32 = self.mask.into();
 		let ones: u32 = mask.count_ones();
-		let cidr_mask: u32 = u32::max_value().checked_shl(32 - ones).unwrap_or(0);
+		let cidr_mask: u32 = u32::MAX.checked_shl(32 - ones).unwrap_or(0);
 		mask == cidr_mask
 	}
 
@@ -48,9 +50,66 @@ impl Netv4Addr {
 	/// let test: Ipv4Addr = Ipv4Addr::new(127, 47, 23, 37);
 	/// assert!(netaddr.contains(&test));
 	/// ```
+	#[must_use]
 	pub fn new(addr: Ipv4Addr, mask: Ipv4Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
+	}
+
+	/// Compute the number of addresses in this network.
+	///
+	/// This is done by raising `2_u32` to the number of zeroes in the netmask,
+	/// which fails if the number of zeros in the netmask is the _length_ of the
+	/// netmask.  Computing this result in this way maintains compatibility with
+	/// non-CIDR netmasks.
+	///
+	/// # Examples
+	///
+	/// First, a "typical" example.
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let netaddr: Netv4Addr = "127.16.32.0/16".parse().unwrap();
+	/// assert_eq!(netaddr.len(), Some(65536_u32));
+	/// ```
+	///
+	/// Note that a `/32` has exactly 2^(0 zeros) = 1 addresses in it.
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let netaddr: Netv4Addr = "127.16.32.0/32".parse().unwrap();
+	/// assert_eq!(netaddr.len(), Some(1_u32));
+	/// ```
+	///
+	/// And there are not enough bits to store the number of devices in a `/0`, so
+	/// the length is not definable.  (This should be the only case when `None`
+	/// gets returned.)
+	///
+	/// ```rust
+	/// # use netaddr2::Netv4Addr;
+	/// let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
+	/// assert_eq!(netaddr.len(), None);
+	/// ```
+	#[must_use]
+	pub fn len(self) -> Option<u32> {
+		2_u32.checked_pow(u32::from(self.mask).count_zeros())
+	}
+
+	/// Determine if the network is empty.
+	///
+	/// (Plot twist, it isn't.)  Even a /32 has one device in it.
+	#[allow(clippy::unused_self)]
+	#[must_use]
+	pub const fn is_empty(self) -> bool {
+		false
+	}
+
+	#[must_use]
+	pub fn addresses(&self) -> crate::AddressIterator<Self, Ipv4Addr> {
+		crate::AddressIterator {
+			net: *self,
+			cur: Some(self.addr()),
+		}
 	}
 }
 
@@ -71,10 +130,10 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod mask {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn returns_mask_field() {
@@ -91,7 +150,9 @@ mod tests {
 	}
 
 	mod addr {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn returns_addr_field() {
@@ -105,7 +166,7 @@ mod tests {
 	}
 
 	mod is_cidr {
-		use super::*;
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn non_cidr_returns_false() {
@@ -129,7 +190,9 @@ mod tests {
 	}
 
 	mod new {
-		use super::*;
+		use std::net::Ipv4Addr;
+
+		use crate::netv4addr::Netv4Addr;
 
 		#[test]
 		fn masks_addr() {
@@ -140,6 +203,32 @@ mod tests {
 
 			assert_eq!(netaddr.mask(), mask);
 			assert_eq!(netaddr.addr(), "192.0.0.0".parse::<Ipv4Addr>().unwrap());
+		}
+	}
+
+	mod len {
+		use crate::netv4addr::Netv4Addr;
+
+		#[test]
+		fn len_correct_max_mask() {
+			let netaddr: Netv4Addr = "0.0.0.0/32".parse().unwrap();
+			assert_eq!(netaddr.len(), Some(1));
+		}
+
+		#[test]
+		fn len_correct_min_mask() {
+			let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
+			assert_eq!(netaddr.len(), None);
+		}
+	}
+
+	mod is_empty {
+		use crate::netv4addr::Netv4Addr;
+
+		#[test]
+		fn is_false() {
+			let netaddr: Netv4Addr = "0.0.0.0/0".parse().unwrap();
+			assert!(!netaddr.is_empty());
 		}
 	}
 }

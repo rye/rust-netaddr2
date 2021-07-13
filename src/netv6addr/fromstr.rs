@@ -1,7 +1,8 @@
-use super::Netv6Addr;
-use crate::{Error, Result};
 use core::str::FromStr;
+
 use std::net::Ipv6Addr;
+
+use crate::{netv6addr::Netv6Addr, Error, Result};
 
 impl FromStr for Netv6Addr {
 	type Err = Error;
@@ -52,7 +53,7 @@ impl FromStr for Netv6Addr {
 
 		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u128 = u128::max_value() ^ u128::max_value().checked_shr(cidr).unwrap_or(0_u128);
+				let mask: u128 = u128::MAX ^ u128::MAX.checked_shr(cidr).unwrap_or(0_u128);
 
 				let mask: Ipv6Addr = mask.into();
 
@@ -67,11 +68,11 @@ impl FromStr for Netv6Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netv6addr::Netv6Addr, Error};
 
 	#[test]
-	fn invalid_is_safe() {
-		let _: Result<Netv6Addr> = "zoop".parse::<Netv6Addr>();
+	fn invalid_does_not_panic() {
+		std::mem::drop("zoop".parse::<Netv6Addr>());
 	}
 
 	#[test]

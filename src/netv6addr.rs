@@ -1,11 +1,11 @@
-use crate::traits::Mask;
 use std::net::Ipv6Addr;
+
+use crate::traits::Mask;
 
 /// A structure representing an IPv6 network.
 ///
-/// Internally, this structure includes two values; an `Ipv6Addr`
-/// representing the network address (`addr`), and another
-/// representing the netmask (`mask`).
+/// Internally, this structure includes two values; an `Ipv6Addr` representing
+/// the network address (`addr`), and another representing the netmask (`mask`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Netv6Addr {
 	addr: Ipv6Addr,
@@ -13,18 +13,21 @@ pub struct Netv6Addr {
 }
 
 impl Netv6Addr {
+	#[must_use]
 	pub const fn mask(&self) -> Ipv6Addr {
 		self.mask
 	}
 
+	#[must_use]
 	pub const fn addr(&self) -> Ipv6Addr {
 		self.addr
 	}
 
+	#[must_use]
 	pub fn is_cidr(&self) -> bool {
 		let mask: u128 = self.mask.into();
 		let ones: u32 = mask.count_ones();
-		let cidr_mask: u128 = u128::max_value().checked_shl(128 - ones).unwrap_or(0);
+		let cidr_mask: u128 = u128::MAX.checked_shl(128 - ones).unwrap_or(0);
 		mask == cidr_mask
 	}
 
@@ -42,9 +45,58 @@ impl Netv6Addr {
 	/// let netmask = Ipv6Addr::new(0xff00, 0, 0, 0, 0, 0, 0, 0);
 	/// let netaddr = Netv6Addr::new(network, netmask);
 	/// ```
+	#[must_use]
 	pub fn new(addr: Ipv6Addr, mask: Ipv6Addr) -> Self {
 		let addr = addr.mask(&mask);
 		Self { addr, mask }
+	}
+
+	/// Compute the number of addresses in this network.
+	///
+	/// This is done by raising `2_u128` to the number of zeroes in the netmask,
+	/// which fails if the number of zeros in the netmask is the _length_ of the
+	/// netmask.  Computing this result in this way maintains compatibility with
+	/// non-CIDR netmasks.
+	///
+	/// # Examples
+	///
+	/// First, a "typical" example.
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let netaddr: Netv6Addr = "2601:db8:dead:beef::/64".parse().unwrap();
+	/// assert_eq!(netaddr.len(), Some(18446744073709551616_u128));
+	/// ```
+	///
+	/// Note that a `/128` has exactly 2^(0 zeros) = 1 addresses in it.
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let netaddr: Netv6Addr = "2601:db8::1/128".parse().unwrap();
+	/// assert_eq!(netaddr.len(), Some(1_u128));
+	/// ```
+	///
+	/// And there are not enough bits to store the number of devices in a `/0`, so
+	/// the length is not definable.  (This should be the only case when `None`
+	/// gets returned.)
+	///
+	/// ```rust
+	/// # use netaddr2::Netv6Addr;
+	/// let netaddr: Netv6Addr = "::/0".parse().unwrap();
+	/// assert_eq!(netaddr.len(), None);
+	/// ```
+	#[must_use]
+	pub fn len(self) -> Option<u128> {
+		2_u128.checked_pow(u128::from(self.mask).count_zeros())
+	}
+
+	/// Determine if the network is empty.
+	///
+	/// (Plot twist, it isn't.)  Even a /128 has one device in it.
+	#[allow(clippy::unused_self)]
+	#[must_use]
+	pub const fn is_empty(self) -> bool {
+		false
 	}
 }
 
@@ -64,10 +116,10 @@ mod ser;
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-
 	mod mask {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn returns_mask_field() {
@@ -84,7 +136,9 @@ mod tests {
 	}
 
 	mod addr {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn returns_addr_field() {
@@ -101,7 +155,7 @@ mod tests {
 	}
 
 	mod is_cidr {
-		use super::*;
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn non_cidr_returns_false() {
@@ -125,7 +179,9 @@ mod tests {
 	}
 
 	mod new {
-		use super::*;
+		use std::net::Ipv6Addr;
+
+		use crate::netv6addr::Netv6Addr;
 
 		#[test]
 		fn masks_addr() {
@@ -139,6 +195,32 @@ mod tests {
 				netaddr.addr(),
 				"2001:db8:dead:be00::0".parse::<Ipv6Addr>().unwrap()
 			);
+		}
+	}
+
+	mod len {
+		use crate::netv6addr::Netv6Addr;
+
+		#[test]
+		fn len_correct_max_mask() {
+			let netaddr: Netv6Addr = "::/128".parse().unwrap();
+			assert_eq!(netaddr.len(), Some(1));
+		}
+
+		#[test]
+		fn len_correct_min_mask() {
+			let netaddr: Netv6Addr = "::/0".parse().unwrap();
+			assert_eq!(netaddr.len(), None);
+		}
+	}
+
+	mod is_empty {
+		use crate::netv6addr::Netv6Addr;
+
+		#[test]
+		fn is_false() {
+			let netaddr: Netv6Addr = "::/0".parse().unwrap();
+			assert!(!netaddr.is_empty());
 		}
 	}
 }

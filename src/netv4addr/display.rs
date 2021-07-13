@@ -1,11 +1,12 @@
-use super::Netv4Addr;
-use core::fmt;
+use core::fmt::{Display, Formatter, Result};
 
-impl fmt::Display for Netv4Addr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+use crate::netv4addr::Netv4Addr;
+
+impl Display for Netv4Addr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 		let mask: u32 = self.mask().into();
 		let ones = mask.count_ones();
-		let cidr_mask: u32 = u32::max_value().checked_shl(32 - ones).unwrap_or(0);
+		let cidr_mask: u32 = u32::MAX.checked_shl(32 - ones).unwrap_or(0);
 
 		if mask == cidr_mask {
 			write!(f, "{}/{}", self.addr(), ones)
@@ -17,7 +18,7 @@ impl fmt::Display for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::Netv4Addr;
+	use crate::netv4addr::Netv4Addr;
 
 	#[test]
 	fn cidr() {
@@ -39,6 +40,6 @@ mod tests {
 	#[test]
 	fn non_cidr() {
 		let addr: Netv4Addr = "127.0.0.1/251.255.255.0".parse().unwrap();
-		assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0")
+		assert_eq!(format!("{}", addr), "123.0.0.0/251.255.255.0");
 	}
 }

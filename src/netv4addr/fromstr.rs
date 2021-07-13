@@ -1,7 +1,8 @@
-use super::Netv4Addr;
-use crate::{Error, Result};
 use core::str::FromStr;
+
 use std::net::Ipv4Addr;
+
+use crate::{netv4addr::Netv4Addr, Error, Result};
 
 impl FromStr for Netv4Addr {
 	type Err = Error;
@@ -52,7 +53,7 @@ impl FromStr for Netv4Addr {
 
 		match (address, cidr, right_addr) {
 			(Ok(addr), Ok(cidr), _) => {
-				let mask: u32 = u32::max_value() ^ u32::max_value().checked_shr(cidr).unwrap_or(0_u32);
+				let mask: u32 = u32::MAX ^ u32::MAX.checked_shr(cidr).unwrap_or(0_u32);
 				let mask: Ipv4Addr = mask.into();
 
 				Ok(Self::new(addr, mask))
@@ -66,11 +67,11 @@ impl FromStr for Netv4Addr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{netv4addr::Netv4Addr, Error};
 
 	#[test]
-	fn invalid_is_safe() {
-		let _: Result<Netv4Addr> = "zoop".parse::<Netv4Addr>();
+	fn invalid_does_not_panic() {
+		std::mem::drop("zoop".parse::<Netv4Addr>());
 	}
 
 	#[test]

@@ -1,5 +1,6 @@
-use crate::{NetAddr, Netv4Addr};
 use std::net::Ipv4Addr;
+
+use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 impl From<Ipv4Addr> for NetAddr {
 	fn from(addr: Ipv4Addr) -> Self {
@@ -9,7 +10,9 @@ impl From<Ipv4Addr> for NetAddr {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use std::net::Ipv4Addr;
+
+	use crate::{netaddr::NetAddr, netv4addr::Netv4Addr};
 
 	#[test]
 	fn uses_max_netmask() {
@@ -17,7 +20,7 @@ mod tests {
 		let netaddr: NetAddr = NetAddr::from(addr);
 		assert_eq!(
 			netaddr,
-			NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::max_value())))
+			NetAddr::V4(Netv4Addr::new(addr, Ipv4Addr::from(u32::MAX)))
 		);
 	}
 }
