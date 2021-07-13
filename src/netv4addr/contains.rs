@@ -35,8 +35,6 @@ impl Contains<Netv4Addr> for Netv4Addr {
 #[cfg(test)]
 mod tests {
 	mod cidr {
-		use crate::{netv4addr::Netv4Addr, traits::Contains};
-
 		mod ipaddr {
 			mod v4 {
 				use std::net::IpAddr;
