@@ -29,14 +29,10 @@ where
 		let next: Option<Self::Item> = cur.and_then(|cur| cur.offset(1_u32));
 
 		match (cur, next) {
-			(Some(cur), Some(next)) => {
-				if self.net.contains(&cur) {
-					self.cur = Some(next);
-					Some(cur)
-				} else {
-					None
-				}
-			}
+			(Some(cur), Some(next)) => self.net.contains(&cur).then(|| {
+				self.cur = Some(next);
+				cur
+			}),
 			(Some(cur), None) => {
 				self.cur = None;
 				Some(cur)
