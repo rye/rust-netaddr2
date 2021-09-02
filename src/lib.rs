@@ -6,8 +6,28 @@
 //!
 //! - Does this `IpAddr` belong to this `NetAddr`? (That is, does this specific
 //!   address happen to lie within the network/netmask given by this `NetAddr`?)
+//!   e.g.,
+//!   ```rust
+//!   # use std::net::IpAddr;
+//!   # use netaddr2::{Contains, NetAddr};
+//!   let addr: std::net::IpAddr = "192.168.1.7".parse().unwrap();
+//!   let net: netaddr2::NetAddr = "192.168.1.0/24".parse().unwrap();
+//!   assert!(net.contains(&addr));
+//!
+//!   let other_addr: std::net::IpAddr = "1.1.1.1".parse().unwrap();
+//!   assert!(!net.contains(&other_addr));
+//!   ```
 //!
 //! - Does this network contain this other network?
+//!   ```rust
+//!   # use netaddr2::{Contains, NetAddr};
+//!   let net: netaddr2::NetAddr = "192.168.0.0/16".parse().unwrap();
+//!   let subnet: netaddr2::NetAddr = "192.168.17.23/24".parse().unwrap();
+//!   assert!(net.contains(&subnet));
+//!
+//!   let all: netaddr2::NetAddr = "0.0.0.0/0".parse().unwrap();
+//!   assert!(!net.contains(&all));
+//!   ```
 //!
 //! The API is strikingly similar to that of the `std::net::Ip.*Addr` structs,
 //! and users who have used that set of structs will hopefully find this API
