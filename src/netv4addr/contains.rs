@@ -2,6 +2,18 @@ use super::Netv4Addr;
 use crate::traits::Contains;
 use crate::traits::Mask;
 
+impl Contains<crate::netv4addr::OctetsIpv4Addr> for Netv4Addr<crate::netv4addr::OctetsIpv4Addr> {
+	fn contains(&self, other: &crate::netv4addr::OctetsIpv4Addr) -> bool {
+		other.mask(&self.mask()) == self.addr()
+	}
+}
+
+impl Contains<crate::netv4addr::OctetsIpv4Addr> for Netv4Addr {
+	fn contains(&self, other: &crate::netv4addr::OctetsIpv4Addr) -> bool {
+		other.mask(&self.mask().octets().into()) == self.addr().octets().into()
+	}
+}
+
 impl Contains<std::net::IpAddr> for Netv4Addr {
 	fn contains(&self, other: &std::net::IpAddr) -> bool {
 		match other {

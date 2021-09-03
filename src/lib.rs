@@ -30,16 +30,19 @@
 //!   assert!(!net.contains(&all));
 //!   ```
 //!
-//! You can also build IPv4- and IPv6-specific variants of the [NetAddr] struct;
-//! these are named [Netv4Addr] and [Netv6Addr] respectively.
+//! You can also build IPv4- and IPv6-specific variants of the [`NetAddr`] struct;
+//! these are named [`Netv4Addr`] and [`Netv6Addr`] respectively.
 //!
 //! The API is strikingly similar to that of the `std::net::Ip.*Addr` structs,
 //! and users who have used that set of structs will hopefully find this API
 //! quite naturally similar.
 
+#![forbid(unsafe_code)]
+
 #[cfg(test)]
 #[macro_use]
 mod util {
+	/// A macro to parse and unwrap as a type.
 	macro_rules! pu {
 		($value:literal # $t:ty) => {
 			$value.parse::<$t>().unwrap()

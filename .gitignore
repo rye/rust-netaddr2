@@ -1,2 +1,6 @@
 /target
 /Cargo.lock
+
+# Ignore .gitignore files in subdirectories that aren't specifically listed here
+/*/.gitignore
+#!/api-guidelines/.gitignore
