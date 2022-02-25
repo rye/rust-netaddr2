@@ -158,7 +158,6 @@ mod tests {
 			use super::*;
 
 			#[test]
-			#[test]
 			fn slash_128_produces_one_off() {
 				let net: NetAddr = "2001:db8::1/128".parse().unwrap();
 
