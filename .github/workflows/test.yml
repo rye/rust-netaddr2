@@ -63,16 +63,9 @@ jobs:
       run: |
         cargo test --workspace --all-features --no-fail-fast
       env:
-        CARGO_INCREMENTAL: 0
+        LLVM_PROFILE_FILE: "netaddr2-%p-%m.profraw"
         RUSTFLAGS: >
-          -Zprofile
-          -Ccodegen-units=1
-          -Copt-level=0
-          -Clink-dead-code
-          -Coverflow-checks=off
-          -Zpanic_abort_tests
-          -Cpanic=abort
-        RUSTDOCFLAGS: '-Cpanic=abort'
+          -Zinstrument-coverage
     - uses: actions-rs/grcov@v0.1
       with:
         config: .grcov.yml
