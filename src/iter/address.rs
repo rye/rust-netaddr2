@@ -5,7 +5,7 @@ use super::offset::Offset;
 /// An iterator over a network's _contained addresses_.
 pub struct AddressIterator<Network, Address>
 where
-	Network: Contains + From<Address>,
+	Network: Contains<Address> + From<Address>,
 {
 	net: Network,
 	cur: Option<Address>,
@@ -13,7 +13,7 @@ where
 
 impl<Network, Address> AddressIterator<Network, Address>
 where
-	Network: Contains + From<Address>
+	Network: Contains<Address> + From<Address>,
 {
 	pub(crate) fn new(net: Network, cur: Option<Address>) -> Self {
 		Self { net, cur }
@@ -24,7 +24,7 @@ where
 impl<Network, Address> Iterator for AddressIterator<Network, Address>
 where
 	Address: Copy + Offset<u32>,
-	Network: Contains + From<Address>,
+	Network: Contains<Address> + From<Address>,
 {
 	type Item = Address;
 
