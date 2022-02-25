@@ -24,11 +24,10 @@ impl Offset<i32> for Ipv6Addr {
 
 		// This is a simple "if positive, use checked_add, if negative, use checked_sub" conditional
 		offset_abs
-			.map(|abs: u128| match offset {
+			.and_then(|abs: u128| match offset {
 				0..=MAX => u128::from(*self).checked_add(abs),
 				MIN..=-1 => u128::from(*self).checked_sub(abs),
 			})
-			.flatten()
 			.map(Ipv6Addr::from)
 	}
 }
@@ -53,8 +52,7 @@ impl Offset<i32> for Ipv4Addr {
 		let offset: Option<u32> = addr
 			.checked_add(i64::from(offset))
 			.map(TryInto::try_into)
-			.map(Result::ok)
-			.flatten();
+			.and_then(Result::ok);
 		offset.map(Ipv4Addr::from)
 	}
 }
@@ -63,8 +61,7 @@ impl Offset<u128> for Ipv4Addr {
 	fn offset(&self, offset: u128) -> Option<Self> {
 		let offset: Option<u32> = offset.try_into().ok();
 		offset
-			.map(|offset: u32| u32::from(*self).checked_add(offset))
-			.flatten()
+			.and_then(|offset: u32| u32::from(*self).checked_add(offset))
 			.map(Ipv4Addr::from)
 	}
 }

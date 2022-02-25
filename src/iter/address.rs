@@ -34,7 +34,7 @@ where
 	/// may produce `None`.
 	fn next(&mut self) -> Option<Self::Item> {
 		let cur: Option<Self::Item> = self.cur;
-		let next: Option<Self::Item> = cur.map(|cur| cur.offset(1_u32)).flatten();
+		let next: Option<Self::Item> = cur.and_then(|cur| cur.offset(1_u32));
 
 		match (cur, next) {
 			(Some(cur), Some(next)) => {
