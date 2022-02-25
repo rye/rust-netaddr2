@@ -66,9 +66,16 @@ jobs:
         LLVM_PROFILE_FILE: "netaddr2-%p-%m.profraw"
         RUSTFLAGS: >
           -Zinstrument-coverage
-    - uses: actions-rs/grcov@v0.1
-      with:
-        config: .grcov.yml
+    - name: Run grcov
+      run: >
+        grcov .
+        -s .
+        --binary-path ./target/debug/
+        -t lcov
+        --llvm
+        --branch
+        --ignore-not-existing
+        -o ./lcov.info
     - name: Upload coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
