@@ -97,7 +97,7 @@ mod tests {
 			pub fn subnets(&self, mask: Ipv4Addr) -> SubnetIterator<Netv4Addr, Netv4Addr> {
 				SubnetIterator {
 					net: *self,
-					cur: Some(Netv4Addr::new(*self.addr(), mask)),
+					cur: Some(Netv4Addr::new(self.addr(), mask)),
 				}
 			}
 		}
@@ -178,7 +178,7 @@ mod tests {
 			pub fn subnets(&self, mask: Ipv6Addr) -> SubnetIterator<Netv6Addr, Netv6Addr> {
 				SubnetIterator {
 					net: *self,
-					cur: Some(Netv6Addr::new(*self.addr(), mask)),
+					cur: Some(Netv6Addr::new(self.addr(), mask)),
 				}
 			}
 		}
