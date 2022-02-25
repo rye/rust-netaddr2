@@ -18,6 +18,14 @@ let net: NetAddr = "ff02::1/128".parse().unwrap();
 let net: Netv4Addr = "203.0.113.19/29".parse().unwrap();
 ```
 
+You can do some operations with these parsed structures, like checking address containment:
+
+```rust
+let net: NetAddr = "10.10.10.0/24".parse().unwrap();
+let addr: IpAddr = "10.10.10.1".parse().unwrap();
+assert!(net.contains(&addr));
+```
+
 (More options will be added eventually.)
 
 ## Vision
@@ -39,7 +47,7 @@ We will release version 1.0 when the GitHub milestone has been fully resolved.
 
 ## License
 
-> Copyright &copy; 2019 Kristofer J. Rye
+> Copyright &copy; 2019&mdash;2022 Kristofer J. Rye
 
 This software is released under either of:
 
