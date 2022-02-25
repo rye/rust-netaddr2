@@ -47,7 +47,7 @@ We will release version 1.0 when the GitHub milestone has been fully resolved.
 
 ## License
 
-> Copyright &copy; 2019 Kristofer J. Rye
+> Copyright &copy; 2019&mdash;2022 Kristofer J. Rye
 
 This software is released under either of:
 
